@@ -1779,13 +1779,20 @@ html, body { touch-action: manipulation; }
     var ids = {}; movies().forEach(function (t) { if (t.wd) ids[t.wd] = 1; });
     return e.films.some(function (f) { return ids[f.id]; }) ? e.films : null;
   }
+  function mergedSeries(c) {
+    var full = seriesFull(c); if (!full) return null;
+    var used = {}, out = full.map(function (f) { var t = byWd(f.id); if (t) used[t.id] = 1; return { f: f, t: t, dt: f.dt || "", o: f.o }; });
+    members(c).forEach(function (t) { if (!used[t.id]) out.push({ f: null, t: t, dt: dateOf(t), o: null }); });
+    var allOrd = out.every(function (x) { return x.o != null; });
+    return out.sort(function (a, b) { if (allOrd && a.o !== b.o) return a.o - b.o; return (a.dt || "9999") < (b.dt || "9999") ? -1 : (a.dt || "9999") > (b.dt || "9999") ? 1 : 0; });
+  }
   function byWd(id) { return movies().filter(function (m) { return m.wd === id; })[0] || null; }
   function collProgress(c) {
     var m = members(c), done = m.filter(function (t) { return t.status === "done"; }).length;
     var full = (c.kind === "series" || c.kind === "universe") ? seriesFull(c) : null;
     if (full) {
-      var w = full.filter(function (f) { var t = byWd(f.id); return t && t.status === "done"; }).length;
-      return w + " of " + full.length + " watched";
+      var dis = COL.dismiss[c.key] || [], ml = mergedSeries(c).filter(function (x) { return x.t || dis.indexOf(x.f.id) < 0; });
+      return ml.filter(function (x) { return x.t && x.t.status === "done"; }).length + " of " + ml.length + " watched";
     }
     return m.length + (m.length === 1 ? " movie" : " movies") + " · " + done + " watched";
   }
@@ -1846,13 +1853,8 @@ html, body { touch-action: manipulation; }
         var show = COL.showMissing[c.key] != null ? COL.showMissing[c.key] : missing.length <= 10;
         rows = '<div class="toggle-row"><span>Show movies I don’t have <span class="hint">· ' + missing.length + "</span></span>" +
           '<button class="switch" role="switch" aria-label="Show movies I don’t have" aria-checked="' + show + '" data-action="coll-showmissing"></button></div>';
-        rows += full.map(function (f, i) {
-          var t = byWd(f.id);
-          if (t) { used[t.id] = 1; return collRow(i + 1, t, f); }
-          if (!show || dis.indexOf(f.id) >= 0) return "";
-          return collRow(i + 1, null, f);
-        }).join("");
-        rows += m.filter(function (t) { return !used[t.id]; }).map(function (t) { return collRow(null, t, null); }).join("");
+        var vis = mergedSeries(c).filter(function (x) { return x.t || (show && dis.indexOf(x.f.id) < 0); });
+        rows += vis.map(function (x, i) { return collRow(i + 1, x.t, x.f); }).join("");
         if (dis.length) rows += '<button class="link" data-action="coll-undismiss" style="margin:0;padding:12px 0">' + dis.length + " hidden · Show</button>";
       } else {
         rows = m.map(function (t, i) { return collRow(i + 1, t, null); }).join("") + (seriesLoading[c.id] ? '<p class="hint" style="padding-top:10px">Loading the full series from Wikipedia…</p>' : "");
