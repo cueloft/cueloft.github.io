@@ -1138,6 +1138,7 @@ html, body { touch-action: manipulation; }
     else if (state.overlay === "colladd") overlay.innerHTML = collAddSheet();
     else if (state.overlay === "hidden") overlay.innerHTML = hiddenSheet();
     else if (state.overlay === "cover") overlay.innerHTML = coverSheet();
+    else if (state.overlay === "addmovies") { overlay.innerHTML = addMoviesSheet(); paintAddm(); }
     else if (state.overlay === "creditprev") overlay.innerHTML = creditPrevSheet();
     document.body.style.overflow = "hidden";
     var ns = overlay.querySelector(".sheet"); if (ns && st) ns.scrollTop = st;
@@ -1331,6 +1332,17 @@ html, body { touch-action: manipulation; }
         var cr0 = state.credit; if (!cr0) break; var key0 = (cr0.kind === "director" ? "d:" : "s:") + cr0.q;
         if (a === "credit-add") { addManual({ key: key0, kind: cr0.kind, id: cr0.q, name: cr0.name }); toast("Added " + cr0.name + " to Collections"); }
         state.backTo = null; state.backTo2 = null; state.collKey = key0; state.collEdit = false; state.overlay = "coll"; renderOverlay(true); render(); break; }
+      case "coll-showmissing": { var cm = findCollection(state.collKey); if (cm) { var full0 = seriesFull(cm) || [], dis0 = COL.dismiss[cm.key] || [];
+        var miss0 = full0.filter(function (f) { return !byWd(f.id) && dis0.indexOf(f.id) < 0; }).length;
+        var cur = COL.showMissing[cm.key] != null ? COL.showMissing[cm.key] : miss0 <= 10; COL.showMissing[cm.key] = !cur; saveCol(); renderOverlay(true); } break; }
+      case "coll-dismiss": { var dk = state.collKey; COL.dismiss[dk] = COL.dismiss[dk] || []; if (COL.dismiss[dk].indexOf(el.dataset.q) < 0) COL.dismiss[dk].push(el.dataset.q); saveCol(); renderOverlay(true); break; }
+      case "coll-undismiss": delete COL.dismiss[state.collKey]; saveCol(); renderOverlay(true); break;
+      case "open-addmovies": state.addm = { q: "", lib: [], web: [] }; state.overlay = "addmovies"; renderOverlay(true); var shM = overlay.querySelector(".sheet"); if (shM) shM.classList.add("anim"); var im = overlay.querySelector("#addm-q"); if (im) im.focus(); break;
+      case "addm-done": state.addm = null; state.overlay = "coll"; renderOverlay(true); render(); break;
+      case "addm-lib": if (t) { collToggle(state.collKey, t.id, true); toast("Added " + t.title); runAddm(); } break;
+      case "addm-web": { var w = state.addm && state.addm.web[+el.dataset.i]; if (!w) break;
+        var nb = { id: newId(), title: w.title, type: "movie", status: "want", rating: 0, notes: "", poster: null, fav: false, favRank: 0, allTime: false, favWhy: "", createdAt: Date.now(), year: w.year, vibe: "unwind", wp: w.page };
+        saveTitle(nb); collToggle(state.collKey, nb.id, true); toast("Added " + w.title); scheduleEnrichment(); runAddm(); break; }
       case "open-cover": state.overlay = "cover"; renderOverlay(true); var shV = overlay.querySelector(".sheet"); if (shV) shV.classList.add("anim"); break;
       case "cover-done": state.overlay = "coll"; renderOverlay(true); render(); break;
       case "cover-pick": if (t) { setCover(state.collKey, { t: t.id }); renderOverlay(true); render(); } break;
@@ -1348,6 +1360,7 @@ html, body { touch-action: manipulation; }
   document.addEventListener("input", function (e) {
     var el = e.target; var k = el.dataset && el.dataset.input; if (!k) return;
     if (k === "search") { state.search = el.value; var pos = el.selectionStart; render(); var s = view.querySelector('[data-input="search"]'); if (s) { s.focus(); try { s.setSelectionRange(pos, pos); } catch (x) {} } }
+    if (k === "addm-q" && state.addm) { state.addm.q = el.value; scheduleAddm(); }
     if (k === "coll-q" && state.collNew) { state.collNew.q = el.value; scheduleCollSearch(); }
     if (k === "add-title" && state.add) { state.add.title = el.value; state.add.year = null; scheduleSuggest(el.value); }
     if (k === "d-title") autosize(el);
@@ -1681,7 +1694,7 @@ html, body { touch-action: manipulation; }
 
 
   /* ===================== collections (movies) ===================== */
-  var LS_COL = "cueloft.collections.v1", LS_SER = "cueloft.series.v1";
+  var LS_COL = "cueloft.collections.v1", LS_SER = "cueloft.series.v2";
   var COL = lsGet(LS_COL, null) || {};
   if (!Array.isArray(COL.manual)) COL.manual = [];
   if (!Array.isArray(COL.hidden)) COL.hidden = [];
@@ -1690,6 +1703,8 @@ html, body { touch-action: manipulation; }
   var SERIES = lsGet(LS_SER, {}), seriesLoading = {};
   function saveCol() { lsSet(LS_COL, COL); autoCache = null; }
   if (!COL.covers || typeof COL.covers !== "object") COL.covers = {};
+  if (!COL.showMissing || typeof COL.showMissing !== "object") COL.showMissing = {};
+  if (!COL.dismiss || typeof COL.dismiss !== "object") COL.dismiss = {};
   function movies() { return state.titles.filter(function (t) { return t.type === "movie"; }); }
   function crList(t, k) { return t.cr && Array.isArray(t.cr[k]) ? t.cr[k] : []; }
   function fieldsFor(kind) { return kind === "director" ? ["d"] : kind === "studio" ? ["s"] : kind === "series" || kind === "universe" ? ["se", "u"] : []; }
@@ -1730,9 +1745,12 @@ html, body { touch-action: manipulation; }
   function unhide(key) { var i = COL.hidden.indexOf(key); if (i >= 0) { COL.hidden.splice(i, 1); saveCol(); } }
   function members(c) {
     var fields = fieldsFor(c.kind), rem = COL.removes[c.key] || [], add = COL.adds[c.key] || [];
+    var inList = {}, e = (c.kind === "series" || c.kind === "universe") && c.id ? SERIES[c.id] : null;
+    if (e && Array.isArray(e.films)) e.films.forEach(function (f) { inList[f.id] = 1; });
     return movies().filter(function (t) {
       if (rem.indexOf(t.id) >= 0) return false;
       if (add.indexOf(t.id) >= 0) return true;
+      if (t.wd && inList[t.wd]) return true;
       return !!c.id && fields.some(function (f) { return crList(t, f).some(function (x) { return x[0] === c.id; }); });
     });
   }
@@ -1812,7 +1830,8 @@ html, body { touch-action: manipulation; }
     }
     var fy = f.dt ? f.dt.slice(0, 4) : "";
     return '<div class="crow missing">' + (n ? '<span class="cnum">' + n + "</span>" : "") + '<span class="cthumb">' + art({ title: f.l, id: f.id }) + '</div></span><span class="ctext"><b>' + esc(f.l) + "</b><small>" + esc((fy ? fy + " · " : "") + "Not in your library") + "</small></span>" +
-      '<button class="sbtn brand" data-action="coll-addfilm" data-q="' + esc(f.id) + '" data-name="' + esc(f.l) + '" data-year="' + esc(fy) + '">Add</button></div>';
+      '<button class="sbtn brand" data-action="coll-addfilm" data-q="' + esc(f.id) + '" data-name="' + esc(f.l) + '" data-year="' + esc(fy) + '">Add</button>' +
+      '<button class="sbtn" data-action="coll-dismiss" data-q="' + esc(f.id) + '" aria-label="Remove ' + esc(f.l) + ' from suggestions" style="padding:0 12px">✕</button></div>';
   }
   function collSheet() {
     var c = findCollection(state.collKey); if (!c) return "";
@@ -1822,21 +1841,76 @@ html, body { touch-action: manipulation; }
       var full = seriesFull(c);
       if (!full && !seriesLoading[c.id]) fetchSeries(c);
       if (full) {
-        var used = {};
-        rows = full.map(function (f, i) { var t = byWd(f.id); if (t && members(c).indexOf(t) >= 0) used[t.id] = 1; else if (t) { used[t.id] = 1; } return collRow(i + 1, t, f); }).join("");
+        var used = {}, dis = COL.dismiss[c.key] || [];
+        var missing = full.filter(function (f) { return !byWd(f.id) && dis.indexOf(f.id) < 0; });
+        var show = COL.showMissing[c.key] != null ? COL.showMissing[c.key] : missing.length <= 10;
+        rows = '<div class="toggle-row"><span>Show movies I don’t have <span class="hint">· ' + missing.length + "</span></span>" +
+          '<button class="switch" role="switch" aria-label="Show movies I don’t have" aria-checked="' + show + '" data-action="coll-showmissing"></button></div>';
+        rows += full.map(function (f, i) {
+          var t = byWd(f.id);
+          if (t) { used[t.id] = 1; return collRow(i + 1, t, f); }
+          if (!show || dis.indexOf(f.id) >= 0) return "";
+          return collRow(i + 1, null, f);
+        }).join("");
         rows += m.filter(function (t) { return !used[t.id]; }).map(function (t) { return collRow(null, t, null); }).join("");
+        if (dis.length) rows += '<button class="link" data-action="coll-undismiss" style="margin:0;padding:12px 0">' + dis.length + " hidden · Show</button>";
       } else {
         rows = m.map(function (t, i) { return collRow(i + 1, t, null); }).join("") + (seriesLoading[c.id] ? '<p class="hint" style="padding-top:10px">Loading the full series from Wikipedia…</p>' : "");
       }
-    } else rows = m.map(function (t) { return collRow(null, t, null); }).join("") || '<p class="hint">No movies here yet. Add one from a movie’s page with “Add to collection”.</p>';
+    } else rows = m.map(function (t) { return collRow(null, t, null); }).join("") || '<p class="hint">No movies here yet. Tap Add movies to choose some.</p>';
     var canPick = m.some(function (t) { return t.status !== "done"; });
     return '<div class="scrim"></div><section class="sheet detail" role="dialog" aria-modal="true" aria-labelledby="coll-h">' +
       '<div class="dback"><button class="glass-btn" data-action="close" aria-label="Back">' + I.back + "</button></div>" +
       '<div class="coll-body" style="padding-top:calc(72px + env(safe-area-inset-top, 0px))"><div class="group" style="gap:6px"><div class="eyebrow" style="color:var(--text2)">' + typeDot("movie") + kindLabel + '</div><h1 id="coll-h" class="h1" style="padding:0">' + esc(c.name) + '</h1><span class="hint">' + esc(collProgress(c)) + "</span></div>" +
       '<div class="small-btns">' + (canPick ? '<button class="sbtn brand" data-action="coll-pick">' + I.dice + (isSeries ? "Pick next" : "Pick for me") + "</button>" : "") +
-      '<button class="sbtn" data-action="coll-edit">' + (state.collEdit ? "Done editing" : "Edit") + '</button><button class="sbtn" data-action="open-cover">Edit cover</button></div>' +
+      '<button class="sbtn" data-action="open-addmovies">' + I.plus + 'Add movies</button><button class="sbtn" data-action="coll-edit">' + (state.collEdit ? "Done editing" : "Edit") + '</button><button class="sbtn" data-action="open-cover">Edit cover</button></div>' +
       "<div>" + rows + "</div>" +
       '<div class="small-btns" style="margin-top:8px"><button class="sbtn danger" data-action="coll-hide">' + (c.kind === "series" || c.kind === "universe" ? "Hide this collection" : "Remove this collection") + "</button></div><div style=\"height:40px\"></div></div></section>";
+  }
+  function addMoviesSheet() {
+    var c = findCollection(state.collKey); if (!c) return "";
+    return '<div class="scrim" data-action="addm-done"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="am-h"><div class="grabber"></div><div class="sheet-head"><span style="width:52px"></span><h2 id="am-h">Add to ' + esc(c.name) + '</h2><button class="textbtn strong" data-action="addm-done">Done</button></div>' +
+      '<div class="group" style="gap:0"><label class="sr" for="addm-q">Search movies</label><input id="addm-q" class="input" data-input="addm-q" placeholder="Search your library or any movie" value="' + esc((state.addm && state.addm.q) || "") + '" autocomplete="off" autocorrect="off" spellcheck="false"><div id="addm-results"></div></div></section>';
+  }
+  var addmTimer = null, addmSeq = 0;
+  function scheduleAddm() { clearTimeout(addmTimer); addmTimer = setTimeout(runAddm, 280); }
+  function runAddm() {
+    var am = state.addm; if (!am) return;
+    var q = (am.q || "").trim(), ql = q.toLowerCase(), my = ++addmSeq, c = findCollection(state.collKey); if (!c) return;
+    var mem = members(c);
+    am.lib = ql ? movies().filter(function (t) { return (t.title || "").toLowerCase().indexOf(ql) >= 0; }).slice(0, 8).map(function (t) { return { t: t, inC: mem.indexOf(t) >= 0 }; }) : [];
+    am.web = q.length >= 2 ? (am.web || []) : []; paintAddm();
+    if (q.length < 2) return;
+    Promise.all([
+      wiki("generator=prefixsearch&gpssearch=" + encodeURIComponent(q) + "&gpslimit=15").catch(function () { return []; }),
+      wiki("generator=search&gsrsearch=" + encodeURIComponent(q + " film") + "&gsrlimit=20&gsrnamespace=0").catch(function () { return []; })
+    ]).then(function (r) {
+      if (my !== addmSeq || !state.addm) return;
+      var seen = {}, out = [];
+      r.forEach(function (pages) {
+        pages.slice().sort(function (a, b) { return (a.index || 0) - (b.index || 0); }).forEach(function (p) {
+          if (classify(p.title, p.description) !== "movie") return;
+          var title = cleanTitle(p.title), ym = /\b(18[89]\d|19\d\d|20\d\d)\b/.exec(p.description || ""), key = title.toLowerCase() + "|" + (ym ? ym[1] : "");
+          if (seen[key]) return; seen[key] = 1;
+          var have = movies().some(function (t) { return (t.title || "").toLowerCase() === title.toLowerCase() && (!ym || !t.year || String(t.year) === ym[1]); });
+          if (!have) out.push({ title: title, year: ym ? +ym[1] : null, desc: p.description || "", page: p.title });
+        });
+      });
+      state.addm.web = out.slice(0, 6); paintAddm();
+    });
+  }
+  function paintAddm() {
+    var box = document.getElementById("addm-results"), am = state.addm; if (!box || !am) return;
+    var h = "";
+    if (am.lib && am.lib.length) h += '<p class="field-label" style="margin:14px 0 4px">In your library</p>' + am.lib.map(function (x) {
+      return '<div class="toggle-row"><span>' + esc(x.t.title) + (x.t.year ? ' <span class="hint">· ' + x.t.year + "</span>" : "") + "</span>" +
+        (x.inC ? '<span class="hint">Added</span>' : '<button class="sbtn brand" data-action="addm-lib" data-id="' + x.t.id + '">Add</button>') + "</div>";
+    }).join("");
+    if (am.web && am.web.length) h += '<p class="field-label" style="margin:14px 0 4px">Not in your library yet</p>' + am.web.map(function (x, i) {
+      return '<div class="toggle-row"><span>' + esc(x.title) + ' <span class="hint">· ' + esc(x.desc.length > 40 ? x.desc.slice(0, 38) + "…" : x.desc) + "</span></span>" +
+        '<button class="sbtn brand" data-action="addm-web" data-i="' + i + '">Add</button></div>';
+    }).join("") + '<p class="hint" style="margin-top:6px">Adds it to your Unwind watchlist and this collection.</p>';
+    box.innerHTML = h;
   }
   function coverSheet() {
     var c = findCollection(state.collKey); if (!c) return "";
@@ -2031,8 +2105,9 @@ html, body { touch-action: manipulation; }
   function fetchSeries(c) {
     if (!c || !c.id || seriesLoading[c.id]) return Promise.resolve();
     seriesLoading[c.id] = true;
-    var link = c.kind === "universe" ? "?film wdt:P1434 wd:" + c.id + " ." : "?film p:P179 ?st . ?st ps:P179 wd:" + c.id + " . OPTIONAL { ?st pq:P1545 ?ord }";
-    var q = "SELECT ?film ?filmLabel ?ord ?dt WHERE { " + link + " ?film wdt:P31 ?inst . VALUES ?inst { wd:Q11424 wd:Q24869 wd:Q202866 wd:Q229390 } OPTIONAL { ?film wdt:P577 ?dt } " +
+    var q = "SELECT ?film ?filmLabel ?ord ?dt WHERE { ?film (wdt:P179|wdt:P1434)/(wdt:P179|wdt:P361)* wd:" + c.id + " . " +
+      "?film wdt:P31 ?inst . VALUES ?inst { wd:Q11424 wd:Q24869 wd:Q202866 wd:Q229390 } ?film wdt:P577 ?dt . " +
+      "OPTIONAL { ?film p:P179 ?st . ?st ps:P179 wd:" + c.id + " . ?st pq:P1545 ?ord } " +
       "SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". } }";
     return sparql(q).then(function (rows) {
       var map = {};
@@ -2042,11 +2117,11 @@ html, body { touch-action: manipulation; }
         var d = (b.dt && b.dt.value || "").slice(0, 10); if (d && (!e.dt || d < e.dt)) e.dt = d;
         var o = parseFloat(b.ord && b.ord.value); if (!isNaN(o)) e.o = o;
       });
-      var films = Object.keys(map).map(function (k) { return map[k]; }).filter(function (f) { return !badSeriesName(f.l); }).sort(function (a, b) {
-        if (a.o != null && b.o != null && a.o !== b.o) return a.o - b.o;
-        return (a.dt || "9999") < (b.dt || "9999") ? -1 : 1;
-      });
-      SERIES[c.id] = { at: Date.now(), films: films.slice(0, 60) }; lsSet(LS_SER, SERIES); autoCache = null;
+      var today = todayKey();
+      var films = Object.keys(map).map(function (k) { return map[k]; }).filter(function (f) { return !badSeriesName(f.l) && f.dt && f.dt <= today; });
+      var allOrd = films.length && films.every(function (f) { return f.o != null; });
+      films.sort(function (a, b) { if (allOrd && a.o !== b.o) return a.o - b.o; return a.dt < b.dt ? -1 : a.dt > b.dt ? 1 : 0; });
+      SERIES[c.id] = { at: Date.now(), films: films.slice(0, 80) }; lsSet(LS_SER, SERIES); autoCache = null;
     }).catch(function () {}).then(function () { seriesLoading[c.id] = false; renderOverlay(); if (state.view !== "library") render(); });
   }
   function fetchMissingSeries() {
