@@ -1110,15 +1110,20 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
   }
   function classify(title, desc) {
     var d = (desc || "").toLowerCase(), t = title.toLowerCase();
-    if (/^list of|\bseason \d|\(season|\bepisodes?\b|\bfranchise\b|\bsoundtrack\b/.test(t)) return null;
+    if (/^list of|\bseason \d|\(season|\bepisodes?\b|\bfranchise\b|\bsoundtrack\b|\bcharacter\)/.test(t)) return null;
+    if (/\b(fictional )?character\b|media franchise|\bfranchise\b|\bsoundtrack\b|\balbum\b|\bsong\b|\bnovel\b/.test(d)) return null;
+    if (/\b(company|corporation|subsidiary|conglomerate|organization|award|awards|festival|ceremony|cinema chain|theatre|theater)\b/.test(d)) return null;
     if (/video game/.test(d)) {
-      return /(series|franchise|company|publisher|character|console|engine|studio|designer|composer|developer\b)/.test(d) ? null : "game";
+      return /video game (series|franchise|company|publisher|developer|console|engine|designer|composer|character|studio|genre|music)|video games? (series|franchise)/.test(d) ? null : "game";
     }
     if (/((television|tv|web|anime|animated|streaming|drama|comedy|reality) (series|show|miniseries|programme|program|sitcom))|miniseries|sitcom|docuseries|soap opera/.test(d)) {
-      return /(character|presenter|host\b|actor|actress|channel|network|producer|writer|episode|season)/.test(d) ? null : "show";
+      return /(television|tv) (presenter|host|producer|writer|actor|actress|personality|network|channel|station|episode|season|director|journalist)|\b(actor|actress|presenter|journalist|comedian)\b/.test(d) ? null : "show";
     }
-    if (/\bfilm\b|\bmovie\b/.test(d)) {
-      return /(series|director|actor|actress|producer|maker|critic|composer|festival|studio|company|award|score|soundtrack|character|franchise|genre|industry|editor|cinematographer|screenwriter|distributor|theat)/.test(d) ? null : "movie";
+    if (/\bfilms?\b|\bmovie\b/.test(d)) {
+      if (/\b(film|movie) (series|director|producer|maker|critic|composer|festival|studio|company|award|score|editor|distributor|industry|genre|actor|actress|trilogy|saga)\b/.test(d)) return null;
+      if (/\b(actor|actress|filmmaker|director|producer|screenwriter|composer|critic|cinematographer|editor|singer|politician|businessman|writer)\b/.test(d) && !/\b\d{4}\b.*\bfilm\b/.test(d)) return null;
+      if (/\bfilms\b/.test(d) && !/\bfilm\b/.test(d)) return null;
+      return "movie";
     }
     return null;
   }
@@ -1153,7 +1158,7 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
   }
   var offerSeq = 0;
   function fetchPoster(page) {
-    return fetch("https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=800&titles=" + encodeURIComponent(page))
+    return fetch("https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=600&pilicense=any&titles=" + encodeURIComponent(page))
       .then(function (r) { return r.ok ? r.json() : {}; })
       .then(function (j) {
         var p = j.query && j.query.pages && j.query.pages[0];
