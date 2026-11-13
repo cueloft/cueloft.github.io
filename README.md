@@ -13,7 +13,7 @@
 - **Search as you type** – start typing a title and pick the right movie, show or game; the type and year fill in for you.
 - **Library** – everything you've logged, with search, filters and an activity heatmap colored by type.
 - **The Vault** – your all-time favorites, with a ranked top 3 per category and an all-time #1.
-- **Posters** – add your own from Photos; they're resized on the device before saving.
+- **Posters** – one-tap suggestions from Wikipedia, or add your own from Photos; they're resized on the device before saving.
 - **Backfill** – add titles you finished years ago, with a date or "don't remember", one at a time or as a list.
 - **Light & dark mode**, installable to the iPhone Home Screen, works offline.
 
@@ -24,7 +24,9 @@ Nothing is uploaded, and there are no accounts, trackers or API keys in this rep
 Use **Settings → Export backup** to keep a copy of your data.
 
 Title suggestions use the public [Wikipedia search API](https://www.mediawiki.org/wiki/API:Search):
-only the text you type is sent, and only titles and short descriptions come back. No images are fetched.
+only the text you type is sent, and titles with short descriptions come back.
+When you pick a title (or tap **Find poster**), Cueloft can offer that page's main image as a poster.
+It's only saved if you tap **Use this poster**, and then it's stored on your device. No artwork is kept in this repo.
 
 ## Install on iPhone
 

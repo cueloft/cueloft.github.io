@@ -257,6 +257,12 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
 .sug b { display: block; font-size: 15px; font-weight: 600; line-height: 1.25; }
 .sug small { display: block; font-size: 12px; color: var(--text2); line-height: 1.3; margin-top: 2px; }
 .sug-note { padding: 8px 14px; font-size: 11px; color: var(--text2); }
+.offer { display: flex; gap: 14px; align-items: center; padding: 12px; border-radius: 16px; background: var(--surface); }
+.sheet:not(.detail) .offer { background: var(--surface2); }
+.offer img { width: 64px; height: 96px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+.offer-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.offer-body b { font-size: 15px; font-weight: 600; }
+.sbtn.brand { background: var(--brand); color: #000; }
 .cta { height: 56px; border-radius: 28px; border: none; background: var(--brand); color: #000; font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; }
 .cta:disabled { opacity: 0.4; }
 
@@ -700,7 +706,7 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
     return '<div class="scrim" data-action="close"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="add-h">' +
       '<div class="grabber"></div><div class="sheet-head"><button class="textbtn" data-action="close">Cancel</button><h2 id="add-h">' + (a.bulk ? "Add several" : "Add to Library") + '</h2><button class="textbtn strong" data-action="add-bulk">' + (a.bulk ? "Just one" : "Several") + '</button></div>' +
       (a.bulk ? '<div class="group"><label class="field-label" for="add-bulk">Titles, one per line</label><textarea id="add-bulk" class="input" data-input="add-bulk" rows="7" placeholder="The Fellowship of the Ring&#10;The Two Towers&#10;The Return of the King">' + esc(a.bulkText || "") + '</textarea><p class="hint">They all get the same type and status. Add posters and ratings later from each title’s page.</p></div>' :
-      '<div class="group" style="gap:0"><label class="sr" for="add-title">Title</label><input id="add-title" class="input" data-input="add-title" placeholder="Search or type a title" value="' + esc(a.title) + '" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done"><div id="suggest" class="suggest" role="listbox" aria-label="Suggestions"></div></div>' +
+      '<div class="group" style="gap:0"><label class="sr" for="add-title">Title</label><input id="add-title" class="input" data-input="add-title" placeholder="Search or type a title" value="' + esc(a.title) + '" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done"><div id="suggest" class="suggest" role="listbox" aria-label="Suggestions"></div></div>' + addOfferHTML(a) +
       '<div class="poster-row">' +
       (state.canPoster ? '<label class="poster-slot file-label">' + slot + '<input type="file" accept="image/*" data-input="add-poster" aria-label="Add poster from Photos"></label>' : '<div class="poster-slot" aria-hidden="true">' + slot + "</div>") +
       '<div class="poster-side">' +
@@ -746,10 +752,10 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
         '<div class="rc-row"><span id="all-l">All-time #1</span><button class="switch" role="switch" aria-labelledby="all-l" aria-checked="' + !!t.allTime + '" data-action="d-alltime" data-id="' + t.id + '"></button></div>' +
         (t.allTime ? '<div class="rc-col"><label for="d-why">Why it’s your favorite</label><textarea id="d-why" data-input="d-why" data-id="' + t.id + '" rows="2" placeholder="One line about why it matters">' + esc(t.favWhy || "") + "</textarea></div>" : "") : "") +
       "</div></div>";
-    h += '<div class="group"><span class="field-label">Poster</span><div class="small-btns">' +
+    h += '<div class="group"><span class="field-label">Poster</span><div class="small-btns">' + (state.canPoster ? '<button class="sbtn" data-action="d-find" data-id="' + t.id + '">Find poster</button>' : "") +
       (state.canPoster ? '<label class="sbtn file-label">' + (t.poster ? "Change poster" : "Add poster") + '<input type="file" accept="image/*" data-input="d-poster" data-id="' + t.id + '" aria-label="Choose a poster from Photos"></label>' : '<span class="hint">Posters can be added when you open Cueloft signed in to your account.</span>') +
       (t.poster && state.canPoster ? '<button class="sbtn" data-action="d-unposter" data-id="' + t.id + '">Remove poster</button>' : "") + "</div>" +
-      (state.canPoster ? '<p class="limit">' + I.shield + "JPG, PNG or HEIC · up to 10 MB · auto-shrunk</p>" : "") + "</div>";
+      (state.canPoster ? '<p class="limit">' + I.shield + "JPG, PNG or HEIC · up to 10 MB · auto-shrunk</p>" : "") + detailOfferHTML(t) + "</div>";
     h += '<div class="small-btns"><button class="sbtn danger" data-action="d-delete" data-id="' + t.id + '">' + (state.confirmDelete ? "Tap again to delete" : "Delete from library") + "</button></div></div></section>";
     return h;
   }
@@ -809,7 +815,7 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
   }
   function closeOverlay() {
     var a = document.activeElement; if (a && overlay.contains(a)) a.blur();
-    state.overlay = null; state.detailId = null; state.add = null; state.confirmDelete = false; state.suggest = null; state.exportReady = null; state.exporting = false;
+    state.overlay = null; state.detailId = null; state.add = null; state.confirmDelete = false; state.suggest = null; state.exportReady = null; state.exporting = false; state.detailOffer = null;
     renderOverlay(true); render();
   }
 
@@ -904,8 +910,36 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
       case "sug-pick": {
         var sgi = state.suggest && state.suggest.web[+el.dataset.i]; if (!sgi || !state.add) break;
         state.add.title = sgi.title; state.add.type = sgi.type; state.add.year = sgi.year || null;
-        state.suggest = null; renderOverlay(true); break;
+        state.suggest = null; state.add.posterOffer = null; state.add.offerNone = false;
+        if (state.canPoster && !state.add.blob && sgi.page) {
+          var oseq = ++offerSeq; state.add.offerLoading = true;
+          fetchPoster(sgi.page).then(function (r) {
+            if (oseq !== offerSeq || !state.add) return;
+            state.add.offerLoading = false; state.add.posterOffer = r; state.add.offerNone = !r; renderOverlay(true);
+          });
+        }
+        renderOverlay(true); break;
       }
+      case "offer-use": if (state.add && state.add.posterOffer) { state.add.blob = state.add.posterOffer.blob; state.add.preview = state.add.posterOffer.preview; state.add.posterOffer = null; renderOverlay(true); } break;
+      case "offer-skip": if (state.add) { state.add.posterOffer = null; state.add.offerNone = false; renderOverlay(true); } break;
+      case "d-find": if (t) {
+        state.detailOffer = { id: t.id, loading: true }; renderOverlay(true);
+        findPosterFor(t).then(function (r) {
+          if (!state.detailOffer || state.detailOffer.id !== t.id) return;
+          state.detailOffer = r ? { id: t.id, blob: r.blob, preview: r.preview } : { id: t.id, none: true };
+          renderOverlay(true);
+        });
+      } break;
+      case "d-offer-use": {
+        var dof = state.detailOffer; if (!t || !dof || !dof.blob) break;
+        var oldP = t.poster; state.detailOffer = { id: t.id, loading: true, saving: true }; renderOverlay(true);
+        uploadPoster(dof.blob).then(function (pid) {
+          update(t.id, { poster: pid }); if (oldP && store.assets) store.assets.delete(oldP).catch(function () {});
+          state.detailOffer = null; renderOverlay(true); toast("Poster saved");
+        }, function (err) { state.detailOffer = null; renderOverlay(true); toast(err.msg || "Couldn’t save that poster."); });
+        break;
+      }
+      case "d-offer-skip": state.detailOffer = null; renderOverlay(true); break;
       case "sug-lib": { var lid = el.dataset.id; closeOverlay(); state.detailId = lid; openOverlay("detail"); break; }
     }
   });
@@ -1110,12 +1144,53 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
           var ym = /\b(18[89]\d|19\d\d|20\d\d)\b/.exec(p.description || "");
           var key = title.toLowerCase() + "|" + type + "|" + (ym ? ym[1] : "");
           if (seen[key]) return; seen[key] = 1;
-          out.push({ title: title, type: type, year: ym ? +ym[1] : null, desc: p.description || "" });
+          out.push({ title: title, type: type, year: ym ? +ym[1] : null, desc: p.description || "", page: p.title });
         });
       });
       state.suggest = { q: ql, lib: lib, web: out.slice(0, 6) };
       paintSuggest();
     });
+  }
+  var offerSeq = 0;
+  function fetchPoster(page) {
+    return fetch("https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&redirects=1&prop=pageimages&piprop=thumbnail&pithumbsize=800&titles=" + encodeURIComponent(page))
+      .then(function (r) { return r.ok ? r.json() : {}; })
+      .then(function (j) {
+        var p = j.query && j.query.pages && j.query.pages[0];
+        var src = p && p.thumbnail && p.thumbnail.source;
+        if (!src) return null;
+        return fetch(src).then(function (r) { if (!r.ok) throw new Error("img"); return r.blob(); }).then(function (b) { return processImage(b); });
+      })
+      .catch(function () { return null; });
+  }
+  function findPosterFor(t) {
+    var hint = t.type === "movie" ? " film" : t.type === "show" ? " television series" : " video game";
+    return wiki("generator=search&gsrsearch=" + encodeURIComponent(t.title + hint) + "&gsrlimit=10&gsrnamespace=0").then(function (pages) {
+      pages = pages.slice().sort(function (a, b) { return (a.index || 0) - (b.index || 0); }).filter(function (p) { return classify(p.title, p.description) === t.type; });
+      var name = (t.title || "").toLowerCase(), yr = t.year ? String(t.year) : "";
+      var best = pages.filter(function (p) { return cleanTitle(p.title).toLowerCase() === name && (!yr || (p.description || "").indexOf(yr) >= 0); })[0]
+        || pages.filter(function (p) { return cleanTitle(p.title).toLowerCase() === name; })[0]
+        || pages[0];
+      return best ? fetchPoster(best.title) : null;
+    }).catch(function () { return null; });
+  }
+  function offerCard(preview, useAction, skipAction, id) {
+    var ida = id ? ' data-id="' + id + '"' : "";
+    return '<div class="offer"><img src="' + preview + '" alt="Suggested poster"><div class="offer-body"><b>Poster from Wikipedia</b><span class="hint">Use it for this title?</span>' +
+      '<div class="small-btns" style="margin-top:6px"><button class="sbtn brand" data-action="' + useAction + '"' + ida + '>Use this poster</button><button class="sbtn" data-action="' + skipAction + '"' + ida + ">Skip</button></div></div></div>";
+  }
+  function addOfferHTML(a) {
+    if (a.bulk || a.blob) return "";
+    if (a.offerLoading) return '<p class="hint">Looking for a poster on Wikipedia…</p>';
+    if (a.posterOffer) return offerCard(a.posterOffer.preview, "offer-use", "offer-skip");
+    if (a.offerNone) return '<p class="hint">No poster found on Wikipedia. You can add your own.</p>';
+    return "";
+  }
+  function detailOfferHTML(t) {
+    var o = state.detailOffer; if (!o || o.id !== t.id) return "";
+    if (o.loading) return '<p class="hint">' + (o.saving ? "Saving poster…" : "Looking for a poster on Wikipedia…") + "</p>";
+    if (o.none) return '<p class="hint">No poster found on Wikipedia for this title. You can add your own.</p>';
+    return offerCard(o.preview, "d-offer-use", "d-offer-skip", t.id);
   }
   function paintSuggest() {
     var box = document.getElementById("suggest"); if (!box) return;
