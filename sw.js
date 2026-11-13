@@ -1,6 +1,6 @@
 // Cueloft service worker: keeps the app opening offline.
 // Network first, so updates pushed to GitHub show up on the next open.
-const CACHE = "cueloft-v6";
+const CACHE = "cueloft-v7";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icons/apple-touch-icon.png", "./icons/icon-192.png", "./icons/icon-512.png"];
 
 self.addEventListener("install", (e) => {

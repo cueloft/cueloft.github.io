@@ -332,13 +332,14 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
 #sbar.on { opacity: 1; }
 
 /* liquid glass add button */
-.round.addbtn { position: relative; overflow: hidden; color: #fff; border: 1px solid rgba(255,255,255,0.35);
-  background: linear-gradient(180deg, #ffab45 0%, #ff8a00 55%, #f07000 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), inset 0 -2px 4px rgba(140,50,0,0.25), 0 6px 16px rgba(255,120,0,0.32); }
-.round.addbtn::before { content: ""; position: absolute; left: 6px; right: 6px; top: 3px; height: 45%; border-radius: 20px 20px 12px 12px; background: linear-gradient(180deg, rgba(255,255,255,0.45), rgba(255,255,255,0)); pointer-events: none; }
-.round.addbtn svg { position: relative; }
+.round.addbtn { color: #fff; border: none; background: var(--brand); box-shadow: 0 4px 14px rgba(255,120,0,0.32); }
 
-/* header */
+/* header (outside the scrolling area, so it never moves) */
+#apphead { flex-shrink: 0; position: relative; z-index: 12; padding-top: env(safe-area-inset-top, 0px); transition: box-shadow .2s; }
+#apphead.scrolled { box-shadow: 0 1px 0 var(--line); }
+#apphead .topbar { padding: 12px 24px 8px; }
+#apphead .head { padding: 12px 24px 8px; }
+#view { padding-top: 0; }
 .stick { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 12; padding-bottom: 10px; transition: background-color .2s; }
 #view.scrolled .stick { background: var(--sbar); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%); }
 .topbar { padding-top: 14px; }
@@ -375,6 +376,8 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
 .art > img.art-img.fit { object-fit: contain; }
 
 /* one pill per poster */
+.sticker { left: 5px; top: 5px; }
+.rank { left: 5px; top: 5px; }
 .sticker.dotonly { padding: 0; width: 20px; justify-content: center; }
 
 /* detail */
@@ -414,7 +417,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
 </head>
 <body>
 <div id="app">
-  <div id="sbar" aria-hidden="true"></div>
+  <header id="apphead"></header>
   <main id="view"><p class="loading">Opening your loft…</p></main>
   <div id="tabbar-wrap">
     <nav class="tabbar" aria-label="Main">
@@ -603,7 +606,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
   }
 
   /* ---------- art ---------- */
-  function art(t, cls) {
+  function art(t, cls, noFit) {
     var h = hash((t.title || "") + (t.id || ""));
     var p = PAL[h % PAL.length], shape = h % 3;
     var sh = shape === 0 ? '<span class="art-c" style="background:' + p[1] + '"></span>'
@@ -611,7 +614,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       : '<span class="art-sq" style="border-color:' + p[1] + '"></span>';
     var psrc = t.poster ? posterSrc(t.poster) : null, img = "";
     if (psrc) {
-      var r = PR[t.poster], odd = cls !== "hero" && r != null && (r < 0.5 || r > 0.9);
+      var r = PR[t.poster], odd = !noFit && r != null && (r < 0.5 || r > 0.9);
       img = (odd ? '<img class="art-blur" src="' + psrc + '" alt="">' : "") + '<img class="art-img' + (odd ? " fit" : "") + '" data-pid="' + esc(t.poster) + '" src="' + psrc + '" alt="">';
     }
     return '<div class="art ' + (cls || "") + '" style="background:' + p[0] + '">' + sh + (psrc ? "" : '<span class="art-title">' + esc(t.title) + "</span>") + img;
@@ -684,14 +687,18 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       return '<button class="chip" data-action="' + action + '" data-v="' + o[0] + '" aria-pressed="' + (current === o[0]) + '">' + (o[0] !== "all" ? typeDot(o[0]) : "") + o[1] + "</button>";
     }).join("");
   }
+  function headerHTML() {
+    if (state.view === "library") return '<div class="head"><h1>Library</h1><div class="head-actions"><button class="round" data-action="open-settings" aria-label="Settings">' + I.gear + "</button>" + addBtn() + "</div></div>";
+    if (state.view === "vault") return '<div class="head"><div class="vault-title">' + I.vault + "<h1>The Vault</h1></div></div>";
+    return '<h1 class="sr">Up Next</h1><div class="topbar"><div class="brand"><span class="brand-word">Cueloft</span><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5l13 7.5-13 7.5z"/></svg></div>' + addBtn() + "</div>";
+  }
   function addBtn() { return '<button class="round addbtn" data-action="open-add" aria-label="Add a title">' + I.plus + "</button>"; }
 
   function viewNext() {
     var f = state.filter;
     var ok = function (t) { return f === "all" || t.type === f; };
     var prog = state.titles.filter(function (t) { return t.status === "progress" && ok(t); }).sort(byUpdated);
-    var h = '<h1 class="sr">Up Next</h1><div class="topbar stick"><div class="brand"><span class="brand-word">Cueloft</span><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5l13 7.5-13 7.5z"/></svg></div>' +
-      addBtn() + "</div>" + modeNote() +
+    var h = modeNote() +
       '<div class="chips" role="group" aria-label="Filter by type">' + filterChips(f, "filter") + "</div>";
     if (!state.titles.length) {
       return h + '<div class="empty"><h2>Your loft is empty</h2><p>Add the first movie, show or game you’re watching, playing, or saving for later.</p><button class="btn-primary" data-action="open-add">' + I.plus + "Add a title</button></div>";
@@ -733,7 +740,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       meta = "Movie";
       action = '<button class="pill" data-action="mark-done" data-id="' + t.id + '">' + I.check + "Mark watched</button>";
     }
-    return '<div class="hero">' + art(t, "hero") + '</div><div class="hero-scrim"></div><div class="hero-body">' +
+    return '<div class="hero">' + art(t, "", true) + '</div><div class="hero-scrim"></div><div class="hero-body">' +
       '<div class="eyebrow">' + typeDot(t.type) + esc(T.long.toUpperCase()) + " · " + (started ? "CONTINUE" : "START") + "</div>" +
       '<h2 class="hero-title">' + esc(t.title) + '</h2><div class="hero-meta">' + esc(meta) + "</div>" +
       (prog != null ? '<div class="bar"><span style="width:' + Math.round(prog * 100) + '%;background:var(--' + t.type + ')"></span></div>' : "") +
@@ -804,7 +811,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
 
   function viewLibrary() {
     var c = { movie: 0, show: 0, game: 0 }; state.titles.forEach(function (t) { c[t.type]++; });
-    var h = '<div class="head stick"><h1>Library</h1><div class="head-actions"><button class="round" data-action="open-settings" aria-label="Settings">' + I.gear + "</button>" + addBtn() + "</div></div>" + modeNote() +
+    var h = modeNote() +
       '<div class="stats">' + TYPE_KEYS.map(function (k) {
         return '<button class="stat" data-action="lib-type" data-v="' + (state.libType === k ? "all" : k) + '" aria-pressed="' + (state.libType === k) + '"><b>' + c[k] + "</b><span>" + typeDot(k) + TYPES[k].plural + "</span></button>";
       }).join("") + "</div>" + heatmap();
@@ -838,8 +845,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
   function viewVault() {
     var favs = state.titles.filter(function (t) { return t.fav; });
     var top = state.titles.filter(function (t) { return t.allTime; })[0];
-    var h = '<div class="head stick"><div class="vault-title">' + I.vault + "<h1>The Vault</h1></div></div>" +
-      '<p class="subtitle">Your all-time favorites.</p>';
+    var h = '<p class="subtitle">Your all-time favorites.</p>';
     if (!favs.length) return h + '<div class="empty"><h2>Your Vault is empty</h2><p>Open any title and tap “Add to Vault” to keep it here forever.</p></div>';
     if (top) {
       h += '<button class="vault-hero" data-action="open" data-id="' + top.id + '">' + art(top) + '</div><div class="shade"></div><div class="vbody">' +
@@ -986,10 +992,11 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
   }
 
   /* ---------- render ---------- */
-  var view = document.getElementById("view"), overlay = document.getElementById("overlay");
+  var view = document.getElementById("view"), overlay = document.getElementById("overlay"), apphead = document.getElementById("apphead");
   function render() {
     if (!state.ready) return;
     var y = view.scrollTop;
+    apphead.innerHTML = headerHTML();
     view.innerHTML = state.view === "library" ? viewLibrary() : state.view === "vault" ? viewVault() : viewNext();
     document.querySelectorAll(".tab").forEach(function (b) { if (b.dataset.tab === state.view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
     view.scrollTop = y;
@@ -1451,7 +1458,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
   }
 
   /* ---------- boot ---------- */
-  function updateSbar() { var on = view.scrollTop > 6, sb = document.getElementById("sbar"); if (sb) sb.classList.toggle("on", on); view.classList.toggle("scrolled", on); }
+  function updateSbar() { apphead.classList.toggle("scrolled", view.scrollTop > 4); }
   view.addEventListener("scroll", updateSbar, { passive: true });
 
   /* ---------- gestures: swipe back from the left edge, swipe down to close ---------- */
