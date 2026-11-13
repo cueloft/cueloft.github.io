@@ -1,0 +1,1244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Cueloft — a private tracker for the movies, shows and games you watch and play.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<meta name="apple-mobile-web-app-title" content="Cueloft">
+<title>Cueloft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #f2f2f7;
+  --surface2: #e5e5ea;
+  --line: #d8d8de;
+  --text: #000000;
+  --text2: #6e6e73;
+  --accent: #0071e3;
+  --on-accent: #ffffff;
+  --glass: rgba(255,255,255,0.78);
+  --glass-line: rgba(0,0,0,0.08);
+  --shadow: 0 10px 30px rgba(0,0,0,0.12);
+  --scrim: rgba(0,0,0,0.35);
+  --empty-cell: #dcdce2;
+  --movie: #ffd23f;
+  --show: #6be3ff;
+  --game: #ff7ad9;
+  --brand: #ff8a00;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", Inter, "Helvetica Neue", Arial, sans-serif;
+  --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", Inter, "Helvetica Neue", Arial, sans-serif;
+  --serif: "DM Serif Display", Georgia, "Times New Roman", serif;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #000000;
+    --surface: #1c1c1e;
+    --surface2: #2c2c2e;
+    --line: #2c2c2e;
+    --text: #ffffff;
+    --text2: #a1a1a6;
+    --accent: #64a8ff;
+    --on-accent: #000000;
+    --glass: rgba(40,40,44,0.72);
+    --glass-line: rgba(255,255,255,0.08);
+    --shadow: 0 10px 40px rgba(0,0,0,0.6);
+    --scrim: rgba(0,0,0,0.6);
+    --empty-cell: #2c2c2e;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #000000;
+  --surface: #1c1c1e;
+  --surface2: #2c2c2e;
+  --line: #2c2c2e;
+  --text: #ffffff;
+  --text2: #a1a1a6;
+  --accent: #64a8ff;
+  --on-accent: #000000;
+  --glass: rgba(40,40,44,0.72);
+  --glass-line: rgba(255,255,255,0.08);
+  --shadow: 0 10px 40px rgba(0,0,0,0.6);
+  --scrim: rgba(0,0,0,0.6);
+  --empty-cell: #2c2c2e;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { height: 100%; overflow: hidden; scroll-padding-top: env(safe-area-inset-top, 0px); -webkit-text-size-adjust: 100%; }
+body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--font); font-size: 16px; line-height: 1.4; -webkit-font-smoothing: antialiased; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+img { max-width: 100%; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+#app { max-width: 560px; margin: 0 auto; height: 100%; position: relative; display: flex; flex-direction: column; }
+#view { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; padding: 0 0 132px; }
+
+/* Headers */
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px 0; }
+.brand { display: flex; align-items: center; gap: 6px; }
+.brand-word { font-family: var(--serif); font-size: 24px; line-height: 1; letter-spacing: -0.01em; }
+.brand svg { color: var(--brand); }
+.head { display: flex; justify-content: space-between; align-items: center; padding: 22px 24px 0; gap: 12px; }
+.head h1, .h1 { margin: 0; font-family: var(--display); font-size: 34px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
+.topbar + .h1 { padding: 10px 24px 0; }
+.head-actions { display: flex; gap: 10px; }
+.round { width: 44px; height: 44px; border-radius: 22px; border: none; background: var(--surface); color: var(--text); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.subtitle { margin: 6px 24px 0; color: var(--text2); font-size: 14px; }
+
+/* Chips */
+.chips { display: flex; gap: 8px; padding: 16px 24px 0; overflow-x: auto; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { height: 34px; padding: 0 13px; border-radius: 17px; border: none; background: var(--surface); color: var(--text); font-size: 14px; font-weight: 500; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; flex-shrink: 0; }
+.chip[aria-pressed="true"] { background: var(--text); color: var(--bg); font-weight: 600; }
+.dot { width: 8px; height: 8px; border-radius: 4px; flex-shrink: 0; display: inline-block; }
+
+/* Poster art */
+.art { position: relative; overflow: hidden; border-radius: 12px; isolation: isolate; }
+.art > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; }
+.art-c { position: absolute; width: 46%; aspect-ratio: 1; border-radius: 50%; left: 27%; top: 18%; }
+.art-bar { position: absolute; left: -15%; width: 130%; height: 9%; top: 28%; transform: rotate(-12deg); }
+.art-sq { position: absolute; width: 42%; aspect-ratio: 1; left: 29%; top: 20%; border: 3px solid; }
+.art-title { position: absolute; left: 9px; right: 9px; bottom: 9px; font-weight: 800; font-size: 13px; line-height: 1.1; color: #fff; text-shadow: 0 1px 6px rgba(0,0,0,0.6); letter-spacing: -0.01em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+.sticker { position: absolute; left: 7px; top: 7px; z-index: 3; height: 20px; padding: 0 7px; border-radius: 10px; background: rgba(0,0,0,0.6); color: #fff; display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; }
+.sticker i { width: 7px; height: 7px; border-radius: 4px; display: inline-block; }
+.badge { position: absolute; right: 7px; top: 7px; z-index: 3; height: 20px; padding: 0 7px; border-radius: 10px; background: rgba(0,0,0,0.6); color: #fff; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; }
+.mini-bar { position: absolute; left: 7px; right: 7px; bottom: 7px; z-index: 3; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.28); }
+.mini-bar > span { display: block; height: 100%; border-radius: 2px; }
+
+/* Hero */
+.hero { margin: 20px 24px 0; border-radius: 22px; position: relative; overflow: hidden; min-height: 248px; box-shadow: var(--shadow); color: #fff; display: block; }
+.hero .art { position: absolute; inset: 0; border-radius: 0; }
+.hero .art .art-title { display: none; }
+.hero-scrim { position: absolute; inset: 0; z-index: 4; background: linear-gradient(180deg, rgba(0,0,0,0) 22%, rgba(0,0,0,0.9) 100%); }
+.hero-body { position: relative; z-index: 5; padding: 92px 20px 18px; display: flex; flex-direction: column; gap: 6px; }
+.eyebrow { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: #d1d1d6; }
+.hero-title { font-family: var(--display); font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; margin: 0; }
+.hero-meta { font-size: 13px; color: #d1d1d6; }
+.bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.22); margin-top: 4px; }
+.bar > span { display: block; height: 100%; border-radius: 2px; }
+.hero-actions { display: flex; gap: 10px; margin-top: 8px; }
+.pill { height: 44px; padding: 0 18px; border-radius: 22px; border: none; background: #fff; color: #000; font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; }
+.pill.glassy { background: rgba(255,255,255,0.18); color: #fff; width: 44px; padding: 0; justify-content: center; }
+
+/* Rows */
+.section-head { display: flex; justify-content: space-between; align-items: baseline; padding: 26px 24px 12px; }
+.section-head h2 { margin: 0; font-family: var(--display); font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.link { border: none; background: none; color: var(--text2); font-size: 14px; font-weight: 500; padding: 8px 0; min-height: 44px; }
+.row { display: flex; gap: 14px; padding: 0 24px 6px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.row::-webkit-scrollbar { display: none; }
+.tile { border: none; background: none; padding: 0; text-align: left; width: 112px; flex-shrink: 0; scroll-snap-align: start; display: flex; flex-direction: column; gap: 6px; color: var(--text); }
+.tile .art { width: 112px; height: 160px; }
+.tile-name { font-size: 13px; font-weight: 600; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.tile-meta { font-size: 12px; color: var(--text2); }
+.wide { border: none; background: none; padding: 0; flex-shrink: 0; scroll-snap-align: start; }
+.wide .art { width: 176px; height: 100px; border-radius: 14px; }
+.wide .art-title { font-size: 15px; }
+
+/* Empty */
+.empty { margin: 24px; padding: 28px 22px; border-radius: 22px; background: var(--surface); display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.empty h2 { margin: 0; font-family: var(--display); font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.empty p { margin: 0; color: var(--text2); font-size: 15px; }
+.btn-primary { height: 50px; padding: 0 22px; border-radius: 25px; border: none; background: var(--text); color: var(--bg); font-weight: 700; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.note { margin: 14px 24px 0; padding: 12px 14px; border-radius: 14px; background: var(--surface); color: var(--text2); font-size: 13px; }
+
+/* Library */
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 18px 24px 0; }
+.stat { border: none; border-radius: 16px; background: var(--surface); padding: 14px; display: flex; flex-direction: column; gap: 2px; text-align: left; color: var(--text); }
+.stat b { font-family: var(--display); font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+.stat span { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+.card { margin: 10px 24px 0; padding: 14px; border-radius: 16px; background: var(--surface); display: flex; flex-direction: column; gap: 10px; }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; }
+.card-head h2 { margin: 0; font-size: 15px; font-weight: 700; }
+.card-head span { font-size: 12px; color: var(--text2); }
+.heat-scroll { overflow-x: auto; scrollbar-width: none; }
+.heat-scroll::-webkit-scrollbar { display: none; }
+.months { position: relative; height: 14px; font-size: 11px; color: var(--text2); min-width: 309px; }
+.months span { position: absolute; top: 0; }
+.heat { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 9px); grid-auto-columns: 9px; gap: 3px; width: max-content; margin-top: 4px; }
+.cell { width: 9px; height: 9px; border-radius: 2px; border: none; padding: 0; background: var(--empty-cell); }
+.cell.future { background: transparent; pointer-events: none; }
+.cell[aria-pressed="true"] { outline: 2px solid var(--text); outline-offset: 1px; }
+.legend { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text2); gap: 8px; flex-wrap: wrap; }
+.legend .keys { display: flex; gap: 10px; }
+.legend .keys span { display: flex; align-items: center; gap: 4px; }
+.day-panel { border-top: 1px solid var(--line); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.day-panel strong { font-size: 13px; }
+.day-panel div { display: flex; align-items: center; gap: 8px; }
+.day-panel em { font-style: normal; color: var(--text2); }
+.search { margin: 16px 24px 0; display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; border-radius: 12px; background: var(--surface); color: var(--text2); }
+.search input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; color: var(--text); font-size: 16px; }
+.chips.tight { padding-top: 10px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px 10px; padding: 18px 24px 0; }
+.gtile { border: none; background: none; padding: 0; text-align: left; display: flex; flex-direction: column; gap: 6px; color: var(--text); min-width: 0; }
+.gtile .art { width: 100%; aspect-ratio: 2 / 3; }
+.muted { padding: 30px 24px; color: var(--text2); font-size: 15px; }
+
+/* Vault */
+.vault-title { display: flex; align-items: center; gap: 10px; }
+.vault-hero { margin: 18px 24px 0; min-height: 190px; border-radius: 22px; position: relative; overflow: hidden; box-shadow: var(--shadow); color: #fff; display: block; width: calc(100% - 48px); border: none; padding: 0; text-align: left; }
+.vault-hero .art { position: absolute; inset: 0; border-radius: 0; }
+.vault-hero .art .art-title { display: none; }
+.vault-hero .shade { position: absolute; inset: 0; z-index: 4; background: linear-gradient(90deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.1) 85%); }
+.vault-hero .vbody { position: relative; z-index: 5; padding: 20px; min-height: 190px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; max-width: 78%; }
+.gold { color: #e3bd6e; }
+.vh-title { font-family: var(--display); font-size: 28px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; }
+.vh-why { font-size: 13px; color: #d1d1d6; line-height: 1.35; }
+.rank { position: absolute; left: 7px; top: 7px; z-index: 3; width: 26px; height: 26px; border-radius: 13px; background: rgba(0,0,0,0.65); color: #fff; font-size: 13px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.rank.one { background: #e3bd6e; color: #1a1305; }
+.shelf-empty { width: 100%; padding: 22px 16px; border-radius: 14px; border: 1.5px dashed var(--line); color: var(--text2); font-size: 14px; }
+.count { font-size: 13px; color: var(--text2); }
+
+/* Tab bar */
+#tabbar-wrap { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; padding: 0 16px calc(18px + env(safe-area-inset-bottom, 0px)); pointer-events: none; }
+.tabbar { pointer-events: auto; max-width: 420px; margin: 0 auto; height: 66px; border-radius: 33px; background: var(--glass); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); border: 1px solid var(--glass-line); box-shadow: var(--shadow); display: flex; justify-content: space-around; align-items: center; padding: 0 8px; }
+.tab { border: none; background: none; min-width: 72px; min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--text2); font-size: 10px; font-weight: 500; }
+.tab[aria-current="page"] { color: var(--text); font-weight: 600; }
+
+/* Sheets */
+#overlay:empty { display: none; }
+.scrim { position: fixed; inset: 0; z-index: 40; background: var(--scrim); }
+.sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 41; max-width: 560px; margin: 0 auto; max-height: calc(100% - 40px - env(safe-area-inset-top, 0px)); overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--bg); border-radius: 28px 28px 0 0; padding: 10px 20px calc(28px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 18px; animation: up .28s cubic-bezier(.2,.8,.2,1); }
+:root:not([data-theme="light"]) .sheet { background: var(--surface); }
+:root[data-theme="light"] .sheet { background: #ffffff; }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .sheet { background: #ffffff; } }
+@keyframes up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sheet { animation: none; } }
+.grabber { align-self: center; width: 40px; height: 5px; border-radius: 3px; background: var(--line); flex-shrink: 0; }
+.sheet-head { display: flex; justify-content: space-between; align-items: center; }
+.sheet-head h2 { margin: 0; font-size: 17px; font-weight: 700; }
+.textbtn { border: none; background: none; color: var(--text2); font-size: 16px; min-height: 44px; padding: 0 2px; }
+.textbtn.strong { color: var(--accent); font-weight: 600; }
+.field-label { font-size: 13px; font-weight: 600; color: var(--text2); }
+.group { display: flex; flex-direction: column; gap: 10px; }
+.input { height: 52px; padding: 0 14px; border-radius: 14px; border: none; background: var(--surface2); color: var(--text); font-size: 17px; font-weight: 500; width: 100%; outline: none; }
+:root[data-theme="light"] .input, :root[data-theme="light"] textarea.input { background: var(--surface); }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .input { background: var(--surface); } }
+textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: vertical; font-size: 16px; font-weight: 400; line-height: 1.4; }
+.types { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.type-tile { height: 84px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface2); color: var(--text2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; font-size: 14px; font-weight: 500; }
+.type-tile[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+.seg { display: flex; padding: 4px; border-radius: 14px; background: var(--surface2); gap: 4px; }
+.seg button { flex: 1; height: 40px; border: none; border-radius: 11px; background: transparent; color: var(--text2); font-size: 14px; font-weight: 500; }
+.seg button[aria-checked="true"] { background: var(--text); color: var(--bg); font-weight: 600; }
+.steppers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.stepper { display: flex; justify-content: space-between; align-items: center; height: 56px; padding: 0 8px 0 14px; border-radius: 14px; background: var(--surface2); font-size: 15px; }
+.stepper div { display: flex; gap: 4px; }
+.stepper button { width: 38px; height: 38px; border-radius: 19px; border: none; background: var(--line); color: var(--text); font-size: 20px; font-weight: 600; line-height: 1; }
+.poster-row { display: flex; gap: 14px; align-items: stretch; }
+.poster-slot { width: 84px; height: 126px; flex-shrink: 0; border-radius: 12px; border: 1.5px dashed var(--text2); background: var(--surface2); color: var(--text2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font-size: 12px; font-weight: 600; overflow: hidden; position: relative; }
+.poster-slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.poster-side { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.hint { font-size: 13px; color: var(--text2); line-height: 1.4; }
+.limit { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); }
+.suggest { display: flex; flex-direction: column; border-radius: 14px; background: var(--surface2); overflow: hidden; margin-top: 8px; }
+.suggest:empty { display: none; }
+:root[data-theme="light"] .suggest { background: var(--surface); }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .suggest { background: var(--surface); } }
+.sug { border: none; background: none; text-align: left; padding: 10px 14px; min-height: 54px; display: flex; gap: 10px; align-items: center; color: var(--text); }
+.sug + .sug { border-top: 1px solid var(--line); }
+.sug b { display: block; font-size: 15px; font-weight: 600; line-height: 1.25; }
+.sug small { display: block; font-size: 12px; color: var(--text2); line-height: 1.3; margin-top: 2px; }
+.sug-note { padding: 8px 14px; font-size: 11px; color: var(--text2); }
+.cta { height: 56px; border-radius: 28px; border: none; background: var(--text); color: var(--bg); font-size: 17px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; flex-shrink: 0; }
+.cta:disabled { opacity: 0.4; }
+
+/* Detail */
+.detail { top: 0; max-height: none; border-radius: 0; padding: 0 0 calc(40px + env(safe-area-inset-bottom, 0px)); gap: 0; background: var(--bg) !important; }
+.detail-art { position: relative; flex-shrink: 0; overflow: hidden; display: flex; justify-content: center; padding: calc(76px + env(safe-area-inset-top, 0px)) 0 6px; }
+.detail-bg { position: absolute; left: -60px; top: -60px; width: calc(100% + 120px); height: calc(100% + 120px); object-fit: cover; filter: blur(40px) saturate(1.25); opacity: 0.6; }
+.detail-poster { position: relative; z-index: 2; width: min(64%, 290px); aspect-ratio: 2 / 3; border-radius: 14px; box-shadow: 0 24px 60px rgba(0,0,0,0.55); }
+.detail-poster .art { position: absolute; inset: 0; border-radius: 14px; }
+.detail-poster .art .art-title { font-size: 20px; left: 14px; right: 14px; bottom: 14px; }
+.detail-art .fade { position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(0,0,0,0) 30%, var(--bg) 100%); }
+.case { position: relative; z-index: 2; width: min(74%, 330px); padding: 9px; border-radius: 6px; background: linear-gradient(135deg, #e0c896 0%, #8a6a3a 40%, #d2b479 68%, #6e5430 100%); box-shadow: 0 26px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.35); }
+.case-inner { position: relative; background: #0d0b09; border-radius: 2px; padding: 12px 14px 16px; box-shadow: inset 0 6px 16px rgba(0,0,0,0.85), inset 0 0 0 1px rgba(255,255,255,0.05); }
+.case-plate { width: 80%; margin: 0 auto 11px; padding: 5px 4px; text-align: center; border-radius: 2px; background: linear-gradient(180deg, #2c231b, #17120d); box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 2px rgba(0,0,0,0.6); color: #e9d29f; font-family: var(--serif); font-size: 15px; letter-spacing: 0.16em; text-transform: uppercase; line-height: 1.3; }
+.case .detail-poster { width: 100%; border-radius: 3px; box-shadow: 0 2px 10px rgba(0,0,0,0.7); }
+.case .detail-poster .art { border-radius: 3px; }
+.case .detail-poster::after { content: ""; position: absolute; inset: 0; z-index: 6; border-radius: 3px; pointer-events: none; background: linear-gradient(118deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.03) 32%, rgba(255,255,255,0) 50%); }
+.case-lock { position: absolute; right: 4px; top: 56%; width: 6px; height: 6px; border-radius: 3px; background: radial-gradient(circle at 35% 35%, #d9d9d9, #6b6b6b); }
+.detail-top { position: absolute; z-index: 5; left: 20px; right: 20px; top: calc(16px + env(safe-area-inset-top, 0px)); display: flex; justify-content: space-between; }
+.glass-btn { width: 44px; height: 44px; border-radius: 22px; border: none; background: rgba(0,0,0,0.45); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); color: #fff; display: flex; align-items: center; justify-content: center; }
+.detail-body { margin-top: 18px; position: relative; z-index: 6; padding: 0 24px; display: flex; flex-direction: column; gap: 20px; }
+.title-input { border: none; background: transparent; padding: 0; width: 100%; display: block; resize: none; overflow: hidden; font-family: var(--display); font-size: 30px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; color: var(--text); outline: none; }
+.stars { display: flex; gap: 6px; }
+.star { width: 46px; height: 46px; border: none; background: none; padding: 0; color: var(--line); }
+.star[data-on="true"] { color: var(--accent); }
+.rows-card { border-radius: 16px; background: var(--surface); overflow: hidden; }
+.rows-card > * + * { border-top: 1px solid var(--line); }
+.rc-row { display: flex; justify-content: space-between; align-items: center; min-height: 52px; padding: 0 16px; gap: 12px; }
+.rc-row input[type="date"], .rc-row input[type="number"] { border: none; background: transparent; color: var(--text2); text-align: right; font-size: 16px; min-width: 0; max-width: 160px; outline: none; }
+.rc-col { display: flex; flex-direction: column; gap: 6px; padding: 14px 16px; }
+.rc-col textarea { border: none; background: transparent; padding: 0; color: var(--text); font-size: 16px; outline: none; resize: none; min-height: 60px; }
+.switch { width: 51px; height: 31px; border-radius: 16px; border: none; background: var(--line); position: relative; flex-shrink: 0; padding: 0; }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 27px; height: 27px; border-radius: 14px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.25); transition: transform .2s; }
+.switch[aria-checked="true"] { background: #30d158; }
+.switch[aria-checked="true"]::after { transform: translateX(20px); }
+.small-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.sbtn { height: 40px; padding: 0 14px; border-radius: 20px; border: none; background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+.sbtn.danger { color: #ff453a; }
+.file-label { position: relative; overflow: hidden; }
+.file-label input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+/* Toast */
+#toast { position: fixed; left: 50%; bottom: calc(104px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(10px); z-index: 60; max-width: calc(100% - 48px); padding: 12px 16px; border-radius: 14px; background: var(--text); color: var(--bg); font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
+#toast.show { opacity: 1; transform: translateX(-50%); }
+.loading { padding: 80px 24px; text-align: center; color: var(--text2); }
+</style>
+</head>
+<body>
+<div id="app">
+  <main id="view"><p class="loading">Opening your loft…</p></main>
+  <div id="tabbar-wrap">
+    <nav class="tabbar" aria-label="Main">
+      <button class="tab" data-action="tab" data-tab="next" aria-current="page">
+        <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5 3.5-5 3.5z" fill="currentColor"/></svg>Up Next</button>
+      <button class="tab" data-action="tab" data-tab="library">
+        <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Library</button>
+      <button class="tab" data-action="tab" data-tab="vault">
+        <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="12" cy="12" r="3.5"/><path d="M12 8.5V7M15.5 12H17M7 20v1.5M17 20v1.5"/></svg>Vault</button>
+    </nav>
+  </div>
+  <div id="overlay"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- constants ---------- */
+  var TYPES = {
+    movie: { label: "Movie", plural: "Movies", long: "Movie", st: ["Watchlist", "Watching", "Watched"], done: "Watched", dateLabel: "Watched on" },
+    show:  { label: "Show",  plural: "Shows",  long: "TV Show", st: ["Watchlist", "Watching", "Watched"], done: "Finished", dateLabel: "Finished on" },
+    game:  { label: "Game",  plural: "Games",  long: "Game", st: ["Backlog", "Playing", "Played"], done: "Played", dateLabel: "Played on" }
+  };
+  var TYPE_KEYS = ["movie", "show", "game"];
+  var STATUS = ["want", "progress", "done"];
+  var MIXED = ["Queue", "In Progress", "Done"];
+  var MAX_BYTES = 10 * 1024 * 1024;
+  var PAL = [["#0d2638", "#9fd3f0"], ["#1f3a2a", "#e9e1cf"], ["#2e2516", "#d9b465"], ["#3d0c10", "#e2402f"], ["#3a1d0c", "#ff8a3d"], ["#4a1430", "#ffb3d1"], ["#1a2a4a", "#9fb8ff"], ["#2a1f3d", "#c9b8ff"], ["#8a4a1c", "#f2c27a"], ["#0b1530", "#d9e6ff"], ["#123b3b", "#7fe0c8"], ["#3b1f12", "#f0a37a"]];
+  var I = {
+    plus: '<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+    gear: '<svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+    check: '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+    more: '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>',
+    back: '<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
+    star: '<svg aria-hidden="true" width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>',
+    search: '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',
+    image: '<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-9 9"/></svg>',
+    shield: '<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/></svg>',
+    vault: '<svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e3bd6e" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="12" cy="12" r="3.5"/><path d="M12 8.5V7M15.5 12H17M7 20v1.5M17 20v1.5"/></svg>',
+    play: '<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5l13 7.5-13 7.5z"/></svg>',
+    movie: '<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/></svg>',
+    show: '<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 21h8M9 2.5l3 3.5 3-3.5"/></svg>',
+    game: '<svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2" y="7" width="20" height="11" rx="5"/><path d="M7 10.5v4M5 12.5h4"/><circle cx="16" cy="11" r="1" fill="currentColor"/><circle cx="18" cy="14" r="1" fill="currentColor"/></svg>'
+  };
+
+  /* ---------- helpers ---------- */
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function dayKey(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function todayKey() { return dayKey(new Date()); }
+  function hash(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
+  function byUpdated(a, b) { return (b.updatedAt || 0) - (a.updatedAt || 0); }
+  function byCreated(a, b) { return (b.createdAt || 0) - (a.createdAt || 0); }
+  function find(id) { for (var i = 0; i < state.titles.length; i++) if (state.titles[i].id === id) return state.titles[i]; return null; }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function statusLabel(type, status) { var idx = STATUS.indexOf(status); return type ? TYPES[type].st[idx] : MIXED[idx]; }
+  function fmtDay(key) {
+    var p = key.split("-"); var d = new Date(+p[0], +p[1] - 1, +p[2]);
+    return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+  }
+  function typeDot(type, size) { return '<span class="dot" style="background:var(--' + type + ')' + (size ? ";width:" + size + "px;height:" + size + "px" : "") + '"></span>'; }
+
+  /* ---------- state ---------- */
+  var state = {
+    ready: false, mode: "loading", loadNote: "", titles: [], activity: {},
+    view: "next", filter: "all", libType: "all", libStatus: "all", search: "", selectedDay: null,
+    overlay: null, detailId: null, confirmDelete: false,
+    add: null, canPoster: false
+  };
+
+  /* ---------- storage ---------- */
+  var store = {
+    mode: "local", titlesCol: null, actDoc: null, assets: null, downloads: null, chains: {},
+    queue: function (key, fn) {
+      var prev = this.chains[key] || Promise.resolve();
+      var next = prev.catch(function () {}).then(fn);
+      this.chains[key] = next;
+      return next;
+    }
+  };
+  var LS_T = "cueloft.titles.v1", LS_A = "cueloft.activity.v1", LS_THEME = "cueloft.theme";
+  function lsGet(k, fallback) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+  function newId() {
+    if (store.mode === "cloud") { try { return store.titlesCol.doc().id; } catch (e) {} }
+    return "t" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  }
+
+  function writeError(e) {
+    var code = e && e.code;
+    if (code === "quota_exceeded") toast("Your library is full. Remove a few titles to add more.");
+    else if (code === "revoked") toast("This page can’t save right now.");
+    else toast("Couldn’t save that change. Check your connection and try again.");
+  }
+
+  function saveTitle(t) {
+    var body = clone(t); var id = body.id; delete body.id;
+    body.updatedAt = Date.now();
+    if (store.mode === "cloud") {
+      var merged = clone(body); merged.id = id; upsertLocal(merged);
+      store.queue(id, function () { return store.titlesCol.doc(id).set(body); }).catch(writeError);
+    } else {
+      var m = clone(body); m.id = id; upsertLocal(m); lsSet(LS_T, state.titles);
+    }
+    render();
+  }
+  function upsertLocal(t) {
+    for (var i = 0; i < state.titles.length; i++) if (state.titles[i].id === t.id) { state.titles[i] = t; return; }
+    state.titles.push(t);
+  }
+  function deleteTitle(t) {
+    state.titles = state.titles.filter(function (x) { return x.id !== t.id; });
+    if (store.mode === "cloud") store.queue(t.id, function () { return store.titlesCol.doc(t.id).delete(); }).catch(writeError);
+    else lsSet(LS_T, state.titles);
+    if (t.poster && store.assets) store.assets.delete(t.poster).catch(function () {});
+    render();
+  }
+  function update(id, patch, logWhat, logDay) {
+    var t = find(id); if (!t) return;
+    var n = clone(t); for (var k in patch) n[k] = patch[k];
+    saveTitle(n);
+    if (logWhat) logActivity(n, logWhat, logDay);
+  }
+  function logActivity(t, what, when) { logMany([{ key: when || todayKey(), n: t.title, ty: t.type, w: what }]); }
+  function logMany(list) {
+    var days = clone(state.activity || {});
+    list.forEach(function (e) {
+      var key = e.key; (days[key] = days[key] || []).push({ n: e.n, ty: e.ty, w: e.w });
+      if (days[key].length > 40) days[key] = days[key].slice(-40);
+    });
+    writeDays(days);
+  }
+  function moveDone(t, from, to) {
+    var days = clone(state.activity || {}), w = TYPES[t.type].done;
+    if (from && days[from]) {
+      var idx = -1; days[from].forEach(function (e, j) { if (e.n === t.title && e.w === w) idx = j; });
+      if (idx >= 0) { days[from].splice(idx, 1); if (!days[from].length) delete days[from]; }
+    }
+    if (to) (days[to] = days[to] || []).push({ n: t.title, ty: t.type, w: w });
+    writeDays(days);
+  }
+  function writeDays(days) {
+    var cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 400); var ck = dayKey(cutoff);
+    Object.keys(days).forEach(function (k) { if (k < ck) delete days[k]; });
+    state.activity = days;
+    if (store.mode === "cloud") store.queue("activity", function () { return store.actDoc.set({ days: days }); }).catch(writeError);
+    else lsSet(LS_A, days);
+  }
+
+  /* ---------- posters ---------- */
+  function readAsDataURL(file) {
+    return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(r.result); }; r.onerror = function () { rej(new Error("read")); }; r.readAsDataURL(file); });
+  }
+  function processImage(file) {
+    if (file.size > MAX_BYTES) return Promise.reject({ msg: "That image is over 10 MB. Try a screenshot instead." });
+    if (file.type && file.type.indexOf("image/") !== 0) return Promise.reject({ msg: "That file isn’t an image. Pick a JPG, PNG or HEIC." });
+    return readAsDataURL(file).then(function (src) {
+      return new Promise(function (res, rej) {
+        var img = new Image();
+        img.onload = function () {
+          var maxW = 600, maxH = 900;
+          var s = Math.min(1, maxW / img.naturalWidth, maxH / img.naturalHeight);
+          var w = Math.max(1, Math.round(img.naturalWidth * s)), h = Math.max(1, Math.round(img.naturalHeight * s));
+          var c = document.createElement("canvas"); c.width = w; c.height = h;
+          c.getContext("2d").drawImage(img, 0, 0, w, h);
+          c.toBlob(function (b) {
+            if (!b) return rej({ msg: "Couldn’t prepare that image. Try another one." });
+            res({ blob: b, preview: c.toDataURL("image/jpeg", 0.7) });
+          }, "image/jpeg", 0.82);
+        };
+        img.onerror = function () { rej({ msg: "This image format can’t be read here. Try a screenshot, JPG or PNG." }); };
+        img.src = src;
+      });
+    });
+  }
+  function uploadPoster(blob) {
+    if (!store.assets) return Promise.reject({ msg: "Posters can’t be saved in this view." });
+    return store.assets.upload(blob, { type: "image/jpeg" }).then(function (r) { return r.id; }, function (e) {
+      var m = e && e.code === "quota_or_state" ? "Poster storage is full. Remove some posters first." : "The poster didn’t upload. Try again in a moment.";
+      throw { msg: m };
+    });
+  }
+
+  /* ---------- art ---------- */
+  function art(t, cls) {
+    var h = hash((t.title || "") + (t.id || ""));
+    var p = PAL[h % PAL.length], shape = h % 3;
+    var sh = shape === 0 ? '<span class="art-c" style="background:' + p[1] + '"></span>'
+      : shape === 1 ? '<span class="art-bar" style="background:' + p[1] + '"></span>'
+      : '<span class="art-sq" style="border-color:' + p[1] + '"></span>';
+    var psrc = t.poster ? posterSrc(t.poster) : null;
+    var img = psrc ? '<img src="' + psrc + '" alt="">' : "";
+    return '<div class="art ' + (cls || "") + '" style="background:' + p[0] + '">' + sh + '<span class="art-title">' + esc(t.title) + "</span>" + img;
+  }
+  function sticker(t) { return '<span class="sticker"><i style="background:var(--' + t.type + ')"></i>' + TYPES[t.type].label + "</span>"; }
+  function progressOf(t) {
+    if (t.type === "show" && t.total) return Math.min(1, (t.ep || 0) / t.total);
+    return null;
+  }
+  function metaLine(t) {
+    if (t.status === "done") return statusLabel(t.type, "done") + (t.rating ? " · ★ " + t.rating : "");
+    if (t.type === "show") return "S" + (t.season || 1) + " · E" + Math.max(1, (t.ep || 0) + (t.status === "progress" ? 1 : 0));
+    if (t.type === "game") return t.status === "progress" ? (t.hours || 0) + " hrs" : TYPES.game.st[0];
+    return statusLabel(t.type, t.status);
+  }
+
+  /* ---------- views ---------- */
+  function filterChips(current, action, labels) {
+    var opts = [["all", "All"]].concat(TYPE_KEYS.map(function (k) { return [k, labels ? TYPES[k].plural : TYPES[k].plural]; }));
+    return opts.map(function (o) {
+      return '<button class="chip" data-action="' + action + '" data-v="' + o[0] + '" aria-pressed="' + (current === o[0]) + '">' + (o[0] !== "all" ? typeDot(o[0]) : "") + o[1] + "</button>";
+    }).join("");
+  }
+
+  function viewNext() {
+    var f = state.filter;
+    var ok = function (t) { return f === "all" || t.type === f; };
+    var prog = state.titles.filter(function (t) { return t.status === "progress" && ok(t); }).sort(byUpdated);
+    var want = state.titles.filter(function (t) { return t.status === "want" && ok(t); }).sort(byCreated);
+    var h = '<div class="topbar"><div class="brand"><span class="brand-word">Cueloft</span><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5l13 7.5-13 7.5z"/></svg></div>' +
+      '<button class="round" data-action="open-add" aria-label="Add a title">' + I.plus + "</button></div>" +
+      '<h1 class="h1">Up Next</h1>' + modeNote() +
+      '<div class="chips" role="group" aria-label="Filter by type">' + filterChips(f, "filter") + "</div>";
+    if (!state.titles.length) {
+      return h + '<div class="empty"><h2>Your loft is empty</h2><p>Add the first movie, show or game you’re watching, playing, or saving for later.</p><button class="btn-primary" data-action="open-add">' + I.plus + "Add a title</button></div>";
+    }
+    if (prog.length) {
+      h += hero(prog[0]);
+    } else {
+      h += '<div class="empty"><h2>Nothing in progress</h2><p>Start something from your ' + (f === "game" ? "backlog" : "watchlist") + ", or add what you’re into right now.</p></div>";
+    }
+    if (prog.length > 1) {
+      h += '<div class="section-head"><h2>In Progress</h2><button class="link" data-action="tab" data-tab="library" data-status="progress">See all</button></div><div class="row">' +
+        prog.slice(1).map(function (t) {
+          var p = progressOf(t);
+          return '<button class="tile" data-action="open" data-id="' + t.id + '" aria-label="' + esc(t.title) + '">' + art(t) + sticker(t) +
+            (p != null ? '<span class="mini-bar"><span style="width:' + Math.round(p * 100) + '%;background:var(--' + t.type + ')"></span></span>' : "") + '</div><span class="tile-name">' + esc(t.title) + '</span><span class="tile-meta">' + esc(metaLine(t)) + "</span></button>";
+        }).join("") + "</div>";
+    }
+    if (want.length) {
+      var wl = f === "game" ? "Backlog" : f === "all" ? "Watchlist & Backlog" : "Watchlist";
+      h += '<div class="section-head"><h2>' + wl + '</h2><button class="link" data-action="tab" data-tab="library" data-status="want">See all</button></div><div class="row">' +
+        want.map(function (t) {
+          return '<button class="wide" data-action="open" data-id="' + t.id + '" aria-label="' + esc(t.title) + '">' + art(t) + sticker(t) + "</div></button>";
+        }).join("") + "</div>";
+    }
+    return h;
+  }
+
+  function hero(t) {
+    var T = TYPES[t.type], meta, prog = null, action;
+    if (t.type === "show") {
+      var s = t.season || 1, e = t.ep || 0, total = t.total || 0;
+      if (total && e >= total) {
+        meta = "Season " + s + " finished"; prog = 1;
+        action = '<button class="pill" data-action="next-season" data-id="' + t.id + '">Start Season ' + (s + 1) + "</button>";
+      } else {
+        meta = "Season " + s + " · Episode " + (e + 1) + (total ? " of " + total : "");
+        prog = total ? e / total : null;
+        action = '<button class="pill" data-action="watched-ep" data-id="' + t.id + '">' + I.check + "Watched E" + (e + 1) + "</button>";
+      }
+    } else if (t.type === "game") {
+      meta = (t.hours || 0) + " hrs played";
+      action = '<button class="pill" data-action="add-hour" data-id="' + t.id + '">+1 hr played</button>';
+    } else {
+      meta = "Movie";
+      action = '<button class="pill" data-action="mark-done" data-id="' + t.id + '">' + I.check + "Mark watched</button>";
+    }
+    return '<div class="hero">' + art(t) + '</div><div class="hero-scrim"></div><div class="hero-body">' +
+      '<div class="eyebrow">' + typeDot(t.type) + esc(T.long.toUpperCase()) + " · CONTINUE</div>" +
+      '<h2 class="hero-title">' + esc(t.title) + '</h2><div class="hero-meta">' + esc(meta) + "</div>" +
+      (prog != null ? '<div class="bar"><span style="width:' + Math.round(prog * 100) + '%;background:var(--' + t.type + ')"></span></div>' : "") +
+      '<div class="hero-actions">' + action + '<button class="pill glassy" data-action="open" data-id="' + t.id + '" aria-label="Details for ' + esc(t.title) + '">' + I.more + "</button></div></div></div>";
+  }
+
+  function modeNote() {
+    if (state.loadNote) return '<p class="note">' + esc(state.loadNote) + "</p>";
+    if (!isStandalone() && !lsGet("cueloft.tipDone", false)) return '<p class="note">Tip: in Safari, tap <b>Share</b> → <b>Add to Home Screen</b> to install Cueloft. <button class="link" data-action="hide-tip" style="min-height:0;padding:0 0 0 4px;color:var(--accent)">Got it</button></p>';
+    return "";
+  }
+
+  function heatmap() {
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var end = new Date(today); end.setDate(end.getDate() + (6 - today.getDay()));
+    var start = new Date(end); start.setDate(start.getDate() - (26 * 7 - 1));
+    var cells = "", months = "", lastMonth = -1, todayK = dayKey(today);
+    var ops = [1, 0.45, 0.7, 0.85, 1];
+    for (var w = 0; w < 26; w++) {
+      var wk = new Date(start); wk.setDate(start.getDate() + w * 7);
+      if (wk.getMonth() !== lastMonth) {
+        if (w > 0 && w < 25) months += '<span style="left:' + (w * 12) + 'px">' + wk.toLocaleDateString(undefined, { month: "short" }) + "</span>";
+        lastMonth = wk.getMonth();
+      }
+      for (var d = 0; d < 7; d++) {
+        var day = new Date(start); day.setDate(start.getDate() + w * 7 + d);
+        var key = dayKey(day);
+        if (key > todayK) { cells += '<span class="cell future"></span>'; continue; }
+        var list = state.activity[key] || [];
+        var n = list.length, bg = "", label = fmtDay(key) + ": " + (n ? n + " logged" : "nothing logged");
+        if (n) {
+          var cnt = { movie: 0, show: 0, game: 0 }; list.forEach(function (x) { if (cnt[x.ty] != null) cnt[x.ty]++; });
+          var top = TYPE_KEYS.slice().sort(function (a, b) { return cnt[b] - cnt[a]; })[0];
+          bg = ' style="background:var(--' + top + ");opacity:" + ops[Math.min(4, n)] + '"';
+        }
+        cells += '<button class="cell" data-action="day" data-day="' + key + '" aria-label="' + esc(label) + '" aria-pressed="' + (state.selectedDay === key) + '"' + bg + "></button>";
+      }
+    }
+    var panel = "";
+    if (state.selectedDay) {
+      var items = state.activity[state.selectedDay] || [];
+      panel = '<div class="day-panel"><strong>' + esc(fmtDay(state.selectedDay)) + "</strong>" +
+        (items.length ? items.map(function (x) { return "<div>" + typeDot(x.ty) + "<span>" + esc(x.n) + " <em>" + esc(x.w) + "</em></span></div>"; }).join("") : "<em>Nothing logged this day.</em>") + "</div>";
+    }
+    return '<section class="card" aria-label="Activity"><div class="card-head"><h2>Activity</h2><span>Last 6 months</span></div>' +
+      '<div class="heat-scroll"><div class="months" aria-hidden="true">' + months + '</div><div class="heat">' + cells + "</div></div>" +
+      '<div class="legend"><span>Tap a day to see what you logged</span><span class="keys"><span>' + typeDot("movie") + "Movie</span><span>" + typeDot("show") + "Show</span><span>" + typeDot("game") + "Game</span></span></div>" + panel + "</section>";
+  }
+
+  function viewLibrary() {
+    var c = { movie: 0, show: 0, game: 0 }; state.titles.forEach(function (t) { c[t.type]++; });
+    var h = '<div class="head"><h1>Library</h1><div class="head-actions"><button class="round" data-action="open-settings" aria-label="Settings">' + I.gear + '</button><button class="round" data-action="open-add" aria-label="Add a title">' + I.plus + "</button></div></div>" + modeNote() +
+      '<div class="stats">' + TYPE_KEYS.map(function (k) {
+        return '<button class="stat" data-action="lib-type" data-v="' + (state.libType === k ? "all" : k) + '" aria-pressed="' + (state.libType === k) + '"><b>' + c[k] + "</b><span>" + typeDot(k) + TYPES[k].plural + "</span></button>";
+      }).join("") + "</div>" + heatmap();
+    h += '<label class="search">' + I.search + '<span class="sr">Search your library</span><input type="search" data-input="search" placeholder="Search your library" value="' + esc(state.search) + '"></label>';
+    h += '<div class="chips tight" role="group" aria-label="Filter by type">' + filterChips(state.libType, "lib-type") + "</div>";
+    var tkey = state.libType === "all" ? null : state.libType;
+    h += '<div class="chips tight" role="group" aria-label="Filter by status">' + [["all", "All"]].concat(STATUS.map(function (s) { return [s, statusLabel(tkey, s)]; })).map(function (o) {
+      return '<button class="chip" data-action="lib-status" data-v="' + o[0] + '" aria-pressed="' + (state.libStatus === o[0]) + '">' + o[1] + "</button>";
+    }).join("") + "</div>";
+    var q = state.search.trim().toLowerCase();
+    var list = state.titles.filter(function (t) {
+      return (state.libType === "all" || t.type === state.libType) && (state.libStatus === "all" || t.status === state.libStatus) && (!q || (t.title || "").toLowerCase().indexOf(q) >= 0);
+    }).sort(byUpdated);
+    if (!state.titles.length) h += '<div class="empty"><h2>Nothing here yet</h2><p>Everything you add shows up in your library.</p><button class="btn-primary" data-action="open-add">' + I.plus + "Add a title</button></div>";
+    else if (!list.length) h += '<p class="muted">No titles match. Try another filter or search.</p>';
+    else h += '<div class="grid">' + list.map(function (t) {
+      var p = progressOf(t), badge = "";
+      if (t.status === "done" && t.rating) badge = '<span class="badge">★ ' + t.rating + "</span>";
+      else if (t.status === "want") badge = '<span class="badge">' + esc(statusLabel(t.type, "want")) + "</span>";
+      return '<button class="gtile" data-action="open" data-id="' + t.id + '" aria-label="' + esc(t.title) + '">' + art(t) + sticker(t) + badge +
+        (t.status === "progress" && p != null ? '<span class="mini-bar"><span style="width:' + Math.round(p * 100) + '%;background:var(--' + t.type + ')"></span></span>' : "") +
+        '</div><span class="tile-name">' + esc(t.title) + "</span></button>";
+    }).join("") + "</div>";
+    return h;
+  }
+
+  function viewVault() {
+    var favs = state.titles.filter(function (t) { return t.fav; });
+    var top = state.titles.filter(function (t) { return t.allTime; })[0];
+    var h = '<div class="head"><div class="vault-title">' + I.vault + "<h1>The Vault</h1></div></div>" +
+      '<p class="subtitle">Your all-time favorites. Top 3 ranked, no limit after that.</p>';
+    if (top) {
+      h += '<button class="vault-hero" data-action="open" data-id="' + top.id + '">' + art(top) + '</div><div class="shade"></div><div class="vbody">' +
+        '<div class="eyebrow gold"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>ALL-TIME #1</div>' +
+        '<div><div class="vh-title">' + esc(top.title) + "</div>" + (top.favWhy ? '<div class="vh-why">' + esc(top.favWhy) + "</div>" : "") + "</div></div></button>";
+    } else if (favs.length) {
+      h += '<p class="note">Open any favorite and turn on “All-time #1” to feature it here.</p>';
+    }
+    if (!favs.length) {
+      return h + '<div class="empty"><h2>Your Vault is empty</h2><p>Open any title and tap “Add to Vault” to keep it here forever.</p></div>';
+    }
+    TYPE_KEYS.forEach(function (k) {
+      var items = favs.filter(function (t) { return t.type === k; }).sort(function (a, b) {
+        var ra = a.favRank || 99, rb = b.favRank || 99; return ra - rb || byUpdated(a, b);
+      });
+      h += '<div class="section-head"><h2>' + TYPES[k].plural + '</h2><span class="count">' + items.length + (items.length === 1 ? " favorite" : " favorites") + "</span></div>";
+      if (!items.length) { h += '<div class="row"><div class="shelf-empty">No favorite ' + TYPES[k].plural.toLowerCase() + " yet. Add one from its page.</div></div>"; return; }
+      h += '<div class="row">' + items.map(function (t) {
+        var r = t.favRank ? '<span class="rank' + (t.favRank === 1 ? " one" : "") + '">' + t.favRank + "</span>" : "";
+        return '<button class="tile" data-action="open" data-id="' + t.id + '" aria-label="' + esc(t.title) + (t.favRank ? ", ranked " + t.favRank : "") + '">' + art(t) + r + '</div><span class="tile-name">' + esc(t.title) + "</span></button>";
+      }).join("") + "</div>";
+    });
+    return h;
+  }
+
+  /* ---------- overlays ---------- */
+  function seg(action, id, current, labels, values) {
+    return '<div class="seg" role="radiogroup">' + values.map(function (v, i) {
+      return '<button role="radio" data-action="' + action + '" data-id="' + (id || "") + '" data-v="' + v + '" aria-checked="' + (current === v) + '">' + esc(labels[i]) + "</button>";
+    }).join("") + "</div>";
+  }
+
+  function addSheet() {
+    var a = state.add, T = TYPES[a.type];
+    var verb = a.status === "want" ? "Add to " + T.st[0] : a.status === "progress" ? "Add to " + T.st[1] : "Add as " + T.st[2];
+    if (a.bulk) verb = "Add all";
+    var slot = a.preview ? '<img src="' + a.preview + '" alt="Poster preview">' : I.image + (state.canPoster ? "Add Poster" : "Posters off");
+    return '<div class="scrim" data-action="close"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="add-h">' +
+      '<div class="grabber"></div><div class="sheet-head"><button class="textbtn" data-action="close">Cancel</button><h2 id="add-h">' + (a.bulk ? "Add several" : "Add to Library") + '</h2><button class="textbtn strong" data-action="add-bulk">' + (a.bulk ? "Just one" : "Several") + '</button></div>' +
+      (a.bulk ? '<div class="group"><label class="field-label" for="add-bulk">Titles, one per line</label><textarea id="add-bulk" class="input" data-input="add-bulk" rows="7" placeholder="The Fellowship of the Ring&#10;The Two Towers&#10;The Return of the King">' + esc(a.bulkText || "") + '</textarea><p class="hint">They all get the same type and status. Add posters and ratings later from each title’s page.</p></div>' :
+      '<div class="group" style="gap:0"><label class="sr" for="add-title">Title</label><input id="add-title" class="input" data-input="add-title" placeholder="Search or type a title" value="' + esc(a.title) + '" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="done"><div id="suggest" class="suggest" role="listbox" aria-label="Suggestions"></div></div>' +
+      '<div class="poster-row">' +
+      (state.canPoster ? '<label class="poster-slot file-label">' + slot + '<input type="file" accept="image/*" data-input="add-poster" aria-label="Add poster from Photos"></label>' : '<div class="poster-slot" aria-hidden="true">' + slot + "</div>") +
+      '<div class="poster-side">' +
+      '<p class="hint">' + (state.canPoster ? "Pick an image or screenshot from Photos. Skip it for a color card." : "Posters can be added when you open Cueloft signed in to your account.") + "</p>" +
+      (state.canPoster ? '<p class="limit">' + I.shield + "JPG, PNG or HEIC · up to 10 MB · auto-shrunk</p>" : "") + "</div></div>") +
+      '<div class="group"><span class="field-label">Type</span><div class="types">' + TYPE_KEYS.map(function (k) {
+        return '<button class="type-tile" data-action="add-type" data-v="' + k + '" aria-pressed="' + (a.type === k) + '">' + I[k] + TYPES[k].long + "</button>";
+      }).join("") + "</div></div>" +
+      '<div class="group"><span class="field-label">Status</span>' + seg("add-status", "", a.status, T.st, STATUS) + "</div>" +
+      (a.status === "done" ? '<div class="group"><span class="field-label">When did you finish?</span>' + seg("add-when", "", a.when, ["Today", "Pick a date", "Don’t remember"], ["today", "earlier", "unknown"]) +
+        (a.when === "earlier" ? '<div class="rows-card"><label class="rc-row"><span>Date</span><input type="date" max="' + todayKey() + '" data-input="add-date" value="' + esc(a.date || "") + '"></label></div>' : "") +
+        (a.when === "unknown" ? '<p class="hint">It goes in your library without a date, so it won’t show on your activity heatmap.</p>' : "") + "</div>" : "") +
+      (a.type === "show" && a.status !== "done" && !a.bulk ? '<div class="steppers">' +
+        '<div class="stepper"><span>Season <b>' + a.season + '</b></span><div><button data-action="add-step" data-f="season" data-d="-1" aria-label="Previous season">−</button><button data-action="add-step" data-f="season" data-d="1" aria-label="Next season">+</button></div></div>' +
+        '<div class="stepper"><span>Watched <b>' + a.ep + '</b></span><div><button data-action="add-step" data-f="ep" data-d="-1" aria-label="One fewer episode watched">−</button><button data-action="add-step" data-f="ep" data-d="1" aria-label="One more episode watched">+</button></div></div></div>' : "") +
+      '<button class="cta" data-action="save-add"' + (a.busy ? " disabled" : "") + ">" + I.plus + esc(a.busy ? "Adding…" : verb) + "</button></section>";
+  }
+
+  function detailSheet(t) {
+    var T = TYPES[t.type];
+    var h = '<div class="scrim"></div><section class="sheet detail" role="dialog" aria-modal="true" aria-label="' + esc(t.title) + '">' +
+      '<div class="detail-art">' + (t.poster && posterSrc(t.poster) ? '<img class="detail-bg" src="' + posterSrc(t.poster) + '" alt="">' : '<div class="detail-bg" style="background:' + PAL[hash((t.title || "") + (t.id || "")) % PAL.length][0] + '"></div>') +
+      '<div class="fade"></div><div class="case"><div class="case-inner"><div class="case-plate">' + esc(statusLabel(t.type, t.status)) + '</div><div class="detail-poster">' + art(t) + '</div></div><span class="case-lock" aria-hidden="true"></span></div></div><div class="detail-top"><button class="glass-btn" data-action="close" aria-label="Back">' + I.back + "</button></div></div>" +
+      '<div class="detail-body"><div class="group" style="gap:6px"><div class="eyebrow" style="color:var(--text2)">' + typeDot(t.type) + esc(T.long.toUpperCase() + (t.year ? " · " + t.year : "")) + "</div>" +
+      '<label class="sr" for="d-title">Title</label><textarea id="d-title" class="title-input" rows="1" data-input="d-title" data-id="' + t.id + '">' + esc(t.title) + '</textarea></div>' +
+      seg("d-status", t.id, t.status, T.st, STATUS);
+    if (t.type === "show") {
+      h += '<div class="steppers"><div class="stepper"><span>Season <b>' + (t.season || 1) + '</b></span><div><button data-action="d-step" data-id="' + t.id + '" data-f="season" data-d="-1" aria-label="Previous season">−</button><button data-action="d-step" data-id="' + t.id + '" data-f="season" data-d="1" aria-label="Next season">+</button></div></div>' +
+        '<div class="stepper"><span>Watched <b>' + (t.ep || 0) + '</b></span><div><button data-action="d-step" data-id="' + t.id + '" data-f="ep" data-d="-1" aria-label="One fewer episode watched">−</button><button data-action="d-step" data-id="' + t.id + '" data-f="ep" data-d="1" aria-label="One more episode watched">+</button></div></div></div>' +
+        '<div class="rows-card"><label class="rc-row"><span>Episodes this season</span><input type="number" inputmode="numeric" min="0" max="999" placeholder="Unknown" data-input="d-total" data-id="' + t.id + '" value="' + (t.total || "") + '"></label></div>';
+    }
+    if (t.type === "game") {
+      h += '<div class="steppers"><div class="stepper" style="grid-column: span 2"><span>Hours played <b>' + (t.hours || 0) + '</b></span><div><button data-action="d-step" data-id="' + t.id + '" data-f="hours" data-d="-1" aria-label="One hour less">−</button><button data-action="d-step" data-id="' + t.id + '" data-f="hours" data-d="1" aria-label="One more hour">+</button></div></div></div>';
+    }
+    h += '<div class="group"><span class="field-label">Your rating</span><div class="stars" role="group" aria-label="Rating">' + [1, 2, 3, 4, 5].map(function (n) {
+      return '<button class="star" data-action="d-rate" data-id="' + t.id + '" data-v="' + n + '" data-on="' + ((t.rating || 0) >= n) + '" aria-label="' + n + (n === 1 ? " star" : " stars") + '" aria-pressed="' + (t.rating === n) + '">' + I.star + "</button>";
+    }).join("") + "</div></div>";
+    h += '<div class="rows-card">' + (t.status === "done" ? '<label class="rc-row"><span>' + T.dateLabel + (t.doneOn ? "" : ' <span class="hint">(not set)</span>') + '</span><input type="date" max="' + todayKey() + '" data-input="d-date" data-id="' + t.id + '" value="' + esc(t.doneOn || "") + '"></label>' : "") +
+      '<div class="rc-col"><label for="d-notes">Notes</label><textarea id="d-notes" data-input="d-notes" data-id="' + t.id + '" placeholder="What did you think?" rows="3">' + esc(t.notes || "") + "</textarea></div></div>";
+    h += '<div class="group"><span class="field-label">The Vault</span><div class="rows-card">' +
+      '<div class="rc-row"><span id="fav-l">Add to Vault</span><button class="switch" role="switch" aria-labelledby="fav-l" aria-checked="' + !!t.fav + '" data-action="d-fav" data-id="' + t.id + '"></button></div>' +
+      (t.fav ? '<div class="rc-col"><span>Rank among ' + TYPES[t.type].plural.toLowerCase() + "</span>" + seg("d-rank", t.id, String(t.favRank || 0), ["Unranked", "#1", "#2", "#3"], ["0", "1", "2", "3"]) + "</div>" +
+        '<div class="rc-row"><span id="all-l">All-time #1</span><button class="switch" role="switch" aria-labelledby="all-l" aria-checked="' + !!t.allTime + '" data-action="d-alltime" data-id="' + t.id + '"></button></div>' +
+        (t.allTime ? '<div class="rc-col"><label for="d-why">Why it’s your favorite</label><textarea id="d-why" data-input="d-why" data-id="' + t.id + '" rows="2" placeholder="One line about why it matters">' + esc(t.favWhy || "") + "</textarea></div>" : "") : "") +
+      "</div></div>";
+    h += '<div class="group"><span class="field-label">Poster</span><div class="small-btns">' +
+      (state.canPoster ? '<label class="sbtn file-label">' + (t.poster ? "Change poster" : "Add poster") + '<input type="file" accept="image/*" data-input="d-poster" data-id="' + t.id + '" aria-label="Choose a poster from Photos"></label>' : '<span class="hint">Posters can be added when you open Cueloft signed in to your account.</span>') +
+      (t.poster && state.canPoster ? '<button class="sbtn" data-action="d-unposter" data-id="' + t.id + '">Remove poster</button>' : "") + "</div>" +
+      (state.canPoster ? '<p class="limit">' + I.shield + "JPG, PNG or HEIC · up to 10 MB · auto-shrunk</p>" : "") + "</div>";
+    h += '<div class="small-btns"><button class="sbtn danger" data-action="d-delete" data-id="' + t.id + '">' + (state.confirmDelete ? "Tap again to delete" : "Delete from library") + "</button></div></div></section>";
+    return h;
+  }
+
+  function settingsSheet() {
+    var pref = getThemePref();
+    return '<div class="scrim" data-action="close"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="set-h">' +
+      '<div class="grabber"></div><div class="sheet-head"><span style="width:52px"></span><h2 id="set-h">Settings</h2><button class="textbtn strong" data-action="close">Done</button></div>' +
+      '<div class="group"><span class="field-label">Appearance</span>' + seg("theme", "", pref, ["Automatic", "Light", "Dark"], ["auto", "light", "dark"]) + "</div>" +
+      '<div class="group"><span class="field-label">Backup</span><div class="rows-card"><div class="rc-col"><span>Save your library and posters to a file, or bring a backup back in. Use Import to move your library over from the earlier Claude version.</span>' +
+      '<div class="small-btns">' + (state.exportReady ? '<button class="sbtn" data-action="export-save">Save backup file</button>' : '<button class="sbtn" data-action="export">' + (state.exporting ? "Preparing…" : "Export backup") + "</button>") +
+      '<label class="sbtn file-label">Import backup<input type="file" accept=".json,application/json" data-input="import" aria-label="Import a Cueloft backup file"></label></div></div></div></div>' +
+      '<div class="group"><span class="field-label">Storage</span><div class="rows-card"><div class="rc-row"><span>Library</span><span class="hint">' +
+      "Saved privately on this device" + '</span></div><div class="rc-row"><span>Posters</span><span class="hint" id="usage">' + (state.canPoster ? "Checking…" : "Off in this view") + "</span></div></div></div></section>";
+  }
+
+  /* ---------- render ---------- */
+  var view = document.getElementById("view"), overlay = document.getElementById("overlay");
+  function render() {
+    if (!state.ready) return;
+    var y = view.scrollTop;
+    view.innerHTML = state.view === "library" ? viewLibrary() : state.view === "vault" ? viewVault() : viewNext();
+    document.querySelectorAll(".tab").forEach(function (b) { if (b.dataset.tab === state.view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+    view.scrollTop = y;
+    renderOverlay();
+  }
+  var pointerDown = false, pendingOverlay = false;
+  overlay.addEventListener("pointerdown", function () { pointerDown = true; });
+  function pointerEnd() {
+    if (!pointerDown) return; pointerDown = false;
+    if (pendingOverlay) { pendingOverlay = false; setTimeout(function () { renderOverlay(); }, 0); }
+  }
+  document.addEventListener("pointerup", pointerEnd);
+  document.addEventListener("pointercancel", pointerEnd);
+  function renderOverlay(force) {
+    if (pointerDown && !force) { pendingOverlay = true; return; }
+    var active = document.activeElement;
+    var typing = active && overlay.contains(active) && (active.tagName === "TEXTAREA" || (active.tagName === "INPUT" && active.type !== "file"));
+    if (typing && !force) return;
+    var scrollEl = overlay.querySelector(".sheet"), st = scrollEl ? scrollEl.scrollTop : 0;
+    if (!state.overlay) { overlay.innerHTML = ""; document.body.style.overflow = ""; return; }
+    if (state.overlay === "detail") {
+      var t = find(state.detailId);
+      if (!t) { state.overlay = null; overlay.innerHTML = ""; document.body.style.overflow = ""; return; }
+      overlay.innerHTML = detailSheet(t);
+    } else if (state.overlay === "add") overlay.innerHTML = addSheet();
+    else if (state.overlay === "settings") { overlay.innerHTML = settingsSheet(); loadUsage(); }
+    document.body.style.overflow = "hidden";
+    var ns = overlay.querySelector(".sheet"); if (ns && st) ns.scrollTop = st;
+    overlay.querySelectorAll("textarea.title-input").forEach(autosize);
+    if (state.overlay === "add") paintSuggest();
+  }
+  function openOverlay(name) {
+    state.overlay = name; state.confirmDelete = false; renderOverlay(true);
+    var first = overlay.querySelector(name === "add" ? "#add-title" : "[data-action='close']");
+    if (first) first.focus({ preventScroll: true });
+  }
+  function closeOverlay() {
+    var a = document.activeElement; if (a && overlay.contains(a)) a.blur();
+    state.overlay = null; state.detailId = null; state.add = null; state.confirmDelete = false; state.suggest = null; state.exportReady = null; state.exporting = false;
+    renderOverlay(true); render();
+  }
+
+  var toastTimer;
+  function toast(msg) {
+    var el = document.getElementById("toast");
+    el.textContent = msg; el.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.classList.remove("show"); }, 2600);
+  }
+
+  function loadUsage() {
+    if (!store.assets) return;
+    store.assets.list().then(function (r) {
+      var el = document.getElementById("usage"); if (!el) return;
+      var mb = function (b) { return (b / (1024 * 1024)).toFixed(1) + " MB"; };
+      el.textContent = r.usage.files + (r.usage.files === 1 ? " poster · " : " posters · ") + mb(r.usage.bytes);
+    }, function () { var el = document.getElementById("usage"); if (el) el.textContent = "Couldn’t check right now"; });
+  }
+
+  /* ---------- theme ---------- */
+  function getThemePref() { try { return localStorage.getItem(LS_THEME) || "auto"; } catch (e) { return "auto"; } }
+  function applyTheme(p) {
+    var pref = p || getThemePref();
+    if (pref === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", pref);
+  }
+
+  /* ---------- actions ---------- */
+  document.addEventListener("click", function (e) {
+    var el = e.target.closest("[data-action]"); if (!el) return;
+    var a = el.dataset.action, id = el.dataset.id, v = el.dataset.v, t = id ? find(id) : null;
+    switch (a) {
+      case "tab":
+        state.view = el.dataset.tab;
+        if (el.dataset.status) { state.libStatus = el.dataset.status; state.libType = state.filter; }
+        render(); view.scrollTop = 0; break;
+      case "filter": state.filter = v; render(); break;
+      case "lib-type": state.libType = v; render(); break;
+      case "lib-status": state.libStatus = v; render(); break;
+      case "day": state.selectedDay = state.selectedDay === el.dataset.day ? null : el.dataset.day; render(); break;
+      case "open": state.detailId = id; openOverlay("detail"); break;
+      case "open-add":
+        state.add = { title: "", type: "movie", status: "want", season: 1, ep: 0, blob: null, preview: null, busy: false, when: "today", date: "", bulk: false, bulkText: "" };
+        state.suggest = null; openOverlay("add"); break;
+      case "open-settings": openOverlay("settings"); break;
+      case "close": closeOverlay(); break;
+      case "add-type": state.add.type = v; renderOverlay(true); break;
+      case "add-status": state.add.status = v; renderOverlay(true); break;
+      case "add-when": state.add.when = v; renderOverlay(true); break;
+      case "add-bulk": {
+        var ta0 = overlay.querySelector("#add-title"); if (ta0) state.add.title = ta0.value;
+        state.add.bulk = !state.add.bulk;
+        if (state.add.bulk) { state.add.status = "done"; state.add.when = "unknown"; }
+        renderOverlay(true); break;
+      }
+      case "add-step": {
+        var f = el.dataset.f, d = +el.dataset.d;
+        state.add[f] = Math.max(f === "season" ? 1 : 0, (state.add[f] || 0) + d); renderOverlay(true); break;
+      }
+      case "save-add": saveAdd(); break;
+      case "watched-ep": if (t) { var e1 = (t.ep || 0) + 1; update(t.id, { ep: e1, status: "progress" }, "S" + (t.season || 1) + " E" + e1); toast("Marked S" + (t.season || 1) + " E" + e1 + " watched"); } break;
+      case "next-season": if (t) { update(t.id, { season: (t.season || 1) + 1, ep: 0, total: 0 }); toast("Season " + ((t.season || 1) + 1) + " is up next"); } break;
+      case "add-hour": if (t) { update(t.id, { hours: (t.hours || 0) + 1, status: "progress" }, "Played 1 hr"); toast("Logged an hour of " + t.title); } break;
+      case "mark-done": if (t) { setStatus(t, "done"); toast("Marked " + t.title + " watched"); } break;
+      case "d-status": if (t) setStatus(t, v); break;
+      case "d-step": if (t) {
+        var fld = el.dataset.f, dd = +el.dataset.d, cur = t[fld] || (fld === "season" ? 1 : 0);
+        var nv = Math.max(fld === "season" ? 1 : 0, cur + dd), patch = {}; patch[fld] = nv;
+        var lg = null;
+        if (fld === "ep" && dd > 0) lg = "S" + (t.season || 1) + " E" + nv;
+        if (fld === "hours" && dd > 0) lg = "Played 1 hr";
+        if (fld === "season" && dd > 0) { patch.ep = 0; patch.total = 0; }
+        update(t.id, patch, lg);
+      } break;
+      case "d-rate": if (t) update(t.id, { rating: t.rating === +v ? 0 : +v }); break;
+      case "d-fav": if (t) update(t.id, t.fav ? { fav: false, favRank: 0, allTime: false } : { fav: true }); break;
+      case "d-rank": if (t) setRank(t, +v); break;
+      case "d-alltime": if (t) setAllTime(t, !t.allTime); break;
+      case "d-unposter": if (t && t.poster) { var old = t.poster; update(t.id, { poster: null }); if (store.assets) store.assets.delete(old).catch(function () {}); } break;
+      case "d-delete":
+        if (!t) break;
+        if (!state.confirmDelete) { state.confirmDelete = true; renderOverlay(true); break; }
+        var nm = t.title; closeOverlay(); deleteTitle(t); toast("Deleted " + nm); break;
+      case "theme": try { localStorage.setItem(LS_THEME, v); } catch (x) {} applyTheme(v); renderOverlay(true); break;
+      case "export": exportBackup(); break;
+      case "export-save": {
+        var ex = state.exportReady; if (!ex) break;
+        store.downloads.save(ex).then(function () { state.exportReady = null; toast("Backup saved"); renderOverlay(true); }, function (e2) { if (!(e2 && e2.code === "declined")) toast("Couldn’t save the file. Try again."); });
+        break;
+      }
+      case "hide-tip": lsSet("cueloft.tipDone", true); render(); break;
+      case "sug-pick": {
+        var sgi = state.suggest && state.suggest.web[+el.dataset.i]; if (!sgi || !state.add) break;
+        state.add.title = sgi.title; state.add.type = sgi.type; state.add.year = sgi.year || null;
+        state.suggest = null; renderOverlay(true); break;
+      }
+      case "sug-lib": { var lid = el.dataset.id; closeOverlay(); state.detailId = lid; openOverlay("detail"); break; }
+    }
+  });
+
+  document.addEventListener("input", function (e) {
+    var el = e.target; var k = el.dataset && el.dataset.input; if (!k) return;
+    if (k === "search") { state.search = el.value; var pos = el.selectionStart; render(); var s = view.querySelector('[data-input="search"]'); if (s) { s.focus(); try { s.setSelectionRange(pos, pos); } catch (x) {} } }
+    if (k === "add-title" && state.add) { state.add.title = el.value; state.add.year = null; scheduleSuggest(el.value); }
+    if (k === "d-title") autosize(el);
+    if (k === "add-bulk" && state.add) state.add.bulkText = el.value;
+    if (k === "add-date" && state.add) state.add.date = el.value;
+  });
+
+  document.addEventListener("change", function (e) {
+    var el = e.target; var k = el.dataset && el.dataset.input; if (!k) return;
+    var t = el.dataset.id ? find(el.dataset.id) : null;
+    if (k === "d-title" && t) { var nt = el.value.trim(); if (nt && nt !== t.title) update(t.id, { title: nt }); else el.value = t.title; }
+    if (k === "d-notes" && t && el.value !== (t.notes || "")) update(t.id, { notes: el.value });
+    if (k === "d-why" && t && el.value !== (t.favWhy || "")) update(t.id, { favWhy: el.value });
+    if (k === "d-total" && t) { var n = Math.max(0, Math.min(999, parseInt(el.value, 10) || 0)); if (n !== (t.total || 0)) update(t.id, { total: n }); }
+    if (k === "add-date" && state.add) state.add.date = el.value;
+    if (k === "import" && el.files && el.files[0]) { var fr = new FileReader(); fr.onload = function () { importBackup(String(fr.result)); }; fr.readAsText(el.files[0]); el.value = ""; }
+    if (k === "d-date" && t && el.value !== (t.doneOn || "")) { moveDone(t, t.doneOn || "", el.value); update(t.id, { doneOn: el.value }); }
+    if (k === "add-poster" && state.add && el.files && el.files[0]) {
+      processImage(el.files[0]).then(function (r) { if (!state.add) return; state.add.blob = r.blob; state.add.preview = r.preview; renderOverlay(true); }, function (err) { toast(err.msg || "Couldn’t use that image."); });
+    }
+    if (k === "d-poster" && t && el.files && el.files[0]) {
+      toast("Uploading poster…");
+      var old = t.poster;
+      processImage(el.files[0]).then(function (r) { return uploadPoster(r.blob); }).then(function (pid) {
+        update(t.id, { poster: pid }); toast("Poster saved");
+        if (old && store.assets) store.assets.delete(old).catch(function () {});
+      }, function (err) { toast(err.msg || "Couldn’t use that image."); });
+    }
+  });
+
+  document.addEventListener("focusout", function () {
+    setTimeout(function () { if (state.overlay && !overlay.contains(document.activeElement)) renderOverlay(); }, 0);
+  });
+  function autosize(el) { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; }
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && e.target.classList && e.target.classList.contains("title-input")) { e.preventDefault(); e.target.blur(); return; }
+    if (e.key === "Escape" && state.overlay) closeOverlay();
+  });
+  document.addEventListener("error", function (e) {
+    var t = e.target; if (t && t.tagName === "IMG" && t.hasAttribute("data-poster")) t.remove();
+  }, true);
+
+  function setStatus(t, s) {
+    if (t.status === s) return;
+    var patch = { status: s }, log = null;
+    if (s === "done") { patch.doneOn = t.doneOn || todayKey(); log = TYPES[t.type].done; }
+    if (s === "progress" && t.type === "show" && !t.season) patch.season = 1;
+    update(t.id, patch, log);
+  }
+  function setRank(t, r) {
+    if (r) state.titles.filter(function (x) { return x.id !== t.id && x.type === t.type && x.favRank === r; }).forEach(function (x) { update(x.id, { favRank: 0 }); });
+    update(t.id, { fav: true, favRank: r });
+  }
+  function setAllTime(t, on) {
+    if (on) state.titles.filter(function (x) { return x.allTime && x.id !== t.id; }).forEach(function (x) { update(x.id, { allTime: false }); });
+    update(t.id, { allTime: on, fav: true });
+  }
+
+  function bulkTitles(a) {
+    var seen = {};
+    return (a.bulkText || "").split(/\n/).map(function (s) { return s.trim(); }).filter(function (s) {
+      var k = s.toLowerCase(); if (!s || seen[k]) return false; seen[k] = 1; return true;
+    }).slice(0, 100);
+  }
+  function whenDate(a) { return a.when === "today" ? todayKey() : a.when === "earlier" ? (a.date || "") : ""; }
+  function baseTitle(name, a) {
+    var b = { id: newId(), title: name, type: a.type, status: a.status, rating: 0, notes: "", poster: null, fav: false, favRank: 0, allTime: false, favWhy: "", createdAt: Date.now(), year: a.year || null };
+    if (a.type === "show") { b.season = a.season || 1; b.ep = a.ep || 0; b.total = 0; }
+    if (a.type === "game") b.hours = 0;
+    if (a.status === "done") b.doneOn = whenDate(a);
+    return b;
+  }
+  function saveAdd() {
+    var a = state.add; if (!a || a.busy) return;
+    if (a.bulk) {
+      var ta = overlay.querySelector("#add-bulk"); if (ta) a.bulkText = ta.value;
+      var names = bulkTitles(a);
+      if (!names.length) { toast("Add at least one title, one per line."); if (ta) ta.focus(); return; }
+      var entries = [], now = Date.now();
+      names.forEach(function (nm, i) {
+        var b = baseTitle(nm, a); b.createdAt = now - i;
+        saveTitle(b);
+        if (b.doneOn) entries.push({ key: b.doneOn, n: nm, ty: a.type, w: TYPES[a.type].done });
+      });
+      if (entries.length) logMany(entries);
+      closeOverlay();
+      toast("Added " + names.length + (names.length === 1 ? " title" : " titles"));
+      return;
+    }
+    var input = overlay.querySelector("#add-title"); if (input) a.title = input.value;
+    var title = (a.title || "").trim();
+    if (!title) { toast("Give it a title first."); if (input) input.focus(); return; }
+    a.busy = true; renderOverlay(true);
+    var T = TYPES[a.type];
+    var base = baseTitle(title, a);
+    var done = function (pid) {
+      if (pid) base.poster = pid;
+      saveTitle(base);
+      if (a.status === "done" && base.doneOn) logActivity(base, T.done, base.doneOn);
+      closeOverlay();
+      toast("Added to " + (a.status === "done" ? "your library" : T.st[STATUS.indexOf(a.status)]));
+    };
+    if (a.blob && store.assets) uploadPoster(a.blob).then(done, function (err) { toast(err.msg); done(null); });
+    else done(null);
+  }
+
+  function exportBackup() {
+    if (state.exporting) return;
+    state.exporting = true; renderOverlay(true);
+    var used = {}; state.titles.forEach(function (t) { if (t.poster) used[t.poster] = 1; });
+    idbAll().then(function (recs) {
+      return Promise.all(recs.filter(function (r) { return used[r.id]; }).map(function (r) {
+        return blobToDataURL(new Blob([r.buf], { type: r.type || "image/jpeg" })).then(function (u) { return [r.id, u]; });
+      }));
+    }).catch(function () { return []; }).then(function (pairs) {
+      var posters = {}; pairs.forEach(function (p) { posters[p[0]] = p[1]; });
+      var data = JSON.stringify({ app: "Cueloft", version: 2, exportedAt: new Date().toISOString(), titles: state.titles, activity: state.activity, posters: posters });
+      state.exporting = false;
+      state.exportReady = { filename: "cueloft-backup-" + todayKey() + ".json", data: data };
+      renderOverlay(true);
+      toast("Backup ready. Tap “Save backup file”.");
+    });
+  }
+  function blobToDataURL(b) { return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; r.readAsDataURL(b); }); }
+  function importBackup(text) {
+    var d; try { d = JSON.parse(text); } catch (e) { toast("That file isn’t a Cueloft backup."); return; }
+    if (!d || d.app !== "Cueloft" || !Array.isArray(d.titles)) { toast("That file isn’t a Cueloft backup."); return; }
+    var posters = d.posters || {}, jobs = [], count = 0;
+    d.titles.forEach(function (t) {
+      if (!t || !t.id || !t.title || !TYPES[t.type] || STATUS.indexOf(t.status) < 0) return;
+      var n = clone(t);
+      if (n.poster && typeof posters[n.poster] === "string" && posters[n.poster].indexOf("data:image/") === 0) {
+        var pid = n.poster;
+        jobs.push(fetch(posters[pid]).then(function (r) { return r.blob(); }).then(function (b) { return idbPutBlob(pid, b); }));
+      } else n.poster = null;
+      upsertLocal(n); count++;
+    });
+    var days = clone(state.activity || {});
+    var inc = d.activity && typeof d.activity === "object" ? d.activity : {};
+    Object.keys(inc).forEach(function (k) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(k) || !Array.isArray(inc[k])) return;
+      var cur = days[k] || [];
+      inc[k].forEach(function (e) {
+        if (!e || !e.n) return;
+        if (!cur.some(function (x) { return x.n === e.n && x.w === e.w && x.ty === e.ty; })) cur.push({ n: e.n, ty: e.ty, w: e.w });
+      });
+      if (cur.length) days[k] = cur;
+    });
+    lsSet(LS_T, state.titles); writeDays(days);
+    Promise.all(jobs).catch(function () {}).then(function () { render(); });
+    closeOverlay();
+    toast("Imported " + count + (count === 1 ? " title" : " titles"));
+  }
+
+  /* ---------- name suggestions (Wikipedia search API: text only) ---------- */
+  var sugTimer = null, sugSeq = 0;
+  function scheduleSuggest(q) { clearTimeout(sugTimer); sugTimer = setTimeout(function () { runSuggest(q); }, 250); }
+  function wiki(params) {
+    return fetch("https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&prop=description&redirects=1&" + params)
+      .then(function (r) { return r.ok ? r.json() : {}; })
+      .then(function (j) { return (j.query && j.query.pages) || []; });
+  }
+  function classify(title, desc) {
+    var d = (desc || "").toLowerCase(), t = title.toLowerCase();
+    if (/^list of|\bseason \d|\(season|\bepisodes?\b|\bfranchise\b|\bsoundtrack\b/.test(t)) return null;
+    if (/video game/.test(d)) {
+      return /(series|franchise|company|publisher|character|console|engine|studio|designer|composer|developer\b)/.test(d) ? null : "game";
+    }
+    if (/((television|tv|web|anime|animated|streaming|drama|comedy|reality) (series|show|miniseries|programme|program|sitcom))|miniseries|sitcom|docuseries|soap opera/.test(d)) {
+      return /(character|presenter|host\b|actor|actress|channel|network|producer|writer|episode|season)/.test(d) ? null : "show";
+    }
+    if (/\bfilm\b|\bmovie\b/.test(d)) {
+      return /(series|director|actor|actress|producer|maker|critic|composer|festival|studio|company|award|score|soundtrack|character|franchise|genre|industry|editor|cinematographer|screenwriter|distributor|theat)/.test(d) ? null : "movie";
+    }
+    return null;
+  }
+  function cleanTitle(t) { return t.replace(/\s*\(([^)]*(film|movie|series|miniseries|video game|tv|game))\)\s*$/i, ""); }
+  function runSuggest(q) {
+    q = (q || "").trim(); var my = ++sugSeq, ql = q.toLowerCase();
+    var lib = ql ? state.titles.filter(function (t) { return (t.title || "").toLowerCase().indexOf(ql) >= 0; }).slice(0, 3) : [];
+    var prev = state.suggest && state.suggest.q && ql.indexOf(state.suggest.q) === 0 ? state.suggest.web : [];
+    state.suggest = { q: ql, lib: lib, web: q.length >= 2 ? prev : [] };
+    paintSuggest();
+    if (q.length < 2) return;
+    var enc = encodeURIComponent(q);
+    Promise.all([
+      wiki("generator=prefixsearch&gpssearch=" + enc + "&gpslimit=15").catch(function () { return []; }),
+      wiki("generator=search&gsrsearch=" + enc + "&gsrlimit=20&gsrnamespace=0").catch(function () { return []; })
+    ]).then(function (r) {
+      if (my !== sugSeq || !state.add) return;
+      var seen = {}, out = [];
+      r.forEach(function (pages) {
+        pages.slice().sort(function (a, b) { return (a.index || 0) - (b.index || 0); }).forEach(function (p) {
+          var type = classify(p.title, p.description); if (!type) return;
+          var title = cleanTitle(p.title);
+          var ym = /\b(18[89]\d|19\d\d|20\d\d)\b/.exec(p.description || "");
+          var key = title.toLowerCase() + "|" + type + "|" + (ym ? ym[1] : "");
+          if (seen[key]) return; seen[key] = 1;
+          out.push({ title: title, type: type, year: ym ? +ym[1] : null, desc: p.description || "" });
+        });
+      });
+      state.suggest = { q: ql, lib: lib, web: out.slice(0, 6) };
+      paintSuggest();
+    });
+  }
+  function paintSuggest() {
+    var box = document.getElementById("suggest"); if (!box) return;
+    var sg = state.suggest; if (!sg || (!sg.lib.length && !sg.web.length)) { box.innerHTML = ""; return; }
+    box.innerHTML = sg.lib.map(function (t) {
+      return '<button class="sug" data-action="sug-lib" data-id="' + t.id + '">' + typeDot(t.type) + "<span><b>" + esc(t.title) + "</b><small>Already in your library · " + esc(statusLabel(t.type, t.status)) + "</small></span></button>";
+    }).join("") + sg.web.map(function (x, i) {
+      var d = x.desc.length > 70 ? x.desc.slice(0, 68) + "…" : x.desc;
+      return '<button class="sug" role="option" data-action="sug-pick" data-i="' + i + '">' + typeDot(x.type) + "<span><b>" + esc(x.title) + "</b><small>" + esc(d || TYPES[x.type].long) + "</small></span></button>";
+    }).join("") + (sg.web.length ? '<div class="sug-note">Names from Wikipedia</div>' : "");
+  }
+
+  /* ---------- boot ---------- */
+  function startLocal() {
+    store.mode = "local";
+    state.titles = lsGet(LS_T, []); state.activity = lsGet(LS_A, {});
+    state.ready = true; render();
+  }
+  function startCloud(db, uid) {
+    store.mode = "cloud";
+    var base = db.doc("data/users/" + uid + "/lib");
+    store.titlesCol = base.collection("titles");
+    store.actDoc = db.doc("data/users/" + uid + "/activity");
+    var timer = setTimeout(function () { state.loadNote = "Your library can’t be reached yet. Check your connection; it will appear when it loads."; state.ready = true; render(); }, 10000);
+    store.titlesCol.onSnapshot(function (snap) {
+      state.titles = snap.docs.map(function (d) { var o = clone(d.data()); o.id = d.id; return o; });
+      if (!snap.metadata.fromCache) { clearTimeout(timer); state.loadNote = ""; }
+      state.ready = true; render();
+    }, function (err) {
+      clearTimeout(timer); state.ready = true;
+      state.loadNote = err && err.code === "revoked" ? "" : "Your library couldn’t load right now. Reopen Cueloft to try again.";
+      render();
+    });
+    store.actDoc.onSnapshot(function (s) {
+      var d = s.exists ? s.data() : null; state.activity = d && d.days ? clone(d.days) : {}; render();
+    }, function () {});
+  }
+  function isStandalone() { return window.navigator.standalone === true || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches); }
+
+  /* ---------- on-device poster storage (IndexedDB) ---------- */
+  var idbP = null, urlCache = {}, pendingP = {};
+  function idb() {
+    if (!idbP) idbP = new Promise(function (res, rej) {
+      var r = indexedDB.open("cueloft", 1);
+      r.onupgradeneeded = function () { r.result.createObjectStore("posters"); };
+      r.onsuccess = function () { res(r.result); };
+      r.onerror = function () { rej(r.error); };
+    });
+    return idbP;
+  }
+  function idbTx(mode, fn) {
+    return idb().then(function (db) {
+      return new Promise(function (res, rej) {
+        var tx = db.transaction("posters", mode), out = fn(tx.objectStore("posters"));
+        tx.oncomplete = function () { res(typeof out === "function" ? out() : out); };
+        tx.onerror = function () { rej(tx.error); }; tx.onabort = function () { rej(tx.error); };
+      });
+    });
+  }
+  function idbPutBlob(id, blob) {
+    return blob.arrayBuffer().then(function (buf) { return idbTx("readwrite", function (st) { st.put({ buf: buf, type: blob.type || "image/jpeg" }, id); }); });
+  }
+  function idbGet(id) { return idbTx("readonly", function (st) { var q = st.get(id); return function () { return q.result; }; }); }
+  function idbDel(id) { return idbTx("readwrite", function (st) { st.delete(id); }); }
+  function idbAll() {
+    return idbTx("readonly", function (st) {
+      var k = st.getAllKeys(), v = st.getAll();
+      return function () { return k.result.map(function (key, i) { return { id: key, buf: v.result[i].buf, type: v.result[i].type }; }); };
+    });
+  }
+  function posterSrc(id) {
+    if (urlCache[id]) return urlCache[id];
+    if (!pendingP[id]) {
+      pendingP[id] = 1;
+      idbGet(id).then(function (rec) {
+        if (rec && rec.buf) { urlCache[id] = URL.createObjectURL(new Blob([rec.buf], { type: rec.type || "image/jpeg" })); render(); }
+      }).catch(function () {});
+    }
+    return null;
+  }
+  var localAssets = {
+    upload: function (blob) {
+      var id = "p" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+      return idbPutBlob(id, blob).then(function () { return { id: id }; }, function () { throw { code: "quota_or_state" }; });
+    },
+    "delete": function (id) {
+      if (urlCache[id]) { URL.revokeObjectURL(urlCache[id]); delete urlCache[id]; }
+      delete pendingP[id];
+      return idbDel(id);
+    },
+    list: function () {
+      return idbAll().then(function (recs) {
+        var bytes = recs.reduce(function (s2, r) { return s2 + (r.buf ? r.buf.byteLength : 0); }, 0);
+        return { usage: { files: recs.length, bytes: bytes } };
+      });
+    }
+  };
+  var localDownloads = {
+    save: function (o) {
+      var blob = new Blob([o.data], { type: "application/json" }), file = null;
+      try { file = new File([blob], o.filename, { type: "application/json" }); } catch (e) {}
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        return navigator.share({ files: [file], title: o.filename }).catch(function (e) { if (e && e.name === "AbortError") throw { code: "declined" }; throw e; });
+      }
+      var url = URL.createObjectURL(blob), a = document.createElement("a");
+      a.href = url; a.download = o.filename; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      return Promise.resolve();
+    }
+  };
+
+  function boot() {
+    applyTheme();
+    if (window.matchMedia) {
+      var mq = window.matchMedia("(prefers-color-scheme: dark)");
+      if (mq.addEventListener) mq.addEventListener("change", function () { applyTheme(); });
+    }
+    store.downloads = localDownloads;
+    if (window.indexedDB) { store.assets = localAssets; state.canPoster = true; }
+    if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
+    if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () {});
+    startLocal();
+  }
+  boot();
+})();
+</script>
+</body>
+</html>
