@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -413,6 +413,89 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
 .rows-card .sbtn.brand { background: var(--brand); color: #000; }
 .warn { color: var(--brand); font-weight: 600; }
 .about a { color: var(--brand); text-decoration: none; }
+
+/* ===== v1.2 ===== */
+:root { --tab-active: #c25e00; --tab-label: #3a3a3c; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --tab-active: var(--brand); --tab-label: #a1a1a6; } }
+:root[data-theme="dark"] { --tab-active: var(--brand); --tab-label: #a1a1a6; }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) { --tabglass: rgba(255,255,255,0.86); } }
+:root[data-theme="light"] { --tabglass: rgba(255,255,255,0.86); }
+.tabbar { -webkit-backdrop-filter: blur(30px) saturate(120%); backdrop-filter: blur(30px) saturate(120%); }
+.tab { min-width: 0; flex: 1; color: var(--tab-label); }
+.tab[aria-current="page"] { color: var(--tab-active); }
+/* crisp header */
+#apphead { transition: none; }
+#apphead .head h1 { font-weight: 700; }
+#apphead h1, .brand-word { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+.round.addbtn { box-shadow: 0 1px 3px rgba(0,0,0,0.18); }
+/* vault hero split title */
+.vh-series { font-size: 13px; font-weight: 600; color: #d1d1d6; margin-bottom: 4px; }
+/* pick for me */
+.pickbar { padding: 12px 24px 0; }
+.pickbtn { width: 100%; height: 46px; border-radius: 23px; border: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.pickbtn svg { color: var(--brand); }
+.choice { width: 100%; min-height: 60px; border-radius: 16px; border: none; background: var(--surface2); color: var(--text); display: flex; align-items: center; justify-content: space-between; padding: 0 18px; font-size: 16px; font-weight: 600; text-align: left; }
+.choice small { color: var(--text2); font-weight: 500; font-size: 13px; }
+.choice:disabled { opacity: 0.4; }
+.pick-poster { width: min(62%, 240px); aspect-ratio: 2 / 3; margin: 0 auto; position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 18px 40px rgba(0,0,0,0.35); }
+.pick-poster .art { position: absolute; inset: 0; border-radius: 16px; }
+.pick-title { text-align: center; font-family: var(--display); font-size: 24px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+.pick-meta { text-align: center; color: var(--text2); font-size: 14px; margin-top: -10px; }
+.pick-actions { display: flex; flex-direction: column; gap: 10px; }
+.cta.ghost { background: var(--surface2); color: var(--text); }
+/* sorter */
+.sort-card { width: min(70%, 260px); aspect-ratio: 2 / 3; margin: 0 auto; position: relative; border-radius: 18px; overflow: hidden; box-shadow: 0 18px 40px rgba(0,0,0,0.35); touch-action: pan-y; }
+.sort-card .art { position: absolute; inset: 0; border-radius: 18px; }
+.sort-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sort-btns .cta { font-size: 15px; }
+.sortcard-prompt { margin: 16px 24px 0; padding: 16px; border-radius: 18px; background: var(--surface); display: flex; align-items: center; gap: 14px; }
+.sortcard-prompt div { flex: 1; min-width: 0; }
+.sortcard-prompt b { display: block; font-size: 15px; }
+/* collections */
+.cgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 14px; padding: 0 24px; }
+.ccard { border: none; background: none; padding: 0; text-align: left; color: var(--text); display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.ccover { width: 100%; aspect-ratio: 1 / 1; border-radius: 18px; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 2px; background: var(--surface); }
+.ccover.one { grid-template-columns: 1fr; grid-template-rows: 1fr; }
+.ccover.two { grid-template-rows: 1fr; }
+.ccover .art { border-radius: 0; width: 100%; height: 100%; }
+.ccover .art .art-title { font-size: 10px; }
+.ccard b { font-size: 15px; font-weight: 600; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ccard small { font-size: 12px; color: var(--text2); }
+.cempty { padding: 0 24px; color: var(--text2); font-size: 14px; }
+.crow { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.crow-main { flex: 1; min-width: 0; border: none; background: none; padding: 0; display: flex; align-items: center; gap: 12px; text-align: left; color: var(--text); }
+.cnum { width: 22px; flex-shrink: 0; text-align: center; font-weight: 700; color: var(--text2); font-size: 14px; }
+.cthumb { width: 48px; height: 72px; flex-shrink: 0; position: relative; border-radius: 8px; overflow: hidden; }
+.cthumb .art { position: absolute; inset: 0; border-radius: 8px; }
+.cthumb .art .art-title { font-size: 8px; left: 4px; right: 4px; bottom: 4px; }
+.ctext { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ctext b { font-size: 15px; font-weight: 600; line-height: 1.25; }
+.ctext small { font-size: 12px; color: var(--text2); }
+.crow.missing .cthumb, .crow.missing .ctext { opacity: 0.5; }
+.coll-body { padding: 0 24px; display: flex; flex-direction: column; gap: 14px; }
+.chips-credit { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-credit { height: 34px; padding: 0 12px; border-radius: 17px; border: none; background: var(--surface2); color: var(--text); font-size: 14px; font-weight: 500; }
+.detail .chip-credit { background: var(--surface); }
+.credit-row { display: flex; flex-direction: column; gap: 6px; }
+.credit-row span.k { font-size: 12px; color: var(--text2); font-weight: 600; }
+.res { width: 100%; border: none; background: none; text-align: left; padding: 10px 2px; border-bottom: 1px solid var(--line); color: var(--text); }
+.res b { display: block; font-size: 15px; font-weight: 600; }
+.res small { display: block; font-size: 12px; color: var(--text2); }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.toggle-row span { font-size: 15px; }
+
+/* ===== v1.2 beta fixes ===== */
+html, body { touch-action: manipulation; }
+.sheet { animation: none; }
+.sheet.anim { animation: up .28s cubic-bezier(.2,.8,.2,1); }
+.sheet.detail.anim { animation: slideup .3s cubic-bezier(.2,.8,.2,1); }
+@keyframes slideup { from { transform: translateY(36px); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .sheet.anim, .sheet.detail.anim { animation: none; } }
+.cover-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.cover-pick { border: 2px solid transparent; border-radius: 12px; padding: 0; background: none; aspect-ratio: 2 / 3; position: relative; overflow: hidden; }
+.cover-pick[aria-pressed="true"] { border-color: var(--brand); }
+.cover-pick .art { position: absolute; inset: 0; border-radius: 10px; }
+.prev-list { display: flex; flex-direction: column; }
 </style>
 </head>
 <body>
@@ -425,6 +508,8 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
         <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5 3.5-5 3.5z" fill="currentColor"/></svg>Up Next</button>
       <button class="tab" data-action="tab" data-tab="library">
         <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>Library</button>
+      <button class="tab" data-action="tab" data-tab="collections">
+        <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="8" width="13" height="13" rx="2"/><path d="M7 4.5h11a2.5 2.5 0 0 1 2.5 2.5v11"/></svg>Collections</button>
       <button class="tab" data-action="tab" data-tab="vault">
         <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="12" cy="12" r="3.5"/><path d="M12 8.5V7M15.5 12H17M7 20v1.5M17 20v1.5"/></svg>Vault</button>
     </nav>
@@ -447,9 +532,10 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
   var STATUS = ["want", "progress", "done"];
   var MIXED = ["Queue", "In Progress", "Done"];
   var MAX_BYTES = 10 * 1024 * 1024;
-  var APP_VERSION = "1.1";
+  var APP_VERSION = "1.2";
   var PAL = [["#0d2638", "#9fd3f0"], ["#1f3a2a", "#e9e1cf"], ["#2e2516", "#d9b465"], ["#3d0c10", "#e2402f"], ["#3a1d0c", "#ff8a3d"], ["#4a1430", "#ffb3d1"], ["#1a2a4a", "#9fb8ff"], ["#2a1f3d", "#c9b8ff"], ["#8a4a1c", "#f2c27a"], ["#0b1530", "#d9e6ff"], ["#123b3b", "#7fe0c8"], ["#3b1f12", "#f0a37a"]];
   var I = {
+    dice: '<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="15.5" cy="15.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="15.5" cy="8.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="8.5" cy="15.5" r="1.3" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/></svg>',
     plus: '<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
     gear: '<svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
     check: '<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
@@ -677,7 +763,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     return '<button class="tile" data-action="open" data-id="' + t.id + '" aria-label="' + esc(t.title) + (opts.rank ? ", ranked " + opts.rank : "") + '">' + art(t) +
       (opts.rank ? '<span class="rank' + (opts.rank === 1 ? " one" : "") + '">' + opts.rank + "</span>" : opts.noPill ? "" : pill(t, opts.dotOnly)) +
       (opts.bar && p != null ? '<span class="mini-bar"><span style="width:' + Math.round(p * 100) + '%;background:var(--' + t.type + ')"></span></span>' : "") +
-      "</div>" + tileName(t) + (opts.meta ? '<span class="tile-meta">' + esc(metaLine(t)) + "</span>" : "") + "</button>";
+      "</div>" + tileName(t) + (opts.metaText ? '<span class="tile-meta">' + esc(opts.metaText) + "</span>" : opts.meta ? '<span class="tile-meta">' + esc(metaLine(t)) + "</span>" : "") + "</button>";
   }
 
   /* ---------- views ---------- */
@@ -689,6 +775,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
   }
   function headerHTML() {
     if (state.view === "library") return '<div class="head"><h1>Library</h1><div class="head-actions"><button class="round" data-action="open-settings" aria-label="Settings">' + I.gear + "</button>" + addBtn() + "</div></div>";
+    if (state.view === "collections") return '<div class="head"><h1>Collections</h1><div class="head-actions"><button class="round addbtn" data-action="open-collnew" aria-label="New collection">' + I.plus + "</button></div></div>";
     if (state.view === "vault") return '<div class="head"><div class="vault-title">' + I.vault + "<h1>The Vault</h1></div></div>";
     return '<h1 class="sr">Up Next</h1><div class="topbar"><div class="brand"><span class="brand-word">Cueloft</span><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5l13 7.5-13 7.5z"/></svg></div>' + addBtn() + "</div>";
   }
@@ -699,7 +786,8 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     var ok = function (t) { return f === "all" || t.type === f; };
     var prog = state.titles.filter(function (t) { return t.status === "progress" && ok(t); }).sort(byUpdated);
     var h = modeNote() +
-      '<div class="chips" role="group" aria-label="Filter by type">' + filterChips(f, "filter") + "</div>";
+      '<div class="chips" role="group" aria-label="Filter by type">' + filterChips(f, "filter") + "</div>" +
+      (state.titles.some(function (t) { return t.status === "want"; }) ? '<div class="pickbar"><button class="pickbtn" data-action="open-pick">' + I.dice + "Pick for me</button></div>" : "");
     if (!state.titles.length) {
       return h + '<div class="empty"><h2>Your loft is empty</h2><p>Add the first movie, show or game you’re watching, playing, or saving for later.</p><button class="btn-primary" data-action="open-add">' + I.plus + "Add a title</button></div>";
     }
@@ -709,10 +797,23 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       h += '<div class="section-head"><h2>In Progress</h2><button class="link" data-action="tab" data-tab="library" data-status="progress" data-type="' + f + '">See all</button></div><div class="row three">' +
         prog.slice(1).map(function (t) { return posterTile(t, { bar: true, meta: true }); }).join("") + "</div>";
     }
+    if (f === "all" || f === "movie") {
+      var unsorted = movies().filter(function (t) { return t.status === "want" && !t.vibe; }).length;
+      if (unsorted) h += '<div class="sortcard-prompt"><div><b>Sort your movie watchlist</b><span class="hint">' + unsorted + (unsorted === 1 ? " movie" : " movies") + ' to split into Headliners and Unwind</span></div><button class="sbtn brand" data-action="open-sorter">Start</button></div>';
+    }
     TYPE_KEYS.forEach(function (k) {
       if (f !== "all" && f !== k) return;
       var items = state.titles.filter(function (t) { return t.type === k && t.status === "want"; }).sort(byCreated);
       if (!items.length) return;
+      if (k === "movie") {
+        [["headliner", "★ Headliners"], ["unwind", "Unwind"]].forEach(function (g) {
+          var list = items.filter(function (t) { return g[0] === "headliner" ? t.vibe === "headliner" : t.vibe !== "headliner"; });
+          if (!list.length) return;
+          h += '<div class="section-head"><h2>' + typeDot(k) + g[1] + '</h2><button class="link" data-action="tab" data-tab="library" data-status="want" data-type="movie">See all</button></div><div class="row three">' +
+            list.map(function (t) { return posterTile(t, { dotOnly: true }); }).join("") + "</div>";
+        });
+        return;
+      }
       h += '<div class="section-head"><h2>' + typeDot(k) + TYPES[k].plural + " — " + TYPES[k].st[0] + '</h2><button class="link" data-action="tab" data-tab="library" data-status="want" data-type="' + k + '">See all</button></div><div class="row three">' +
         items.map(function (t) { return posterTile(t, { dotOnly: true }); }).join("") + "</div>";
     });
@@ -850,7 +951,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     if (top) {
       h += '<button class="vault-hero" data-action="open" data-id="' + top.id + '">' + art(top) + '</div><div class="shade"></div><div class="vbody">' +
         '<div class="eyebrow gold">' + STAR14 + "ALL-TIME #1</div>" +
-        '<div><div class="vh-title">' + esc(top.title) + "</div>" + (top.favWhy ? '<div class="vh-why">' + esc(top.favWhy) + "</div>" : "") + "</div></div></button>";
+        '<div>' + (nameParts(top.title).series ? '<div class="vh-series">' + esc(nameParts(top.title).series) + "</div>" : "") + '<div class="vh-title">' + esc(nameParts(top.title).main) + "</div>" + (top.favWhy ? '<div class="vh-why">' + esc(top.favWhy) + "</div>" : "") + "</div></div></button>";
     } else {
       h += '<button class="pick-card" data-action="open-picker"><span class="gold">' + STAR14.replace('width="14" height="14"', 'width="28" height="28"') + "</span><span><b>Pick your all-time #1</b><span class=\"hint\">Choose from your favorites</span></span></button>";
     }
@@ -873,6 +974,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
   function addSheet() {
     var a = state.add, T = TYPES[a.type];
     var verb = a.status === "want" ? "Add to " + T.st[0] : a.status === "progress" ? "Add to " + T.st[1] : "Add as " + T.st[2];
+    if (a.type === "movie" && a.status === "want" && !a.bulk) verb = "Add to " + (a.vibe === "headliner" ? "Headliners" : "Unwind");
     if (a.bulk) verb = "Add all";
     var slot = a.preview ? '<img src="' + a.preview + '" alt="Poster preview">' : I.image + (state.canPoster ? "Add Poster" : "Posters off");
     return '<div class="scrim" data-action="close"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="add-h">' +
@@ -888,6 +990,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
         return '<button class="type-tile" data-action="add-type" data-v="' + k + '" aria-pressed="' + (a.type === k) + '">' + I[k] + TYPES[k].long + "</button>";
       }).join("") + "</div></div>" +
       '<div class="group"><span class="field-label">Status</span>' + seg("add-status", "", a.status, T.st, STATUS) + "</div>" +
+      (a.type === "movie" && a.status === "want" ? '<div class="group"><span class="field-label">Watchlist</span>' + seg("add-vibe", "", a.vibe || "unwind", ["★ Headliner", "Unwind"], ["headliner", "unwind"], "brandseg") + "</div>" : "") +
       (a.status === "done" ? '<div class="group"><span class="field-label">When did you finish?</span>' + seg("add-when", "", a.when, ["Today", "Pick a date", "Don’t remember"], ["today", "earlier", "unknown"]) +
         (a.when === "earlier" ? '<div class="rows-card"><label class="rc-row"><span>Date</span><input type="date" max="' + todayKey() + '" data-input="add-date" value="' + esc(a.date || "") + '"></label></div>' : "") +
         (a.when === "unknown" ? '<p class="hint">It goes in your library without a date, so it won’t show on your activity heatmap.</p>' : "") + "</div>" : "") +
@@ -910,7 +1013,8 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       '<div class="fade"></div><div class="case"><div class="case-inner"><div class="case-plate">' + esc(statusLabel(t.type, t.status)) + '</div><div class="detail-poster">' + art(t) + '</div></div><span class="case-lock" aria-hidden="true"></span></div></div></div>' +
       '<div class="detail-body"><div class="group" style="gap:6px"><div class="eyebrow" style="color:var(--text2)">' + typeDot(t.type) + esc(T.long.toUpperCase() + (t.year ? " · " + t.year : "")) + "</div>" +
       '<label class="sr" for="d-title">Title</label><textarea id="d-title" class="title-input" rows="1" data-input="d-title" data-id="' + t.id + '">' + esc(t.title) + '</textarea></div>' +
-      seg("d-status", t.id, t.status, T.st, STATUS);
+      seg("d-status", t.id, t.status, T.st, STATUS) +
+      (t.type === "movie" && t.status === "want" ? '<div class="rows-card"><div class="rc-row"><span id="vibe-l">★ Headliner <span class="hint">· off = Unwind</span></span><button class="switch" role="switch" aria-labelledby="vibe-l" aria-checked="' + (t.vibe === "headliner") + '" data-action="d-vibe" data-id="' + t.id + '"></button></div></div>' : "");
     if (t.status === "done") {
       var m = whenMode(t);
       h += '<div class="group"><span class="field-label' + (state.askWhen === t.id ? " ask" : "") + '">' + (state.askWhen === t.id ? "When did you finish?" : T.dateLabel) + "</span>" +
@@ -931,6 +1035,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       return '<button class="star" data-action="d-rate" data-id="' + t.id + '" data-v="' + n + '" data-on="' + ((t.rating || 0) >= n) + '" aria-label="' + n + (n === 1 ? " star" : " stars") + '" aria-pressed="' + (t.rating === n) + '">' + I.star + "</button>";
     }).join("") + "</div></div>";
     h += '<div class="rows-card"><div class="rc-col"><label for="d-notes">Notes</label><textarea id="d-notes" data-input="d-notes" data-id="' + t.id + '" placeholder="What did you think?" rows="3">' + esc(t.notes || "") + "</textarea></div></div>";
+    if (t.type === "movie") h += creditsHTML(t);
     h += '<div class="group"><span class="field-label">The Vault</span><div class="rows-card">' +
       '<div class="rc-row"><span id="fav-l">Add to Vault</span><button class="switch" role="switch" aria-labelledby="fav-l" aria-checked="' + !!t.fav + '" data-action="d-fav" data-id="' + t.id + '"></button></div>' +
       (t.fav ? '<div class="rc-col"><span>Rank among ' + TYPES[t.type].plural.toLowerCase() + "</span>" + seg("d-rank", t.id, String(t.favRank || 0), ["Unranked", "#1", "#2", "#3"], ["0", "1", "2", "3"], "brandseg") + "</div>" +
@@ -997,7 +1102,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     if (!state.ready) return;
     var y = view.scrollTop;
     apphead.innerHTML = headerHTML();
-    view.innerHTML = state.view === "library" ? viewLibrary() : state.view === "vault" ? viewVault() : viewNext();
+    view.innerHTML = state.view === "library" ? viewLibrary() : state.view === "vault" ? viewVault() : state.view === "collections" ? viewCollections() : viewNext();
     document.querySelectorAll(".tab").forEach(function (b) { if (b.dataset.tab === state.view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
     view.scrollTop = y;
     updateSbar();
@@ -1026,6 +1131,15 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     else if (state.overlay === "settings") { overlay.innerHTML = settingsSheet(); loadUsage(); }
     else if (state.overlay === "shelf") overlay.innerHTML = shelfSheet();
     else if (state.overlay === "picker") overlay.innerHTML = pickerSheet();
+    else if (state.overlay === "pick") overlay.innerHTML = pickSheet();
+    else if (state.overlay === "sorter") overlay.innerHTML = sorterSheet();
+    else if (state.overlay === "coll") overlay.innerHTML = collSheet();
+    else if (state.overlay === "collnew") { overlay.innerHTML = collNewSheet(); paintCollSearch(); }
+    else if (state.overlay === "colladd") overlay.innerHTML = collAddSheet();
+    else if (state.overlay === "hidden") overlay.innerHTML = hiddenSheet();
+    else if (state.overlay === "cover") overlay.innerHTML = coverSheet();
+    else if (state.overlay === "addmovies") { overlay.innerHTML = addMoviesSheet(); paintAddm(); }
+    else if (state.overlay === "creditprev") overlay.innerHTML = creditPrevSheet();
     document.body.style.overflow = "hidden";
     var ns = overlay.querySelector(".sheet"); if (ns && st) ns.scrollTop = st;
     overlay.querySelectorAll("textarea.title-input").forEach(autosize);
@@ -1033,13 +1147,16 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
   }
   function openOverlay(name) {
     state.overlay = name; state.confirmDelete = false; renderOverlay(true);
+    var shA = overlay.querySelector(".sheet"); if (shA) shA.classList.add("anim");
     var first = overlay.querySelector(name === "add" ? "#add-title" : "[data-action='close']");
     if (first) first.focus({ preventScroll: true });
   }
   function closeOverlay() {
     var a = document.activeElement; if (a && overlay.contains(a)) a.blur();
-    if (state.overlay === "detail" && state.backTo === "shelf") {
-      state.backTo = null; state.overlay = "shelf"; state.detailId = null; state.confirmDelete = false; state.detailOffer = null; state.askWhen = null; state.dateMode = null;
+    if ((state.overlay === "detail" || state.overlay === "colladd" || state.overlay === "creditprev") && state.backTo) {
+      var fromAdd = state.overlay === "colladd" || state.overlay === "creditprev", bt = state.backTo;
+      state.backTo = fromAdd ? state.backTo2 || null : null; state.backTo2 = null; state.overlay = bt;
+      if (!fromAdd) { state.detailId = null; state.confirmDelete = false; state.detailOffer = null; state.askWhen = null; state.dateMode = null; }
       renderOverlay(true); render(); return;
     }
     state.backTo = null; state.askWhen = null; state.dateMode = null;
@@ -1084,7 +1201,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       case "lib-type": state.libType = v; render(); break;
       case "lib-status": state.libStatus = v; render(); break;
       case "day": state.selectedDay = state.selectedDay === el.dataset.day ? null : el.dataset.day; render(); break;
-      case "open": state.backTo = state.overlay === "shelf" ? "shelf" : null; state.detailId = id; openOverlay("detail"); break;
+      case "open": state.backTo = (state.overlay === "shelf" || state.overlay === "coll") ? state.overlay : null; state.detailId = id; openOverlay("detail"); break;
       case "open-add":
         state.add = { title: "", type: "movie", status: "want", season: 1, ep: 0, blob: null, preview: null, busy: false, when: "today", date: "", bulk: false, bulkText: "" };
         state.suggest = null; openOverlay("add"); break;
@@ -1153,7 +1270,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       case "hide-tip": lsSet("cueloft.tipDone", true); render(); break;
       case "sug-pick": {
         var sgi = state.suggest && state.suggest.web[+el.dataset.i]; if (!sgi || !state.add) break;
-        state.add.title = sgi.title; state.add.type = sgi.type; state.add.year = sgi.year || null;
+        state.add.title = sgi.title; state.add.type = sgi.type; state.add.year = sgi.year || null; state.add.page = sgi.page || null;
         state.suggest = null; state.add.posterOffer = null; state.add.offerNone = false;
         if (state.canPoster && !state.add.blob && sgi.page) {
           var oseq = ++offerSeq; state.add.offerLoading = true;
@@ -1184,6 +1301,58 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
         break;
       }
       case "d-offer-skip": state.detailOffer = null; renderOverlay(true); break;
+      case "add-vibe": state.add.vibe = v; renderOverlay(true); break;
+      case "d-vibe": if (t) update(t.id, { vibe: t.vibe === "headliner" ? "unwind" : "headliner" }); break;
+      case "open-pick": state.pick = { step: "mood", skips: 0, seen: [] }; if (state.filter === "show" || state.filter === "game") { state.pick.pool = state.filter; nextPick(); } openOverlay("pick"); break;
+      case "pick-pool": state.pick.pool = v; nextPick(); renderOverlay(true); break;
+      case "pick-skip": state.pick.skips++; nextPick(); renderOverlay(true); break;
+      case "pick-watch": if (t) { var wasT = t; closeOverlay(); setStatus(wasT, "progress"); state.view = "next"; render(); view.scrollTop = 0; toast("Enjoy! " + wasT.title + " is on Up Next"); } break;
+      case "open-sorter": state.sortSkip = []; openOverlay("sorter"); break;
+      case "sort-set": if (t) { update(t.id, { vibe: v }); renderOverlay(true); } break;
+      case "sort-skip": if (t) { state.sortSkip.push(t.id); renderOverlay(true); } break;
+      case "open-coll": state.collKey = v; state.collEdit = false; unhide(v); openOverlay("coll"); break;
+      case "coll-edit": state.collEdit = !state.collEdit; renderOverlay(true); break;
+      case "coll-remove": collToggle(state.collKey, id, false); renderOverlay(true); break;
+      case "coll-addfilm": addFilmFromCollection(el.dataset.q, el.dataset.name, el.dataset.year); renderOverlay(true); break;
+      case "coll-hide": { var hc = findCollection(state.collKey); if (hc) { if (hc.kind === "custom" || hc.kind === "director" || hc.kind === "studio") { COL.manual = COL.manual.filter(function (c) { return c.key !== hc.key; }); toast("Removed " + hc.name); } else { if (COL.hidden.indexOf(hc.key) < 0) COL.hidden.push(hc.key); toast("Hid " + hc.name); } saveCol(); } closeOverlay(); break; }
+      case "coll-pick": { var pc = findCollection(state.collKey); state.pick = { step: "card", pool: "coll", collKey: state.collKey, skips: 0, seen: [] }; nextPick(); openOverlay("pick"); break; }
+      case "open-collnew": state.collNew = { kind: null, q: "", results: [], loading: false }; openOverlay("collnew"); break;
+      case "collnew-kind": state.collNew = { kind: v, q: "", results: [], loading: false }; renderOverlay(true); var ci = overlay.querySelector("#coll-q"); if (ci) ci.focus(); break;
+      case "collnew-pick": { var nk = state.collNew.kind, pre = nk === "director" ? "d:" : nk === "studio" ? "s:" : "se:"; addManual({ key: pre + el.dataset.q, kind: nk === "series" ? "series" : nk, id: el.dataset.q, name: el.dataset.name }); state.collKey = pre + el.dataset.q; state.collEdit = false; state.overlay = "coll"; renderOverlay(true); render(); runEnrichment(); break; }
+      case "collnew-custom": { var cin = overlay.querySelector("#coll-q"); var nm = cin ? cin.value.trim() : ""; if (!nm) { toast("Give it a name first."); break; } var ck = "c:" + Date.now().toString(36); addManual({ key: ck, kind: "custom", id: null, name: nm }); state.collKey = ck; state.collEdit = false; state.overlay = "coll"; renderOverlay(true); render(); break; }
+      case "credit": {
+        if (el.dataset.kind === "director" || el.dataset.kind === "studio") {
+          state.credit = { kind: el.dataset.kind, q: el.dataset.q, name: el.dataset.name };
+          state.backTo2 = state.backTo; state.backTo = "detail"; state.overlay = "creditprev"; renderOverlay(true);
+          var shC = overlay.querySelector(".sheet"); if (shC) shC.classList.add("anim"); break;
+        }
+        var ck2 = (el.dataset.kind === "universe" ? "u:" : "se:") + el.dataset.q;
+        unhide(ck2); state.backTo = null; state.collKey = ck2; state.collEdit = false; state.overlay = "coll"; renderOverlay(true); render(); break; }
+      case "credit-add": case "credit-open": {
+        var cr0 = state.credit; if (!cr0) break; var key0 = (cr0.kind === "director" ? "d:" : "s:") + cr0.q;
+        if (a === "credit-add") { addManual({ key: key0, kind: cr0.kind, id: cr0.q, name: cr0.name }); toast("Added " + cr0.name + " to Collections"); }
+        state.backTo = null; state.backTo2 = null; state.collKey = key0; state.collEdit = false; state.overlay = "coll"; renderOverlay(true); render(); break; }
+      case "coll-showmissing": { var cm = findCollection(state.collKey); if (cm) { var full0 = seriesFull(cm) || [], dis0 = COL.dismiss[cm.key] || [];
+        var miss0 = full0.filter(function (f) { return !byWd(f.id) && dis0.indexOf(f.id) < 0; }).length;
+        var cur = COL.showMissing[cm.key] != null ? COL.showMissing[cm.key] : miss0 <= 10; COL.showMissing[cm.key] = !cur; saveCol(); renderOverlay(true); } break; }
+      case "coll-dismiss": { var dk = state.collKey; COL.dismiss[dk] = COL.dismiss[dk] || []; if (COL.dismiss[dk].indexOf(el.dataset.q) < 0) COL.dismiss[dk].push(el.dataset.q); saveCol(); renderOverlay(true); break; }
+      case "coll-undismiss": delete COL.dismiss[state.collKey]; saveCol(); renderOverlay(true); break;
+      case "open-addmovies": state.addm = { q: "", lib: [], web: [] }; state.overlay = "addmovies"; renderOverlay(true); var shM = overlay.querySelector(".sheet"); if (shM) shM.classList.add("anim"); var im = overlay.querySelector("#addm-q"); if (im) im.focus(); break;
+      case "addm-done": state.addm = null; state.overlay = "coll"; renderOverlay(true); render(); break;
+      case "addm-lib": if (t) { collToggle(state.collKey, t.id, true); toast("Added " + t.title); runAddm(); } break;
+      case "addm-web": { var w = state.addm && state.addm.web[+el.dataset.i]; if (!w) break;
+        var nb = { id: newId(), title: w.title, type: "movie", status: "want", rating: 0, notes: "", poster: null, fav: false, favRank: 0, allTime: false, favWhy: "", createdAt: Date.now(), year: w.year, vibe: "unwind", wp: w.page };
+        saveTitle(nb); collToggle(state.collKey, nb.id, true); toast("Added " + w.title); scheduleEnrichment(); runAddm(); break; }
+      case "open-cover": state.overlay = "cover"; renderOverlay(true); var shV = overlay.querySelector(".sheet"); if (shV) shV.classList.add("anim"); break;
+      case "cover-done": state.overlay = "coll"; renderOverlay(true); render(); break;
+      case "cover-pick": if (t) { setCover(state.collKey, { t: t.id }); renderOverlay(true); render(); } break;
+      case "cover-reset": setCover(state.collKey, null); renderOverlay(true); render(); break;
+      case "d-lookup": if (t) { toast("Looking up credits…"); lookupOne(t).then(function (ok) { toast(ok ? "Credits found" : "Couldn’t find this movie on Wikipedia"); render(); }); } break;
+      case "open-colladd": if (t) { state.backTo2 = state.backTo; state.backTo = "detail"; state.collAddId = t.id; state.overlay = "colladd"; renderOverlay(true); } break;
+      case "colladd-toggle": { var mt = find(state.collAddId), cc = findCollection(v); if (mt && cc) { collToggle(v, mt.id, members(cc).indexOf(mt) < 0); renderOverlay(true); } break; }
+      case "colladd-new": { var cin2 = overlay.querySelector("#colladd-name"); var nm2 = cin2 ? cin2.value.trim() : ""; if (!nm2) { toast("Give it a name first."); break; } var ck3 = "c:" + Date.now().toString(36); addManual({ key: ck3, kind: "custom", id: null, name: nm2 }); collToggle(ck3, state.collAddId, true); renderOverlay(true); toast("Created " + nm2); break; }
+      case "open-hidden": openOverlay("hidden"); break;
+      case "unhide": unhide(v); renderOverlay(true); render(); break;
       case "sug-lib": { var lid = el.dataset.id; closeOverlay(); state.detailId = lid; openOverlay("detail"); break; }
     }
   });
@@ -1191,6 +1360,8 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
   document.addEventListener("input", function (e) {
     var el = e.target; var k = el.dataset && el.dataset.input; if (!k) return;
     if (k === "search") { state.search = el.value; var pos = el.selectionStart; render(); var s = view.querySelector('[data-input="search"]'); if (s) { s.focus(); try { s.setSelectionRange(pos, pos); } catch (x) {} } }
+    if (k === "addm-q" && state.addm) { state.addm.q = el.value; scheduleAddm(); }
+    if (k === "coll-q" && state.collNew) { state.collNew.q = el.value; scheduleCollSearch(); }
     if (k === "add-title" && state.add) { state.add.title = el.value; state.add.year = null; scheduleSuggest(el.value); }
     if (k === "d-title") autosize(el);
     if (k === "add-bulk" && state.add) state.add.bulkText = el.value;
@@ -1207,6 +1378,11 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     if (k === "add-date" && state.add) state.add.date = el.value;
     if (k === "lib-sort") { state.libSort = el.value; lsSet("cueloft.libSort", el.value); render(); }
     if (k === "shelf-sort") { state.shelfSort = el.value; renderOverlay(true); }
+    if (k === "cover-file" && el.files && el.files[0]) {
+      var ckey = state.collKey; toast("Saving cover…");
+      processImage(el.files[0]).then(function (r) { return uploadPoster(r.blob); }).then(function (pid) { setCover(ckey, { a: pid }); renderOverlay(true); render(); toast("Cover saved"); },
+        function (err) { toast(err.msg || "Couldn’t use that image."); });
+    }
     if (k === "import" && el.files && el.files[0]) { var fr = new FileReader(); fr.onload = function () { importBackup(String(fr.result)); }; fr.readAsText(el.files[0]); el.value = ""; }
     if (k === "d-date" && t && el.value !== (t.doneOn || "")) { moveDone(t, t.doneOn || "", el.value); state.dateMode = null; update(t.id, { doneOn: el.value }); }
     if (k === "add-poster" && state.add && el.files && el.files[0]) {
@@ -1226,6 +1402,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     setTimeout(function () { if (state.overlay && !overlay.contains(document.activeElement)) renderOverlay(); }, 0);
   });
   function autosize(el) { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; }
+  document.addEventListener("gesturestart", function (e) { e.preventDefault(); });
   document.addEventListener("keydown", function (e) {
     if (e.key === "Enter" && e.target.classList && e.target.classList.contains("title-input")) { e.preventDefault(); e.target.blur(); return; }
     if (e.key === "Escape" && state.overlay) closeOverlay();
@@ -1263,6 +1440,8 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
   function baseTitle(name, a) {
     var b = { id: newId(), title: name, type: a.type, status: a.status, rating: 0, notes: "", poster: null, fav: false, favRank: 0, allTime: false, favWhy: "", createdAt: Date.now(), year: a.year || null };
     if (a.type === "show") { b.season = a.season || 1; b.ep = a.ep || 0; b.total = 0; }
+    if (a.type === "movie" && a.status === "want") b.vibe = a.vibe === "headliner" ? "headliner" : "unwind";
+    if (a.page && !a.bulk) b.wp = a.page;
     if (a.type === "game") b.hours = 0;
     if (a.status === "done") b.doneOn = whenDate(a);
     return b;
@@ -1280,6 +1459,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
         if (b.doneOn) entries.push({ key: b.doneOn, n: nm, ty: a.type, w: TYPES[a.type].done });
       });
       if (entries.length) logMany(entries);
+      if (a.type === "movie") scheduleEnrichment();
       closeOverlay();
       toast("Added " + names.length + (names.length === 1 ? " title" : " titles"));
       return;
@@ -1294,6 +1474,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       if (pid) base.poster = pid;
       saveTitle(base);
       if (a.status === "done" && base.doneOn) logActivity(base, T.done, base.doneOn);
+      if (base.type === "movie") scheduleEnrichment();
       closeOverlay();
       toast("Added to " + (a.status === "done" ? "your library" : T.st[STATUS.indexOf(a.status)]));
     };
@@ -1305,13 +1486,14 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     if (state.exporting) return;
     state.exporting = true; renderOverlay(true);
     var used = {}; state.titles.forEach(function (t) { if (t.poster) used[t.poster] = 1; });
+    Object.keys(COL.covers || {}).forEach(function (k) { if (COL.covers[k] && COL.covers[k].a) used[COL.covers[k].a] = 1; });
     idbAll().then(function (recs) {
       return Promise.all(recs.filter(function (r) { return used[r.id]; }).map(function (r) {
         return blobToDataURL(new Blob([r.buf], { type: r.type || "image/jpeg" })).then(function (u) { return [r.id, u]; });
       }));
     }).catch(function () { return []; }).then(function (pairs) {
       var posters = {}; pairs.forEach(function (p) { posters[p[0]] = p[1]; });
-      var data = JSON.stringify({ app: "Cueloft", version: 2, exportedAt: new Date().toISOString(), titles: state.titles, activity: state.activity, posters: posters });
+      var data = JSON.stringify({ app: "Cueloft", version: 2, exportedAt: new Date().toISOString(), titles: state.titles, activity: state.activity, posters: posters, collections: COL });
       state.exporting = false;
       state.exportReady = { filename: "cueloft-backup-" + todayKey() + ".json", data: data };
       renderOverlay(true);
@@ -1343,6 +1525,17 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       });
       if (cur.length) days[k] = cur;
     });
+    if (d.collections && typeof d.collections === "object") {
+      (d.collections.manual || []).forEach(function (c) { if (c && c.key && c.name && !COL.manual.some(function (x) { return x.key === c.key; })) COL.manual.push(c); });
+      (d.collections.hidden || []).forEach(function (k) { if (COL.hidden.indexOf(k) < 0) COL.hidden.push(k); });
+      Object.keys(d.collections.covers || {}).forEach(function (k) {
+        var cv = d.collections.covers[k]; if (!cv) return;
+        if (cv.a && typeof posters[cv.a] === "string" && posters[cv.a].indexOf("data:image/") === 0) { jobs.push(fetch(posters[cv.a]).then(function (r) { return r.blob(); }).then(function (b) { return idbPutBlob(cv.a, b); })); COL.covers[k] = cv; }
+        else if (cv.t) COL.covers[k] = cv;
+      });
+      ["adds", "removes"].forEach(function (f) { var src = d.collections[f] || {}; Object.keys(src).forEach(function (k) { COL[f][k] = (COL[f][k] || []).concat((src[k] || []).filter(function (x) { return (COL[f][k] || []).indexOf(x) < 0; })); }); });
+      saveCol();
+    }
     lsSet(LS_T, state.titles); writeDays(days);
     Promise.all(jobs).catch(function () {}).then(function () { render(); });
     closeOverlay();
@@ -1466,6 +1659,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     var g = null;
     overlay.addEventListener("touchstart", function (e) {
       var sh = overlay.querySelector(".sheet"); if (!sh || e.touches.length !== 1) return;
+      if (e.target.closest && e.target.closest("#sorter-card")) { g = null; return; }
       var tch = e.touches[0];
       var full = sh.classList.contains("detail");
       g = { sh: sh, x: tch.clientX, y: tch.clientY, edge: full && tch.clientX < 28, top: sh.scrollTop <= 0, mode: null, dx: 0, dy: 0 };
@@ -1496,6 +1690,535 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     }
     overlay.addEventListener("touchend", end);
     overlay.addEventListener("touchcancel", end);
+  })();
+
+
+  /* ===================== collections (movies) ===================== */
+  var LS_COL = "cueloft.collections.v1", LS_SER = "cueloft.series.v2";
+  var COL = lsGet(LS_COL, null) || {};
+  if (!Array.isArray(COL.manual)) COL.manual = [];
+  if (!Array.isArray(COL.hidden)) COL.hidden = [];
+  if (!COL.adds || typeof COL.adds !== "object") COL.adds = {};
+  if (!COL.removes || typeof COL.removes !== "object") COL.removes = {};
+  var SERIES = lsGet(LS_SER, {}), seriesLoading = {};
+  function saveCol() { lsSet(LS_COL, COL); autoCache = null; }
+  if (!COL.covers || typeof COL.covers !== "object") COL.covers = {};
+  if (!COL.showMissing || typeof COL.showMissing !== "object") COL.showMissing = {};
+  if (!COL.dismiss || typeof COL.dismiss !== "object") COL.dismiss = {};
+  function movies() { return state.titles.filter(function (t) { return t.type === "movie"; }); }
+  function crList(t, k) { return t.cr && Array.isArray(t.cr[k]) ? t.cr[k] : []; }
+  function fieldsFor(kind) { return kind === "director" ? ["d"] : kind === "studio" ? ["s"] : kind === "series" || kind === "universe" ? ["se", "u"] : []; }
+  function badSeriesName(n) { return /\bphase\b/i.test(n || ""); }
+  function rawAuto() {
+    var map = {}, seen = {};
+    movies().forEach(function (t) {
+      crList(t, "se").forEach(function (x) { if (seen[x[0]] || badSeriesName(x[1])) return; seen[x[0]] = 1; map["se:" + x[0]] = { key: "se:" + x[0], kind: "series", id: x[0], name: x[1] }; });
+      crList(t, "u").forEach(function (x) { if (seen[x[0]] || badSeriesName(x[1])) return; seen[x[0]] = 1; map["u:" + x[0]] = { key: "u:" + x[0], kind: "universe", id: x[0], name: x[1] }; });
+    });
+    return map;
+  }
+  var autoCache = null, autoSig = "";
+  function autoCollections() {
+    var sig = state.titles.length + "|" + Object.keys(SERIES).length + "|" + movies().filter(function (t) { return t.cr; }).length + "|" + JSON.stringify(COL.adds).length + "|" + JSON.stringify(COL.removes).length;
+    if (autoCache && sig === autoSig) return autoCache;
+    var raw = rawAuto(), keep = {}, groups = {};
+    Object.keys(raw).forEach(function (k) {
+      var c = raw[k], m = members(c), full = seriesFull(c);
+      if (full && !full.some(function (f) { return m.some(function (t) { return t.wd === f.id; }); })) full = null;
+      var size = full ? full.length : m.length;
+      if (size < 2) return;
+      c.size = full ? full.length : 999;
+      var sigM = m.map(function (t) { return t.id; }).sort().join(",");
+      if (!groups[sigM] || c.size < groups[sigM].size || (c.size === groups[sigM].size && c.kind === "series" && groups[sigM].kind !== "series")) groups[sigM] = c;
+    });
+    Object.keys(groups).forEach(function (g) { keep[groups[g].key] = groups[g]; });
+    autoCache = keep; autoSig = sig;
+    return keep;
+  }
+  function allCollections(includeHidden) {
+    var map = autoCollections();
+    COL.manual.forEach(function (c) { map[c.key] = c; });
+    return Object.keys(map).map(function (k) { return map[k]; }).filter(function (c) { return includeHidden || COL.hidden.indexOf(c.key) < 0; });
+  }
+  function findCollection(key) { var m = autoCollections(); return COL.manual.filter(function (c) { return c.key === key; })[0] || m[key] || rawAuto()[key] || null; }
+  function addManual(c) { if (!COL.manual.some(function (x) { return x.key === c.key; })) COL.manual.push(c); unhide(c.key); saveCol(); }
+  function unhide(key) { var i = COL.hidden.indexOf(key); if (i >= 0) { COL.hidden.splice(i, 1); saveCol(); } }
+  function members(c) {
+    var fields = fieldsFor(c.kind), rem = COL.removes[c.key] || [], add = COL.adds[c.key] || [];
+    var inList = {}, e = (c.kind === "series" || c.kind === "universe") && c.id ? SERIES[c.id] : null;
+    if (e && Array.isArray(e.films)) e.films.forEach(function (f) { inList[f.id] = 1; });
+    return movies().filter(function (t) {
+      if (rem.indexOf(t.id) >= 0) return false;
+      if (add.indexOf(t.id) >= 0) return true;
+      if (t.wd && inList[t.wd]) return true;
+      return !!c.id && fields.some(function (f) { return crList(t, f).some(function (x) { return x[0] === c.id; }); });
+    });
+  }
+  function collToggle(key, titleId, on) {
+    var add = COL.adds[key] = COL.adds[key] || [], rem = COL.removes[key] = COL.removes[key] || [];
+    if (on) { var r = rem.indexOf(titleId); if (r >= 0) rem.splice(r, 1); if (add.indexOf(titleId) < 0) add.push(titleId); }
+    else { var a = add.indexOf(titleId); if (a >= 0) add.splice(a, 1); if (rem.indexOf(titleId) < 0) rem.push(titleId); }
+    saveCol();
+  }
+  function ordOf(t, c) {
+    var hit = null;
+    ["se", "u"].forEach(function (f) { crList(t, f).forEach(function (x) { if (x[0] === c.id && x[2]) hit = x[2]; }); });
+    var n = parseFloat(hit); return isNaN(n) ? null : n;
+  }
+  function dateOf(t) { return (t.cr && t.cr.dt) || (t.year ? String(t.year) : "9999"); }
+  function sortForCollection(list, c) {
+    return list.slice().sort(function (a, b) {
+      var oa = ordOf(a, c), ob = ordOf(b, c);
+      if (oa != null && ob != null && oa !== ob) return oa - ob;
+      var da = dateOf(a), db = dateOf(b);
+      return da < db ? -1 : da > db ? 1 : 0;
+    });
+  }
+  function seriesFull(c) {
+    var e = SERIES[c.id]; if (!(e && Array.isArray(e.films) && e.films.length)) return null;
+    var ids = {}; movies().forEach(function (t) { if (t.wd) ids[t.wd] = 1; });
+    return e.films.some(function (f) { return ids[f.id]; }) ? e.films : null;
+  }
+  function mergedSeries(c) {
+    var full = seriesFull(c); if (!full) return null;
+    var used = {}, out = full.map(function (f) { var t = byWd(f.id); if (t) used[t.id] = 1; return { f: f, t: t, dt: f.dt || "", o: f.o }; });
+    members(c).forEach(function (t) { if (!used[t.id]) out.push({ f: null, t: t, dt: dateOf(t), o: null }); });
+    var allOrd = out.every(function (x) { return x.o != null; });
+    return out.sort(function (a, b) { if (allOrd && a.o !== b.o) return a.o - b.o; return (a.dt || "9999") < (b.dt || "9999") ? -1 : (a.dt || "9999") > (b.dt || "9999") ? 1 : 0; });
+  }
+  function byWd(id) { return movies().filter(function (m) { return m.wd === id; })[0] || null; }
+  function collProgress(c) {
+    var m = members(c), done = m.filter(function (t) { return t.status === "done"; }).length;
+    var full = (c.kind === "series" || c.kind === "universe") ? seriesFull(c) : null;
+    if (full) {
+      var dis = COL.dismiss[c.key] || [], ml = mergedSeries(c).filter(function (x) { return x.t || dis.indexOf(x.f.id) < 0; });
+      return ml.filter(function (x) { return x.t && x.t.status === "done"; }).length + " of " + ml.length + " watched";
+    }
+    return m.length + (m.length === 1 ? " movie" : " movies") + " · " + done + " watched";
+  }
+  function coverHTML(c) {
+    var cv = COL.covers[c.key]; if (!cv) return "";
+    if (cv.t) { var t = find(cv.t); if (t) return '<span class="ccover one">' + art(t) + "</div></span>"; }
+    if (cv.a) { var src = posterSrc(cv.a); return '<span class="ccover one"><div class="art" style="background:#111">' + (src ? '<img class="art-img" src="' + src + '" alt="">' : "") + "</div></span>"; }
+    return "";
+  }
+  function collCard(c) {
+    var custom = coverHTML(c);
+    if (custom) return '<button class="ccard" data-action="open-coll" data-v="' + esc(c.key) + '">' + custom + "<b>" + esc(c.name) + "</b><small>" + esc(collProgress(c)) + "</small></button>";
+    var m = sortForCollection(members(c), c), cov = m.slice(0, 4);
+    var cls = cov.length <= 1 ? " one" : cov.length === 2 ? " two" : "";
+    var inner = cov.length ? cov.map(function (t) { return art(t) + "</div>"; }).join("") : art({ title: c.name, id: c.key }) + "</div>";
+    return '<button class="ccard" data-action="open-coll" data-v="' + esc(c.key) + '"><span class="ccover' + cls + '">' + inner + "</span><b>" + esc(c.name) + "</b><small>" + esc(collProgress(c)) + "</small></button>";
+  }
+  function viewCollections() {
+    var h = '<p class="subtitle">Series fill in by themselves. Add directors and studios with +.</p>';
+    if (enrich.running) h += '<p class="note" id="enrich-status">' + enrichText() + "</p>";
+    if (!movies().length) return h + '<div class="empty"><h2>No movies yet</h2><p>Collections build themselves from the movies you add.</p></div>';
+    var cols = allCollections();
+    [["Series & Universes", function (c) { return c.kind === "series" || c.kind === "universe"; }, ""],
+     ["Directors", function (c) { return c.kind === "director"; }, "Tap + to add a director. All their movies in your library gather here."],
+     ["Studios", function (c) { return c.kind === "studio"; }, "Tap + to add a studio, like Pixar or A24."],
+     ["Your collections", function (c) { return c.kind === "custom"; }, ""]].forEach(function (g) {
+      var list = cols.filter(g[1]).map(function (c) { return { c: c, n: members(c).length }; })
+        .filter(function (x) { return x.n || COL.manual.some(function (m) { return m.key === x.c.key; }); })
+        .sort(function (a, b) { return b.n - a.n || (a.c.name < b.c.name ? -1 : 1); });
+      if (!list.length) { if (g[2]) h += '<div class="section-head"><h2>' + g[0] + '</h2></div><p class="cempty">' + g[2] + "</p>"; return; }
+      h += '<div class="section-head"><h2>' + g[0] + '</h2><span class="count">' + list.length + '</span></div><div class="cgrid">' + list.map(function (x) { return collCard(x.c); }).join("") + "</div>";
+    });
+    if (COL.hidden.length) h += '<div class="section-head"><button class="link" data-action="open-hidden" style="margin:0;padding:10px 0">Hidden (' + COL.hidden.length + ")</button></div>";
+    return h;
+  }
+  function collRow(n, t, f) {
+    if (t) {
+      var y = t.year || (t.cr && t.cr.dt ? t.cr.dt.slice(0, 4) : "");
+      return '<div class="crow"><button class="crow-main" data-action="open" data-id="' + t.id + '">' + (n ? '<span class="cnum">' + n + "</span>" : "") +
+        '<span class="cthumb">' + art(t) + '</div></span><span class="ctext"><b>' + esc(t.title) + "</b><small>" + esc((y ? y + " · " : "") + statusLabel("movie", t.status)) + "</small></span></button>" +
+        (state.collEdit ? '<button class="sbtn" data-action="coll-remove" data-id="' + t.id + '">Remove</button>' : "") + "</div>";
+    }
+    var fy = f.dt ? f.dt.slice(0, 4) : "";
+    return '<div class="crow missing">' + (n ? '<span class="cnum">' + n + "</span>" : "") + '<span class="cthumb">' + art({ title: f.l, id: f.id }) + '</div></span><span class="ctext"><b>' + esc(f.l) + "</b><small>" + esc((fy ? fy + " · " : "") + "Not in your library") + "</small></span>" +
+      '<button class="sbtn brand" data-action="coll-addfilm" data-q="' + esc(f.id) + '" data-name="' + esc(f.l) + '" data-year="' + esc(fy) + '">Add</button>' +
+      '<button class="sbtn" data-action="coll-dismiss" data-q="' + esc(f.id) + '" aria-label="Remove ' + esc(f.l) + ' from suggestions" style="padding:0 12px">✕</button></div>';
+  }
+  function collSheet() {
+    var c = findCollection(state.collKey); if (!c) return "";
+    var kindLabel = { series: "SERIES", universe: "UNIVERSE", director: "DIRECTOR", studio: "STUDIO", custom: "COLLECTION" }[c.kind];
+    var m = sortForCollection(members(c), c), rows = "", isSeries = c.kind === "series" || c.kind === "universe";
+    if (isSeries && c.id) {
+      var full = seriesFull(c);
+      if (!full && !seriesLoading[c.id]) fetchSeries(c);
+      if (full) {
+        var used = {}, dis = COL.dismiss[c.key] || [];
+        var missing = full.filter(function (f) { return !byWd(f.id) && dis.indexOf(f.id) < 0; });
+        var show = COL.showMissing[c.key] != null ? COL.showMissing[c.key] : missing.length <= 10;
+        rows = '<div class="toggle-row"><span>Show movies I don’t have <span class="hint">· ' + missing.length + "</span></span>" +
+          '<button class="switch" role="switch" aria-label="Show movies I don’t have" aria-checked="' + show + '" data-action="coll-showmissing"></button></div>';
+        var vis = mergedSeries(c).filter(function (x) { return x.t || (show && dis.indexOf(x.f.id) < 0); });
+        rows += vis.map(function (x, i) { return collRow(i + 1, x.t, x.f); }).join("");
+        if (dis.length) rows += '<button class="link" data-action="coll-undismiss" style="margin:0;padding:12px 0">' + dis.length + " hidden · Show</button>";
+      } else {
+        rows = m.map(function (t, i) { return collRow(i + 1, t, null); }).join("") + (seriesLoading[c.id] ? '<p class="hint" style="padding-top:10px">Loading the full series from Wikipedia…</p>' : "");
+      }
+    } else rows = m.map(function (t) { return collRow(null, t, null); }).join("") || '<p class="hint">No movies here yet. Tap Add movies to choose some.</p>';
+    var canPick = m.some(function (t) { return t.status !== "done"; });
+    return '<div class="scrim"></div><section class="sheet detail" role="dialog" aria-modal="true" aria-labelledby="coll-h">' +
+      '<div class="dback"><button class="glass-btn" data-action="close" aria-label="Back">' + I.back + "</button></div>" +
+      '<div class="coll-body" style="padding-top:calc(72px + env(safe-area-inset-top, 0px))"><div class="group" style="gap:6px"><div class="eyebrow" style="color:var(--text2)">' + typeDot("movie") + kindLabel + '</div><h1 id="coll-h" class="h1" style="padding:0">' + esc(c.name) + '</h1><span class="hint">' + esc(collProgress(c)) + "</span></div>" +
+      '<div class="small-btns">' + (canPick ? '<button class="sbtn brand" data-action="coll-pick">' + I.dice + (isSeries ? "Pick next" : "Pick for me") + "</button>" : "") +
+      '<button class="sbtn" data-action="open-addmovies">' + I.plus + 'Add movies</button><button class="sbtn" data-action="coll-edit">' + (state.collEdit ? "Done editing" : "Edit") + '</button><button class="sbtn" data-action="open-cover">Edit cover</button></div>' +
+      "<div>" + rows + "</div>" +
+      '<div class="small-btns" style="margin-top:8px"><button class="sbtn danger" data-action="coll-hide">' + (c.kind === "series" || c.kind === "universe" ? "Hide this collection" : "Remove this collection") + "</button></div><div style=\"height:40px\"></div></div></section>";
+  }
+  function addMoviesSheet() {
+    var c = findCollection(state.collKey); if (!c) return "";
+    return '<div class="scrim" data-action="addm-done"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="am-h"><div class="grabber"></div><div class="sheet-head"><span style="width:52px"></span><h2 id="am-h">Add to ' + esc(c.name) + '</h2><button class="textbtn strong" data-action="addm-done">Done</button></div>' +
+      '<div class="group" style="gap:0"><label class="sr" for="addm-q">Search movies</label><input id="addm-q" class="input" data-input="addm-q" placeholder="Search your library or any movie" value="' + esc((state.addm && state.addm.q) || "") + '" autocomplete="off" autocorrect="off" spellcheck="false"><div id="addm-results"></div></div></section>';
+  }
+  var addmTimer = null, addmSeq = 0;
+  function scheduleAddm() { clearTimeout(addmTimer); addmTimer = setTimeout(runAddm, 280); }
+  function runAddm() {
+    var am = state.addm; if (!am) return;
+    var q = (am.q || "").trim(), ql = q.toLowerCase(), my = ++addmSeq, c = findCollection(state.collKey); if (!c) return;
+    var mem = members(c);
+    am.lib = ql ? movies().filter(function (t) { return (t.title || "").toLowerCase().indexOf(ql) >= 0; }).slice(0, 8).map(function (t) { return { t: t, inC: mem.indexOf(t) >= 0 }; }) : [];
+    am.web = q.length >= 2 ? (am.web || []) : []; paintAddm();
+    if (q.length < 2) return;
+    Promise.all([
+      wiki("generator=prefixsearch&gpssearch=" + encodeURIComponent(q) + "&gpslimit=15").catch(function () { return []; }),
+      wiki("generator=search&gsrsearch=" + encodeURIComponent(q + " film") + "&gsrlimit=20&gsrnamespace=0").catch(function () { return []; })
+    ]).then(function (r) {
+      if (my !== addmSeq || !state.addm) return;
+      var seen = {}, out = [];
+      r.forEach(function (pages) {
+        pages.slice().sort(function (a, b) { return (a.index || 0) - (b.index || 0); }).forEach(function (p) {
+          if (classify(p.title, p.description) !== "movie") return;
+          var title = cleanTitle(p.title), ym = /\b(18[89]\d|19\d\d|20\d\d)\b/.exec(p.description || ""), key = title.toLowerCase() + "|" + (ym ? ym[1] : "");
+          if (seen[key]) return; seen[key] = 1;
+          var have = movies().some(function (t) { return (t.title || "").toLowerCase() === title.toLowerCase() && (!ym || !t.year || String(t.year) === ym[1]); });
+          if (!have) out.push({ title: title, year: ym ? +ym[1] : null, desc: p.description || "", page: p.title });
+        });
+      });
+      state.addm.web = out.slice(0, 6); paintAddm();
+    });
+  }
+  function paintAddm() {
+    var box = document.getElementById("addm-results"), am = state.addm; if (!box || !am) return;
+    var h = "";
+    if (am.lib && am.lib.length) h += '<p class="field-label" style="margin:14px 0 4px">In your library</p>' + am.lib.map(function (x) {
+      return '<div class="toggle-row"><span>' + esc(x.t.title) + (x.t.year ? ' <span class="hint">· ' + x.t.year + "</span>" : "") + "</span>" +
+        (x.inC ? '<span class="hint">Added</span>' : '<button class="sbtn brand" data-action="addm-lib" data-id="' + x.t.id + '">Add</button>') + "</div>";
+    }).join("");
+    if (am.web && am.web.length) h += '<p class="field-label" style="margin:14px 0 4px">Not in your library yet</p>' + am.web.map(function (x, i) {
+      return '<div class="toggle-row"><span>' + esc(x.title) + ' <span class="hint">· ' + esc(x.desc.length > 40 ? x.desc.slice(0, 38) + "…" : x.desc) + "</span></span>" +
+        '<button class="sbtn brand" data-action="addm-web" data-i="' + i + '">Add</button></div>';
+    }).join("") + '<p class="hint" style="margin-top:6px">Adds it to your Unwind watchlist and this collection.</p>';
+    box.innerHTML = h;
+  }
+  function coverSheet() {
+    var c = findCollection(state.collKey); if (!c) return "";
+    var cv = COL.covers[c.key] || {}, withPosters = sortForCollection(members(c), c).filter(function (t) { return t.poster; });
+    return '<div class="scrim" data-action="cover-done"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="cv-h"><div class="grabber"></div><div class="sheet-head"><span style="width:52px"></span><h2 id="cv-h">Collection cover</h2><button class="textbtn strong" data-action="cover-done">Done</button></div>' +
+      '<div class="group"><span class="field-label">Choose from this collection</span>' + (withPosters.length ? '<div class="cover-grid">' + withPosters.map(function (t) {
+        return '<button class="cover-pick" data-action="cover-pick" data-id="' + t.id + '" aria-pressed="' + (cv.t === t.id) + '" aria-label="Use the poster of ' + esc(t.title) + '">' + art(t) + "</div></button>";
+      }).join("") + "</div>" : '<p class="hint">None of these movies has a poster yet.</p>') + "</div>" +
+      (state.canPoster ? '<div class="small-btns"><label class="sbtn file-label">Upload from Photos<input type="file" accept="image/*" data-input="cover-file" aria-label="Upload a cover from Photos"></label>' +
+        (COL.covers[c.key] ? '<button class="sbtn" data-action="cover-reset">Reset cover</button>' : "") + "</div>" : "") + "</section>";
+  }
+  function setCover(key, cv) {
+    var old = COL.covers[key];
+    if (old && old.a && store.assets && (!cv || cv.a !== old.a)) store.assets.delete(old.a).catch(function () {});
+    if (cv) COL.covers[key] = cv; else delete COL.covers[key];
+    saveCol();
+  }
+  function creditPrevSheet() {
+    var cr = state.credit || {}, c = { kind: cr.kind, id: cr.q, key: (cr.kind === "director" ? "d:" : "s:") + cr.q, name: cr.name };
+    var m = sortForCollection(members(c), c), exists = COL.manual.some(function (x) { return x.key === c.key; });
+    return '<div class="scrim" data-action="close"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="cp-h"><div class="grabber"></div><div class="sheet-head"><button class="textbtn" data-action="close">Close</button><h2 id="cp-h">' + (cr.kind === "director" ? "Director" : "Studio") + '</h2><span style="width:52px"></span></div>' +
+      '<div class="group" style="gap:4px"><div class="pick-title" style="text-align:left">' + esc(cr.name) + '</div><span class="hint">' + m.length + (m.length === 1 ? " of your movies" : " of your movies") + "</span></div>" +
+      '<div class="prev-list">' + m.slice(0, 12).map(function (t) { return collRow(null, t, null); }).join("") + "</div>" +
+      (exists ? '<button class="cta ghost" data-action="credit-open">Open collection</button>' : '<button class="cta" data-action="credit-add">' + I.plus + "Add as collection</button>") + "</section>";
+  }
+  function addFilmFromCollection(q, name, year) {
+    if (!q || byWd(q)) return;
+    var b = { id: newId(), title: name, type: "movie", status: "want", rating: 0, notes: "", poster: null, fav: false, favRank: 0, allTime: false, favWhy: "", createdAt: Date.now(), year: year ? +year : null, vibe: "unwind", wd: q };
+    saveTitle(b); collToggle(state.collKey, b.id, true); toast("Added " + name + " to Unwind");
+    scheduleEnrichment();
+  }
+  function collNewSheet() {
+    var n = state.collNew || {};
+    var head = '<div class="scrim" data-action="close"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="cn-h"><div class="grabber"></div><div class="sheet-head"><button class="textbtn" data-action="close">Cancel</button><h2 id="cn-h">New collection</h2><span style="width:52px"></span></div>';
+    if (!n.kind) {
+      return head + '<div class="group">' + [["director", "Director", "Gather all their movies in your library"], ["studio", "Studio", "Pixar, A24, Studio Ghibli…"], ["series", "Series or universe", "If one didn’t appear on its own"], ["custom", "Your own", "Comfort rewatches, best of 2024…"]].map(function (k) {
+        return '<button class="choice" data-action="collnew-kind" data-v="' + k[0] + '"><span>' + k[1] + "<br><small>" + k[2] + "</small></span><span>›</span></button>";
+      }).join("") + "</div></section>";
+    }
+    if (n.kind === "custom") {
+      return head + '<div class="group"><label class="field-label" for="coll-q">Name</label><input id="coll-q" class="input" placeholder="e.g. Comfort Rewatches" autocomplete="off"></div><button class="cta" data-action="collnew-custom">Create</button></section>';
+    }
+    var label = n.kind === "director" ? "Search directors" : n.kind === "studio" ? "Search studios" : "Search series or universes";
+    return head + '<div class="group" style="gap:0"><label class="sr" for="coll-q">' + label + '</label><input id="coll-q" class="input" data-input="coll-q" placeholder="' + label + '" value="' + esc(n.q || "") + '" autocomplete="off" autocorrect="off" spellcheck="false"><div id="coll-results"></div></div></section>';
+  }
+  var collTimer = null, collSeq = 0;
+  function scheduleCollSearch() { clearTimeout(collTimer); collTimer = setTimeout(runCollSearch, 300); }
+  function runCollSearch() {
+    var n = state.collNew; if (!n || !n.kind) return;
+    var q = (n.q || "").trim(), my = ++collSeq;
+    if (q.length < 2) { n.results = []; paintCollSearch(); return; }
+    n.loading = true; paintCollSearch();
+    fetch("https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&origin=*&language=en&uselang=en&type=item&limit=12&search=" + encodeURIComponent(q))
+      .then(function (r) { return r.ok ? r.json() : {}; })
+      .then(function (j) {
+        if (my !== collSeq || !state.collNew) return;
+        var res = (j.search || []).map(function (x) { return { id: x.id, label: x.label || x.id, desc: x.description || "" }; });
+        var re = n.kind === "director" ? /(director|filmmaker|screenwriter|animator|producer)/i : n.kind === "studio" ? /(studio|company|production|pictures|films|entertainment|animation|distributor)/i : /(series|franchise|universe|saga|trilogy|films|media)/i;
+        var good = res.filter(function (x) { return re.test(x.desc); });
+        n.results = (good.length ? good : res).slice(0, 8); n.loading = false; paintCollSearch();
+      }).catch(function () { if (state.collNew) { state.collNew.loading = false; state.collNew.results = []; state.collNew.error = true; paintCollSearch(); } });
+  }
+  function paintCollSearch() {
+    var box = document.getElementById("coll-results"), n = state.collNew; if (!box || !n) return;
+    if (n.loading) { box.innerHTML = '<p class="hint" style="padding:10px 2px">Searching…</p>'; return; }
+    if (n.error) { box.innerHTML = '<p class="hint" style="padding:10px 2px">Search isn’t available right now. Check your connection.</p>'; n.error = false; return; }
+    box.innerHTML = (n.results || []).map(function (x) {
+      return '<button class="res" data-action="collnew-pick" data-q="' + esc(x.id) + '" data-name="' + esc(x.label) + '"><b>' + esc(x.label) + "</b><small>" + esc(x.desc || "No description") + "</small></button>";
+    }).join("");
+  }
+  function collAddSheet() {
+    var t = find(state.collAddId); if (!t) return "";
+    var cols = allCollections(true).filter(function (c) { return c.kind === "custom" || c.kind === "director" || c.kind === "studio" || c.kind === "series" || c.kind === "universe"; })
+      .sort(function (a, b) { return a.name < b.name ? -1 : 1; });
+    return '<div class="scrim" data-action="close"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="ca-h"><div class="grabber"></div><div class="sheet-head"><span style="width:52px"></span><h2 id="ca-h">Collections</h2><button class="textbtn strong" data-action="close">Done</button></div>' +
+      '<div>' + (cols.length ? cols.map(function (c) {
+        var on = members(c).indexOf(t) >= 0;
+        return '<div class="toggle-row"><span>' + esc(c.name) + ' <span class="hint">· ' + c.kind + '</span></span><button class="switch" role="switch" aria-label="' + esc(c.name) + '" aria-checked="' + on + '" data-action="colladd-toggle" data-v="' + esc(c.key) + '"></button></div>';
+      }).join("") : '<p class="hint">No collections yet.</p>') + "</div>" +
+      '<div class="group"><label class="field-label" for="colladd-name">New collection with this movie</label><input id="colladd-name" class="input" placeholder="Name" autocomplete="off"><button class="cta ghost" data-action="colladd-new">Create</button></div></section>';
+  }
+  function hiddenSheet() {
+    var cols = allCollections(true).filter(function (c) { return COL.hidden.indexOf(c.key) >= 0; });
+    return '<div class="scrim" data-action="close"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="hid-h"><div class="grabber"></div><div class="sheet-head"><span style="width:52px"></span><h2 id="hid-h">Hidden collections</h2><button class="textbtn strong" data-action="close">Done</button></div>' +
+      (cols.length ? cols.map(function (c) { return '<div class="toggle-row"><span>' + esc(c.name) + '</span><button class="sbtn" data-action="unhide" data-v="' + esc(c.key) + '">Show</button></div>'; }).join("") : '<p class="hint">Nothing hidden.</p>') + "</section>";
+  }
+  function creditsHTML(t) {
+    var cr = t.cr, rows = "";
+    if (cr) {
+      var chip = function (kind, x) { return '<button class="chip-credit" data-action="credit" data-kind="' + kind + '" data-q="' + esc(x[0]) + '" data-name="' + esc(x[1]) + '">' + esc(x[1]) + "</button>"; };
+      if (crList(t, "d").length) rows += '<div class="credit-row"><span class="k">Directed by</span><div class="chips-credit">' + crList(t, "d").map(function (x) { return chip("director", x); }).join("") + "</div></div>";
+      if (crList(t, "s").length) rows += '<div class="credit-row"><span class="k">Studios</span><div class="chips-credit">' + crList(t, "s").slice(0, 6).map(function (x) { return chip("studio", x); }).join("") + "</div></div>";
+      var ser = crList(t, "se").map(function (x) { return chip("series", x); }).concat(crList(t, "u").map(function (x) { return chip("universe", x); }));
+      if (ser.length) rows += '<div class="credit-row"><span class="k">Series &amp; universe</span><div class="chips-credit">' + ser.join("") + "</div></div>";
+      if (!rows) rows = '<p class="hint">No credits listed on Wikipedia for this movie.</p>';
+      rows += '<p class="hint">Tap a name to open its collection.</p>';
+    } else {
+      rows = '<p class="hint">' + (enrich.running ? "Looking up credits…" : "Credits haven’t been found yet.") + '</p><div class="small-btns"><button class="sbtn" data-action="d-lookup" data-id="' + t.id + '">Look up credits</button></div>';
+    }
+    return '<div class="group"><span class="field-label">Credits</span>' + rows + '<div class="small-btns"><button class="sbtn" data-action="open-colladd" data-id="' + t.id + '">Add to collection…</button></div></div>';
+  }
+  function continueSeries() {
+    var out = [];
+    allCollections().filter(function (c) { return c.kind === "series"; }).forEach(function (c) {
+      var full = seriesFull(c), seq;
+      if (full) seq = full.map(function (f) { return { f: f, t: byWd(f.id) }; });
+      else seq = sortForCollection(members(c), c).map(function (t) { return { f: null, t: t }; });
+      if (!seq.some(function (x) { return x.t && x.t.status === "done"; })) return;
+      var next = seq.filter(function (x) { return !(x.t && x.t.status === "done"); })[0];
+      if (next && !(next.t && next.t.status === "progress")) out.push({ c: c, t: next.t, f: next.f });
+    });
+    return out.slice(0, 8);
+  }
+
+  /* ===================== Wikidata lookups ===================== */
+  var enrich = { running: false, done: 0, total: 0 }, enrichTimer = null;
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function enrichText() { return "Matching your movies with Wikipedia… " + enrich.done + " of " + enrich.total; }
+  function paintEnrich() { var el = document.getElementById("enrich-status"); if (el) el.textContent = enrichText(); }
+  function persistTitles() { if (store.mode === "local") lsSet(LS_T, state.titles); }
+  function sparql(q) {
+    return fetch("https://query.wikidata.org/sparql?format=json&query=" + encodeURIComponent(q), { headers: { Accept: "application/sparql-results+json" } })
+      .then(function (r) { if (!r.ok) throw new Error("wdqs"); return r.json(); })
+      .then(function (j) { return (j.results && j.results.bindings) || []; });
+  }
+  function qidOf(uri) { return String(uri || "").split("/").pop(); }
+  function resolveQid(t) {
+    var base = "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&origin=*&redirects=1&prop=description|pageprops&ppprop=wikibase_item&";
+    var url = t.wp ? base + "titles=" + encodeURIComponent(t.wp) : base + "generator=search&gsrlimit=8&gsrnamespace=0&gsrsearch=" + encodeURIComponent(t.title + " film");
+    return fetch(url).then(function (r) { return r.ok ? r.json() : {}; }).then(function (j) {
+      var pages = ((j.query && j.query.pages) || []).slice().sort(function (a, b) { return (a.index || 0) - (b.index || 0); });
+      var q = function (p) { return p && p.pageprops && p.pageprops.wikibase_item; };
+      if (t.wp) return q(pages[0]) || null;
+      var films = pages.filter(function (p) { return classify(p.title, p.description) === "movie" && q(p); });
+      var name = (t.title || "").toLowerCase(), yr = t.year ? String(t.year) : "";
+      var best = films.filter(function (p) { return cleanTitle(p.title).toLowerCase() === name && (!yr || (p.description || "").indexOf(yr) >= 0); })[0]
+        || films.filter(function (p) { return cleanTitle(p.title).toLowerCase() === name; })[0];
+      return best ? q(best) : null;
+    });
+  }
+  function fetchCredits(batch) {
+    var ids = batch.map(function (t) { return "wd:" + t.wd; }).join(" ");
+    var q = "SELECT ?film ?p ?v ?vLabel ?ord ?dt WHERE { VALUES ?film { " + ids + " } " +
+      "{ ?film wdt:P57 ?v . BIND(\"d\" AS ?p) } UNION { ?film wdt:P272 ?v . BIND(\"s\" AS ?p) } " +
+      "UNION { ?film p:P179 ?st . ?st ps:P179 ?v . OPTIONAL { ?st pq:P1545 ?ord } BIND(\"se\" AS ?p) } " +
+      "UNION { ?film wdt:P1434 ?v . BIND(\"u\" AS ?p) } UNION { ?film wdt:P577 ?dt . BIND(\"dt\" AS ?p) } " +
+      "SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". } }";
+    return sparql(q).then(function (rows) {
+      var byId = {};
+      batch.forEach(function (t) { byId[t.wd] = { d: [], s: [], se: [], u: [], dt: "" }; });
+      rows.forEach(function (b) {
+        var f = qidOf(b.film && b.film.value), cr = byId[f]; if (!cr) return;
+        var p = b.p && b.p.value;
+        if (p === "dt") { var d = (b.dt && b.dt.value || "").slice(0, 10); if (d && (!cr.dt || d < cr.dt)) cr.dt = d; return; }
+        var id = qidOf(b.v && b.v.value), label = (b.vLabel && b.vLabel.value) || id;
+        if (!id || /^Q\d+$/.test(label)) return;
+        var list = cr[p]; if (!list || list.some(function (x) { return x[0] === id; })) return;
+        list.push(p === "se" ? [id, label, (b.ord && b.ord.value) || ""] : [id, label]);
+      });
+      batch.forEach(function (t) { var cur = find(t.id); if (cur) cur.cr = byId[t.wd]; });
+    });
+  }
+  function lookupOne(t) {
+    return resolveQid(t).then(function (q) {
+      var cur = find(t.id); if (!cur || !q) return false;
+      cur.wd = q; return fetchCredits([cur]).then(function () { persistTitles(); return true; });
+    }).catch(function () { return false; });
+  }
+  function scheduleEnrichment() { clearTimeout(enrichTimer); enrichTimer = setTimeout(runEnrichment, 1500); }
+  function runEnrichment() {
+    if (enrich.running || (navigator.onLine === false)) return;
+    var week = 7 * 86400000, now = Date.now();
+    var need = movies().filter(function (t) { return !t.cr && (!t.wdTry || now - t.wdTry > week); });
+    if (!need.length) { fetchMissingSeries(); return; }
+    enrich.running = true; enrich.total = need.length; enrich.done = 0;
+    if (state.view === "collections") render();
+    var queue = need.slice();
+    function worker() {
+      var t = queue.shift(); if (!t) return Promise.resolve();
+      return (t.wd ? Promise.resolve(t.wd) : resolveQid(t)).then(function (q) {
+        var cur = find(t.id); if (cur) { if (q) cur.wd = q; else cur.wdTry = Date.now(); }
+      }).catch(function () {}).then(function () { enrich.done++; if (enrich.done % 5 === 0) paintEnrich(); return sleep(120); }).then(worker);
+    }
+    Promise.all([worker(), worker(), worker()]).then(function () {
+      var withQ = movies().filter(function (t) { return t.wd && !t.cr; }), batches = [];
+      for (var i = 0; i < withQ.length; i += 40) batches.push(withQ.slice(i, i + 40));
+      return batches.reduce(function (p, b) { return p.then(function () { return fetchCredits(b).catch(function () { b.forEach(function (t) { var c = find(t.id); if (c) c.wdTry = Date.now(); }); }); }).then(function () { return sleep(400); }); }, Promise.resolve());
+    }).catch(function () {}).then(function () {
+      persistTitles(); enrich.running = false; render(); fetchMissingSeries();
+    });
+  }
+  function fetchSeries(c) {
+    if (!c || !c.id || seriesLoading[c.id]) return Promise.resolve();
+    seriesLoading[c.id] = true;
+    var q = "SELECT ?film ?filmLabel ?ord ?dt WHERE { ?film (wdt:P179|wdt:P1434)/(wdt:P179|wdt:P361)* wd:" + c.id + " . " +
+      "?film wdt:P31 ?inst . VALUES ?inst { wd:Q11424 wd:Q24869 wd:Q202866 wd:Q229390 } ?film wdt:P577 ?dt . " +
+      "OPTIONAL { ?film p:P179 ?st . ?st ps:P179 wd:" + c.id + " . ?st pq:P1545 ?ord } " +
+      "SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\". } }";
+    return sparql(q).then(function (rows) {
+      var map = {};
+      rows.forEach(function (b) {
+        var id = qidOf(b.film && b.film.value), l = b.filmLabel && b.filmLabel.value; if (!id || !l || /^Q\d+$/.test(l)) return;
+        var e = map[id] = map[id] || { id: id, l: l, dt: "", o: null };
+        var d = (b.dt && b.dt.value || "").slice(0, 10); if (d && (!e.dt || d < e.dt)) e.dt = d;
+        var o = parseFloat(b.ord && b.ord.value); if (!isNaN(o)) e.o = o;
+      });
+      var today = todayKey();
+      var films = Object.keys(map).map(function (k) { return map[k]; }).filter(function (f) { return !badSeriesName(f.l) && f.dt && f.dt <= today; });
+      var allOrd = films.length && films.every(function (f) { return f.o != null; });
+      films.sort(function (a, b) { if (allOrd && a.o !== b.o) return a.o - b.o; return a.dt < b.dt ? -1 : a.dt > b.dt ? 1 : 0; });
+      SERIES[c.id] = { at: Date.now(), films: films.slice(0, 80) }; lsSet(LS_SER, SERIES); autoCache = null;
+    }).catch(function () {}).then(function () { seriesLoading[c.id] = false; renderOverlay(); if (state.view !== "library") render(); });
+  }
+  function fetchMissingSeries() {
+    autoCache = null;
+    var month = 30 * 86400000, now = Date.now();
+    var raw = rawAuto(), todo = Object.keys(raw).map(function (k) { return raw[k]; }).concat(COL.manual.filter(function (c) { return c.kind === "series" || c.kind === "universe"; }))
+      .filter(function (c) { return c.id && (!SERIES[c.id] || now - SERIES[c.id].at > month); });
+    todo.reduce(function (p, c) { return p.then(function () { return fetchSeries(c); }).then(function () { return sleep(700); }); }, Promise.resolve());
+  }
+
+  /* ===================== pick for me ===================== */
+  function blockedBySeries(t) {
+    return crList(t, "se").some(function (x) {
+      var c = { kind: "series", id: x[0], key: "se:" + x[0] };
+      var seq = sortForCollection(members(c), c), idx = seq.indexOf(t);
+      return idx > 0 && seq.slice(0, idx).some(function (m) { return m.status !== "done"; });
+    });
+  }
+  function pickPool(p) {
+    if (p.pool === "coll") {
+      var c = findCollection(p.collKey); if (!c) return [];
+      var left = sortForCollection(members(c), c).filter(function (t) { return t.status !== "done"; });
+      return (c.kind === "series" || c.kind === "universe") ? left.slice(0, 1) : left;
+    }
+    var base;
+    if (p.pool === "show" || p.pool === "game") base = state.titles.filter(function (t) { return t.type === p.pool && t.status === "want"; });
+    else base = movies().filter(function (t) { return t.status === "want" && (p.pool === "headliner" ? t.vibe === "headliner" : t.vibe !== "headliner"); });
+    return base.filter(function (t) { return !blockedBySeries(t); });
+  }
+  function nextPick() {
+    var p = state.pick, list = pickPool(p);
+    if (!list.length) { p.cur = null; p.step = "card"; return; }
+    var pool = list.filter(function (t) { return p.seen.indexOf(t.id) < 0; }); if (!pool.length) pool = list;
+    var now = Date.now(), ws = pool.map(function (t) { return 1 + Math.max(0, (now - (t.createdAt || now)) / 86400000) / 30; });
+    var sum = ws.reduce(function (a, b) { return a + b; }, 0), r = Math.random() * sum, pick = pool[pool.length - 1];
+    for (var i = 0; i < pool.length; i++) { r -= ws[i]; if (r <= 0) { pick = pool[i]; break; } }
+    p.cur = pick.id; p.seen.push(pick.id); p.step = "card";
+  }
+  function pickSheet() {
+    var p = state.pick || {}, f = state.filter;
+    var head = '<div class="scrim" data-action="close"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="pk-h"><div class="grabber"></div><div class="sheet-head"><button class="textbtn" data-action="close">Close</button><h2 id="pk-h">Pick for me</h2><span style="width:52px"></span></div>';
+    if (p.step === "mood") {
+      var count = function (pool) { return pickPool({ pool: pool }).length; };
+      var opts = [];
+      if (f === "all" || f === "movie") opts.push(["headliner", "★ Headliner night", "Something big and immersive"], ["unwind", "Time to unwind", "Easy and comfortable"]);
+      if (f === "all") opts.push(["show", "A show", "From your watchlist"], ["game", "A game", "From your backlog"]);
+      return head + '<p class="pick-title" style="font-size:22px">' + (f === "movie" ? "Headliner night, or time to unwind?" : "What are you in the mood for?") + '</p><div class="group">' +
+        opts.map(function (o) { var n = count(o[0]); return '<button class="choice" data-action="pick-pool" data-v="' + o[0] + '"' + (n ? "" : " disabled") + "><span>" + o[1] + "<br><small>" + o[2] + "</small></span><small>" + n + "</small></button>"; }).join("") + "</div></section>";
+    }
+    var t = p.cur ? find(p.cur) : null;
+    if (!t) return head + '<div class="empty" style="margin:0"><h2>Nothing to pick from</h2><p>Add a few titles to this list first.</p></div></section>';
+    var last = p.skips >= 3 || pickPool(p).length <= 1;
+    var meta = [TYPES[t.type].long, t.year || (t.cr && t.cr.dt ? t.cr.dt.slice(0, 4) : ""), t.type === "movie" ? (t.vibe === "headliner" ? "★ Headliner" : "Unwind") : ""].filter(Boolean).join(" · ");
+    return head + (p.skips >= 3 ? '<p class="pick-title" style="font-size:18px;color:var(--brand)">Go with this one.</p>' : "") +
+      '<div class="pick-poster">' + art(t) + '</div></div><div class="pick-title">' + esc(t.title) + '</div><div class="pick-meta">' + esc(meta) + "</div>" +
+      '<div class="pick-actions"><button class="cta" data-action="pick-watch" data-id="' + t.id + '">' + I.check + "Watch this</button>" +
+      (last ? "" : '<button class="cta ghost" data-action="pick-skip">Not tonight</button>') + "</div></section>";
+  }
+
+  /* ===================== headliners / unwind sorter ===================== */
+  function sorterSheet() {
+    var list = movies().filter(function (t) { return t.status === "want" && !t.vibe && (state.sortSkip || []).indexOf(t.id) < 0; }).sort(byCreated);
+    var all = movies().filter(function (t) { return t.status === "want"; }).length, left = list.length;
+    var head = '<div class="scrim"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="so-h"><div class="grabber"></div><div class="sheet-head"><span style="width:52px"></span><h2 id="so-h">Sort your watchlist</h2><button class="textbtn strong" data-action="close">Done</button></div>';
+    if (!left) return head + '<div class="empty" style="margin:0"><h2>All sorted</h2><p>Your movies are split into Headliners and Unwind. You can switch any movie from its page.</p></div></section>';
+    var t = list[0];
+    return head + '<p class="hint" style="text-align:center">' + left + " left · swipe right for Headliner, left for Unwind</p>" +
+      '<div class="sort-card" id="sorter-card" data-id="' + t.id + '">' + art(t) + '</div></div><div class="pick-title">' + esc(t.title) + "</div>" +
+      '<div class="sort-btns"><button class="cta ghost" data-action="sort-set" data-id="' + t.id + '" data-v="unwind">← Unwind</button><button class="cta" data-action="sort-set" data-id="' + t.id + '" data-v="headliner">Headliner ★ →</button></div>' +
+      '<button class="textbtn" style="align-self:center" data-action="sort-skip" data-id="' + t.id + '">Skip for now</button></section>';
+  }
+  (function () {
+    var g = null;
+    overlay.addEventListener("touchstart", function (e) {
+      var card = e.target.closest && e.target.closest("#sorter-card"); if (!card || e.touches.length !== 1) return;
+      g = { card: card, x: e.touches[0].clientX, y: e.touches[0].clientY, dx: 0, on: false };
+    }, { passive: true });
+    overlay.addEventListener("touchmove", function (e) {
+      if (!g) return;
+      g.dx = e.touches[0].clientX - g.x; var dy = e.touches[0].clientY - g.y;
+      if (!g.on) { if (Math.abs(g.dx) > 8 && Math.abs(g.dx) > Math.abs(dy)) g.on = true; else if (Math.abs(dy) > 10) { g = null; return; } }
+      if (!g.on) return;
+      e.preventDefault(); e.stopPropagation();
+      g.card.style.transition = "none"; g.card.style.transform = "translateX(" + g.dx + "px) rotate(" + (g.dx / 20) + "deg)";
+    }, { passive: false });
+    overlay.addEventListener("touchend", function () {
+      if (!g) return; var c = g.card, dx = g.dx, on = g.on; g = null;
+      if (!on) return;
+      c.style.transition = "transform .22s ease";
+      if (Math.abs(dx) > 90) {
+        c.style.transform = "translateX(" + (dx > 0 ? 420 : -420) + "px) rotate(" + (dx > 0 ? 18 : -18) + "deg)";
+        var id = c.getAttribute("data-id");
+        setTimeout(function () { var t = find(id); if (t) update(t.id, { vibe: dx > 0 ? "headliner" : "unwind" }); renderOverlay(true); }, 200);
+      } else c.style.transform = "";
+    });
   })();
 
   function startLocal() {
@@ -1616,6 +2339,8 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () {});
     startLocal();
+    setTimeout(runEnrichment, 2500);
+    window.addEventListener("online", function () { scheduleEnrichment(); });
   }
   boot();
 })();

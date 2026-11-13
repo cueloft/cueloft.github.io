@@ -2,7 +2,7 @@
 // Opens instantly from the copy saved on the device, then checks GitHub for
 // updates in the background (with a timeout), so a slow or blocked network
 // can never stop the app from opening. New versions show on the next open.
-const CACHE = "cueloft-v8";
+const CACHE = "cueloft-v12";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icons/apple-touch-icon.png", "./icons/icon-192.png", "./icons/icon-512.png"];
 const TIMEOUT_MS = 8000;
 

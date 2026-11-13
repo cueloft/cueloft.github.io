@@ -13,6 +13,8 @@
 - **Search as you type** – start typing a title and pick the right movie, show or game; the type and year fill in for you.
 - **Library** – everything you've logged, with search, filters, sorting and an activity heatmap colored by type.
 - **The Vault** – your all-time favorites, with a ranked top 3 per category, an all-time #1 and a full grid per shelf.
+- **Collections** – movie series and universes in the right order (filled in from Wikidata), plus directors, studios and your own collections.
+- **Pick for me** – can't decide? Choose *Headliner night* or *Time to unwind* and Cueloft picks one movie from your watchlist.
 - **Posters** – one-tap suggestions from Wikipedia, or add your own from Photos; they're resized on the device before saving.
 - **Backfill** – add titles you finished years ago, with a date or "don't remember", one at a time or as a list.
 - **Light & dark mode**, installable to the iPhone Home Screen, works offline.
@@ -27,6 +29,7 @@ Title suggestions use the public [Wikipedia search API](https://www.mediawiki.or
 only the text you type is sent, and titles with short descriptions come back.
 When you pick a title (or tap **Find poster**), Cueloft can offer that page's main image as a poster.
 It's only saved if you tap **Use this poster**, and then it's stored on your device. No artwork is kept in this repo.
+For collections, movie titles are looked up on [Wikidata](https://www.wikidata.org/) (directors, studios, series and release order). Only titles are sent; nothing about you.
 
 ## Install on iPhone
 
