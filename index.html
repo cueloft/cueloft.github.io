@@ -1537,7 +1537,7 @@ html, body { touch-action: manipulation; }
       saveCol();
     }
     lsSet(LS_T, state.titles); writeDays(days);
-    Promise.all(jobs).catch(function () {}).then(function () { render(); });
+    Promise.all(jobs).catch(function () {}).then(function () { pendingP = {}; render(); renderOverlay(); });
     closeOverlay();
     toast("Imported " + count + (count === 1 ? " title" : " titles"));
   }
@@ -2285,7 +2285,8 @@ html, body { touch-action: manipulation; }
       pendingP[id] = 1;
       idbGet(id).then(function (rec) {
         if (rec && rec.buf) { urlCache[id] = URL.createObjectURL(new Blob([rec.buf], { type: rec.type || "image/jpeg" })); render(); }
-      }).catch(function () {});
+        else delete pendingP[id];
+      }).catch(function () { delete pendingP[id]; });
     }
     return null;
   }
