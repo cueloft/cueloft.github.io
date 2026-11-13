@@ -308,10 +308,108 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
 #toast { position: absolute; left: 50%; bottom: calc(94px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(10px); z-index: 60; max-width: calc(100% - 48px); padding: 12px 16px; border-radius: 14px; background: var(--text); color: var(--bg); font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; }
 #toast.show { opacity: 1; transform: translateX(-50%); }
 .loading { padding: 80px 24px; text-align: center; color: var(--text2); }
+
+/* ===== v1.1 refresh ===== */
+:root {
+  --tabglass: rgba(255,255,255,0.52); --glass-rim: rgba(0,0,0,0.07); --glass-hi: rgba(255,255,255,0.95); --lens: rgba(0,0,0,0.06);
+  --sbar: rgba(255,255,255,0.62); --star-off: #c7c7cc;
+  --top-bg: linear-gradient(180deg, rgba(255,150,70,0.42) 0%, rgba(255,180,120,0.22) 15%, rgba(255,255,255,0) 34%);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --tabglass: rgba(28,28,32,0.42); --glass-rim: rgba(255,255,255,0.14); --glass-hi: rgba(255,255,255,0.24); --lens: rgba(255,255,255,0.13);
+  --sbar: rgba(0,0,0,0.5); --star-off: #5a5a5f;
+  --top-bg: radial-gradient(130% 34% at 50% -4%, rgba(255,122,26,0.32), rgba(0,0,0,0) 72%);
+} }
+:root[data-theme="dark"] {
+  --tabglass: rgba(28,28,32,0.42); --glass-rim: rgba(255,255,255,0.14); --glass-hi: rgba(255,255,255,0.24); --lens: rgba(255,255,255,0.13);
+  --sbar: rgba(0,0,0,0.5); --star-off: #5a5a5f;
+  --top-bg: radial-gradient(130% 34% at 50% -4%, rgba(255,122,26,0.32), rgba(0,0,0,0) 72%);
+}
+html { background: var(--top-bg) no-repeat, var(--bg); }
+
+/* status bar glass */
+#sbar { position: absolute; left: 0; right: 0; top: 0; height: env(safe-area-inset-top, 0px); z-index: 15; pointer-events: none; opacity: 0; transition: opacity .2s; background: var(--sbar); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%); }
+#sbar.on { opacity: 1; }
+
+/* liquid glass add button */
+.round.addbtn { background: rgba(255,138,0,0.66); color: #fff; border: 1px solid rgba(255,255,255,0.45); -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.75), inset 0 -3px 8px rgba(150,60,0,0.28), 0 6px 18px rgba(255,120,0,0.35); }
+.round.addbtn svg { filter: drop-shadow(0 1px 1px rgba(120,50,0,0.35)); }
+
+/* header */
+.topbar { padding-top: 14px; }
+.brand-word { font-size: 28px; }
+
+/* pills fill the row */
+.chips .chip { flex: 1 0 auto; justify-content: center; }
+
+/* liquid glass tab bar */
+.tabbar { background: var(--tabglass); -webkit-backdrop-filter: blur(30px) saturate(190%); backdrop-filter: blur(30px) saturate(190%); border: 1px solid var(--glass-rim);
+  box-shadow: inset 0 1px 0 var(--glass-hi), inset 0 -1px 0 rgba(255,255,255,0.04), 0 14px 40px rgba(0,0,0,0.28); padding: 0 6px; }
+.tab { min-width: 96px; min-height: 54px; border-radius: 27px; }
+.tab[aria-current="page"] { background: var(--lens); box-shadow: inset 0 1px 0 var(--glass-hi); }
+
+/* spacing */
+.section-head { padding: 18px 24px 10px; align-items: center; }
+.section-head h2 { display: flex; align-items: center; gap: 8px; }
+.link { min-height: 0; padding: 10px 0 10px 12px; margin: -10px 0; }
+.row { padding: 0 24px 2px; scroll-padding-inline: 24px; }
+.row.three { gap: 12px; }
+.row.three .tile { width: calc((100% - 24px) / 3); }
+.row.three .tile .art { width: 100%; height: auto; aspect-ratio: 2 / 3; }
+.tile-series { font-size: 11px; color: var(--text2); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: -4px; }
+.gtile .tile-series { margin-bottom: -4px; }
+
+/* hero */
+.hero { min-height: 220px; margin-top: 16px; }
+.hero-body { padding-top: 70px; }
+.hero-scrim { background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.5) 42%, rgba(0,0,0,0.92) 100%); }
+
+/* posters: never cropped */
+.art > img.art-blur { object-fit: cover; filter: blur(16px) saturate(1.3); transform: scale(1.25); opacity: 0.9; z-index: 1; }
+.art > img.art-img { object-fit: contain; z-index: 2; }
+
+/* one pill per poster */
+.sticker.dotonly { padding: 0; width: 20px; justify-content: center; }
+
+/* detail */
+.dback { position: sticky; top: calc(12px + env(safe-area-inset-top, 0px)); z-index: 30; height: 0; padding-left: 18px; }
+.glass-btn { background: rgba(20,20,22,0.38); border: 1px solid rgba(255,255,255,0.28); -webkit-backdrop-filter: blur(20px) saturate(180%); backdrop-filter: blur(20px) saturate(180%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 14px rgba(0,0,0,0.25); }
+.detail-art { padding-top: calc(70px + env(safe-area-inset-top, 0px)); }
+.star { color: var(--star-off); }
+.switch[aria-checked="true"] { background: var(--brand); }
+.seg.brandseg button[aria-checked="true"] { background: var(--brand); color: #000; }
+.small-btns.one-row { flex-wrap: nowrap; }
+.small-btns.one-row .sbtn { flex: 1; justify-content: center; padding: 0 10px; }
+.ask { color: var(--brand); font-weight: 600; }
+.sheet.dragging { transition: none !important; }
+.sheet.snap { transition: transform .25s cubic-bezier(.2,.8,.2,1); }
+
+/* library */
+.lib-tools { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 0; font-size: 13px; color: var(--text2); }
+.sortsel { display: inline-flex; align-items: center; gap: 6px; position: relative; color: var(--text); font-weight: 600; font-size: 14px; }
+.sortsel select { position: absolute; inset: 0; opacity: 0; font-size: 16px; }
+.card-head.toggle { border: none; background: none; padding: 0; width: 100%; color: var(--text); text-align: left; cursor: pointer; }
+.card-head .chev { display: inline-flex; align-items: center; gap: 6px; }
+.card-head .chev svg { transition: transform .2s; }
+.card-head[aria-expanded="false"] .chev svg { transform: rotate(-90deg); }
+
+/* vault */
+.pick-card { margin: 18px 24px 0; width: calc(100% - 48px); border: 1.5px dashed #e3bd6e; border-radius: 22px; background: transparent; padding: 22px 20px; text-align: left; display: flex; align-items: center; gap: 14px; color: var(--text); }
+.pick-card b { display: block; font-size: 17px; }
+.pick-card span.hint { display: block; margin-top: 2px; }
+
+/* settings */
+.textbtn.strong { color: var(--brand); }
+.rows-card .sbtn { background: var(--surface2); }
+.rows-card .sbtn.brand { background: var(--brand); color: #000; }
+.warn { color: var(--brand); font-weight: 600; }
+.about a { color: var(--brand); text-decoration: none; }
 </style>
 </head>
 <body>
 <div id="app">
+  <div id="sbar" aria-hidden="true"></div>
   <main id="view"><p class="loading">Opening your loft…</p></main>
   <div id="tabbar-wrap">
     <nav class="tabbar" aria-label="Main">
@@ -341,6 +439,7 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
   var STATUS = ["want", "progress", "done"];
   var MIXED = ["Queue", "In Progress", "Done"];
   var MAX_BYTES = 10 * 1024 * 1024;
+  var APP_VERSION = "1.1";
   var PAL = [["#0d2638", "#9fd3f0"], ["#1f3a2a", "#e9e1cf"], ["#2e2516", "#d9b465"], ["#3d0c10", "#e2402f"], ["#3a1d0c", "#ff8a3d"], ["#4a1430", "#ffb3d1"], ["#1a2a4a", "#9fb8ff"], ["#2a1f3d", "#c9b8ff"], ["#8a4a1c", "#f2c27a"], ["#0b1530", "#d9e6ff"], ["#123b3b", "#7fe0c8"], ["#3b1f12", "#f0a37a"]];
   var I = {
     plus: '<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
@@ -506,68 +605,101 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
       : shape === 1 ? '<span class="art-bar" style="background:' + p[1] + '"></span>'
       : '<span class="art-sq" style="border-color:' + p[1] + '"></span>';
     var psrc = t.poster ? posterSrc(t.poster) : null;
-    var img = psrc ? '<img src="' + psrc + '" alt="">' : "";
+    var img = psrc ? '<img class="art-blur" src="' + psrc + '" alt=""><img class="art-img" src="' + psrc + '" alt="">' : "";
     return '<div class="art ' + (cls || "") + '" style="background:' + p[0] + '">' + sh + '<span class="art-title">' + esc(t.title) + "</span>" + img;
   }
-  function sticker(t) { return '<span class="sticker"><i style="background:var(--' + t.type + ')"></i>' + TYPES[t.type].label + "</span>"; }
+  function pillText(t) {
+    if (t.status === "done") return t.rating ? "★ " + t.rating : TYPES[t.type].st[2];
+    if (t.status === "want") return TYPES[t.type].st[0];
+    if (t.type === "show") return "S" + (t.season || 1) + " E" + ((t.ep || 0) + 1);
+    return TYPES[t.type].st[1];
+  }
+  function pill(t, dotOnly) {
+    if (dotOnly) return '<span class="sticker dotonly" aria-hidden="true"><i style="background:var(--' + t.type + ')"></i></span>';
+    return '<span class="sticker"><i style="background:var(--' + t.type + ')"></i>' + esc(pillText(t)) + "</span>";
+  }
+  function sticker(t) { return pill(t); }
   function progressOf(t) {
     if (t.type === "show" && t.total) return Math.min(1, (t.ep || 0) / t.total);
     return null;
   }
+  function relDay(key) {
+    if (!key) return "";
+    var today = todayKey(), y = new Date(); y.setDate(y.getDate() - 1);
+    if (key === today) return "today";
+    if (key === dayKey(y)) return "yesterday";
+    var p = key.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]);
+    return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  }
+  function gameLine(t) {
+    if (t.lastPlayed) return "Last played " + relDay(t.lastPlayed);
+    if (t.startedOn) return "Started " + relDay(t.startedOn);
+    return "Not started";
+  }
   function metaLine(t) {
     if (t.status === "done") return statusLabel(t.type, "done") + (t.rating ? " · ★ " + t.rating : "");
     if (t.type === "show") return "S" + (t.season || 1) + " · E" + Math.max(1, (t.ep || 0) + (t.status === "progress" ? 1 : 0));
-    if (t.type === "game") return t.status === "progress" ? (t.hours || 0) + " hrs" : TYPES.game.st[0];
+    if (t.type === "game") return t.status === "progress" ? gameLine(t) : TYPES.game.st[0];
     return statusLabel(t.type, t.status);
+  }
+  function nameParts(title) {
+    var i = (title || "").indexOf(": ");
+    if (i > 0 && i < title.length - 2) return { series: title.slice(0, i), main: title.slice(i + 2) };
+    return { series: "", main: title || "" };
+  }
+  function tileName(t) {
+    var np = nameParts(t.title);
+    return (np.series ? '<span class="tile-series">' + esc(np.series) + "</span>" : "") + '<span class="tile-name">' + esc(np.main) + "</span>";
+  }
+  function posterTile(t, opts) {
+    opts = opts || {};
+    var p = progressOf(t);
+    return '<button class="tile" data-action="open" data-id="' + t.id + '" aria-label="' + esc(t.title) + (opts.rank ? ", ranked " + opts.rank : "") + '">' + art(t) +
+      (opts.rank ? '<span class="rank' + (opts.rank === 1 ? " one" : "") + '">' + opts.rank + "</span>" : opts.noPill ? "" : pill(t, opts.dotOnly)) +
+      (opts.bar && p != null ? '<span class="mini-bar"><span style="width:' + Math.round(p * 100) + '%;background:var(--' + t.type + ')"></span></span>' : "") +
+      "</div>" + tileName(t) + (opts.meta ? '<span class="tile-meta">' + esc(metaLine(t)) + "</span>" : "") + "</button>";
   }
 
   /* ---------- views ---------- */
-  function filterChips(current, action, labels) {
-    var opts = [["all", "All"]].concat(TYPE_KEYS.map(function (k) { return [k, labels ? TYPES[k].plural : TYPES[k].plural]; }));
+  function filterChips(current, action) {
+    var opts = [["all", "All"]].concat(TYPE_KEYS.map(function (k) { return [k, TYPES[k].plural]; }));
     return opts.map(function (o) {
       return '<button class="chip" data-action="' + action + '" data-v="' + o[0] + '" aria-pressed="' + (current === o[0]) + '">' + (o[0] !== "all" ? typeDot(o[0]) : "") + o[1] + "</button>";
     }).join("");
   }
+  function addBtn() { return '<button class="round addbtn" data-action="open-add" aria-label="Add a title">' + I.plus + "</button>"; }
 
   function viewNext() {
     var f = state.filter;
     var ok = function (t) { return f === "all" || t.type === f; };
     var prog = state.titles.filter(function (t) { return t.status === "progress" && ok(t); }).sort(byUpdated);
-    var want = state.titles.filter(function (t) { return t.status === "want" && ok(t); }).sort(byCreated);
-    var h = '<div class="topbar"><div class="brand"><span class="brand-word">Cueloft</span><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5l13 7.5-13 7.5z"/></svg></div>' +
-      '<button class="round brand" data-action="open-add" aria-label="Add a title">' + I.plus + "</button></div>" +
-      '<h1 class="h1">Up Next</h1>' + modeNote() +
+    var h = '<h1 class="sr">Up Next</h1><div class="topbar"><div class="brand"><span class="brand-word">Cueloft</span><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5l13 7.5-13 7.5z"/></svg></div>' +
+      addBtn() + "</div>" + modeNote() +
       '<div class="chips" role="group" aria-label="Filter by type">' + filterChips(f, "filter") + "</div>";
     if (!state.titles.length) {
       return h + '<div class="empty"><h2>Your loft is empty</h2><p>Add the first movie, show or game you’re watching, playing, or saving for later.</p><button class="btn-primary" data-action="open-add">' + I.plus + "Add a title</button></div>";
     }
-    if (prog.length) {
-      h += hero(prog[0]);
-    } else {
-      h += '<div class="empty"><h2>Nothing in progress</h2><p>Start something from your ' + (f === "game" ? "backlog" : "watchlist") + ", or add what you’re into right now.</p></div>";
-    }
+    if (prog.length) h += hero(prog[0]);
+    else h += '<div class="empty"><h2>Nothing in progress</h2><p>Start something from your ' + (f === "game" ? "backlog" : "watchlist") + ", or add what you’re into right now.</p></div>";
     if (prog.length > 1) {
-      h += '<div class="section-head"><h2>In Progress</h2><button class="link" data-action="tab" data-tab="library" data-status="progress">See all</button></div><div class="row">' +
-        prog.slice(1).map(function (t) {
-          var p = progressOf(t);
-          return '<button class="tile" data-action="open" data-id="' + t.id + '" aria-label="' + esc(t.title) + '">' + art(t) + sticker(t) +
-            (p != null ? '<span class="mini-bar"><span style="width:' + Math.round(p * 100) + '%;background:var(--' + t.type + ')"></span></span>' : "") + '</div><span class="tile-name">' + esc(t.title) + '</span><span class="tile-meta">' + esc(metaLine(t)) + "</span></button>";
-        }).join("") + "</div>";
+      h += '<div class="section-head"><h2>In Progress</h2><button class="link" data-action="tab" data-tab="library" data-status="progress" data-type="' + f + '">See all</button></div><div class="row three">' +
+        prog.slice(1).map(function (t) { return posterTile(t, { bar: true, meta: true }); }).join("") + "</div>";
     }
-    if (want.length) {
-      var wl = f === "game" ? "Backlog" : f === "all" ? "Watchlist & Backlog" : "Watchlist";
-      h += '<div class="section-head"><h2>' + wl + '</h2><button class="link" data-action="tab" data-tab="library" data-status="want">See all</button></div><div class="row">' +
-        want.map(function (t) {
-          return '<button class="wide" data-action="open" data-id="' + t.id + '" aria-label="' + esc(t.title) + '">' + art(t) + sticker(t) + "</div></button>";
-        }).join("") + "</div>";
-    }
+    TYPE_KEYS.forEach(function (k) {
+      if (f !== "all" && f !== k) return;
+      var items = state.titles.filter(function (t) { return t.type === k && t.status === "want"; }).sort(byCreated);
+      if (!items.length) return;
+      h += '<div class="section-head"><h2>' + typeDot(k) + TYPES[k].plural + " — " + TYPES[k].st[0] + '</h2><button class="link" data-action="tab" data-tab="library" data-status="want" data-type="' + k + '">See all</button></div><div class="row three">' +
+        items.map(function (t) { return posterTile(t, { dotOnly: true }); }).join("") + "</div>";
+    });
     return h;
   }
 
   function hero(t) {
-    var T = TYPES[t.type], meta, prog = null, action;
+    var T = TYPES[t.type], meta, prog = null, action, started = true;
     if (t.type === "show") {
       var s = t.season || 1, e = t.ep || 0, total = t.total || 0;
+      started = e > 0 || s > 1;
       if (total && e >= total) {
         meta = "Season " + s + " finished"; prog = 1;
         action = '<button class="pill" data-action="next-season" data-id="' + t.id + '">Start Season ' + (s + 1) + "</button>";
@@ -577,14 +709,15 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
         action = '<button class="pill" data-action="watched-ep" data-id="' + t.id + '">' + I.check + "Watched E" + (e + 1) + "</button>";
       }
     } else if (t.type === "game") {
-      meta = (t.hours || 0) + " hrs played";
-      action = '<button class="pill" data-action="add-hour" data-id="' + t.id + '">+1 hr played</button>';
+      started = !!(t.lastPlayed || t.startedOn);
+      meta = t.lastPlayed ? "Last played " + relDay(t.lastPlayed) : t.startedOn ? "Started " + relDay(t.startedOn) : "Not started yet";
+      action = '<button class="pill" data-action="played-today" data-id="' + t.id + '">' + I.check + "Played today</button>";
     } else {
       meta = "Movie";
       action = '<button class="pill" data-action="mark-done" data-id="' + t.id + '">' + I.check + "Mark watched</button>";
     }
     return '<div class="hero">' + art(t) + '</div><div class="hero-scrim"></div><div class="hero-body">' +
-      '<div class="eyebrow">' + typeDot(t.type) + esc(T.long.toUpperCase()) + " · CONTINUE</div>" +
+      '<div class="eyebrow">' + typeDot(t.type) + esc(T.long.toUpperCase()) + " · " + (started ? "CONTINUE" : "START") + "</div>" +
       '<h2 class="hero-title">' + esc(t.title) + '</h2><div class="hero-meta">' + esc(meta) + "</div>" +
       (prog != null ? '<div class="bar"><span style="width:' + Math.round(prog * 100) + '%;background:var(--' + t.type + ')"></span></div>' : "") +
       '<div class="hero-actions">' + action + '<button class="pill glassy" data-action="open" data-id="' + t.id + '" aria-label="Details for ' + esc(t.title) + '">' + I.more + "</button></div></div></div>";
@@ -592,11 +725,15 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
 
   function modeNote() {
     if (state.loadNote) return '<p class="note">' + esc(state.loadNote) + "</p>";
-    if (!isStandalone() && !lsGet("cueloft.tipDone", false)) return '<p class="note">Tip: in Safari, tap <b>Share</b> → <b>Add to Home Screen</b> to install Cueloft. <button class="link" data-action="hide-tip" style="min-height:0;padding:0 0 0 4px;color:var(--accent)">Got it</button></p>';
+    if (!isStandalone() && !lsGet("cueloft.tipDone", false)) return '<p class="note">Tip: in Safari, tap <b>Share</b> → <b>Add to Home Screen</b> to install Cueloft. <button class="link" data-action="hide-tip" style="min-height:0;margin:0;padding:0 0 0 4px;color:var(--brand)">Got it</button></p>';
     return "";
   }
 
+  var CHEV = '<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
   function heatmap() {
+    var open = lsGet("cueloft.actOpen", true);
+    var head = '<button class="card-head toggle" data-action="toggle-activity" aria-expanded="' + open + '"><h2>Activity</h2><span class="chev">' + (open ? "Last 6 months" : "Show") + CHEV + "</span></button>";
+    if (!open) return '<section class="card" aria-label="Activity">' + head + "</section>";
     var today = new Date(); today.setHours(0, 0, 0, 0);
     var end = new Date(today); end.setDate(end.getDate() + (6 - today.getDay()));
     var start = new Date(end); start.setDate(start.getDate() - (26 * 7 - 1));
@@ -628,14 +765,29 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
       panel = '<div class="day-panel"><strong>' + esc(fmtDay(state.selectedDay)) + "</strong>" +
         (items.length ? items.map(function (x) { return "<div>" + typeDot(x.ty) + "<span>" + esc(x.n) + " <em>" + esc(x.w) + "</em></span></div>"; }).join("") : "<em>Nothing logged this day.</em>") + "</div>";
     }
-    return '<section class="card" aria-label="Activity"><div class="card-head"><h2>Activity</h2><span>Last 6 months</span></div>' +
+    return '<section class="card" aria-label="Activity">' + head +
       '<div class="heat-scroll"><div class="months" aria-hidden="true">' + months + '</div><div class="heat">' + cells + "</div></div>" +
       '<div class="legend"><span>Tap a day to see what you logged</span><span class="keys"><span>' + typeDot("movie") + "Movie</span><span>" + typeDot("show") + "Show</span><span>" + typeDot("game") + "Game</span></span></div>" + panel + "</section>";
   }
 
+  var SORTS = { added: "Recently added", az: "A–Z", rating: "Rating", finished: "Recently finished" };
+  function sortKeyAZ(t) { return (t.title || "").replace(/^(the|a|an)\s+/i, "").toLowerCase(); }
+  function sortList(list, mode) {
+    var l = list.slice();
+    if (mode === "az") l.sort(function (a, b) { return sortKeyAZ(a) < sortKeyAZ(b) ? -1 : sortKeyAZ(a) > sortKeyAZ(b) ? 1 : 0; });
+    else if (mode === "rating") l.sort(function (a, b) { return (b.rating || 0) - (a.rating || 0) || byCreated(a, b); });
+    else if (mode === "finished") l.sort(function (a, b) { var x = a.doneOn || "", y = b.doneOn || ""; return x < y ? 1 : x > y ? -1 : byCreated(a, b); });
+    else l.sort(byCreated);
+    return l;
+  }
+  function sortSelect(input, current, opts) {
+    return '<label class="sortsel">' + esc(SORTS[current]) + CHEV + '<span class="sr">Sort</span><select data-input="' + input + '">' +
+      opts.map(function (k) { return '<option value="' + k + '"' + (k === current ? " selected" : "") + ">" + SORTS[k] + "</option>"; }).join("") + "</select></label>";
+  }
+
   function viewLibrary() {
     var c = { movie: 0, show: 0, game: 0 }; state.titles.forEach(function (t) { c[t.type]++; });
-    var h = '<div class="head"><h1>Library</h1><div class="head-actions"><button class="round" data-action="open-settings" aria-label="Settings">' + I.gear + '</button><button class="round brand" data-action="open-add" aria-label="Add a title">' + I.plus + "</button></div></div>" + modeNote() +
+    var h = '<div class="head"><h1>Library</h1><div class="head-actions"><button class="round" data-action="open-settings" aria-label="Settings">' + I.gear + "</button>" + addBtn() + "</div></div>" + modeNote() +
       '<div class="stats">' + TYPE_KEYS.map(function (k) {
         return '<button class="stat" data-action="lib-type" data-v="' + (state.libType === k ? "all" : k) + '" aria-pressed="' + (state.libType === k) + '"><b>' + c[k] + "</b><span>" + typeDot(k) + TYPES[k].plural + "</span></button>";
       }).join("") + "</div>" + heatmap();
@@ -646,54 +798,51 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
       return '<button class="chip" data-action="lib-status" data-v="' + o[0] + '" aria-pressed="' + (state.libStatus === o[0]) + '">' + o[1] + "</button>";
     }).join("") + "</div>";
     var q = state.search.trim().toLowerCase();
-    var list = state.titles.filter(function (t) {
+    var list = sortList(state.titles.filter(function (t) {
       return (state.libType === "all" || t.type === state.libType) && (state.libStatus === "all" || t.status === state.libStatus) && (!q || (t.title || "").toLowerCase().indexOf(q) >= 0);
-    }).sort(byUpdated);
-    if (!state.titles.length) h += '<div class="empty"><h2>Nothing here yet</h2><p>Everything you add shows up in your library.</p><button class="btn-primary" data-action="open-add">' + I.plus + "Add a title</button></div>";
-    else if (!list.length) h += '<p class="muted">No titles match. Try another filter or search.</p>';
-    else h += '<div class="grid">' + list.map(function (t) {
-      var p = progressOf(t), badge = "";
-      if (t.status === "done" && t.rating) badge = '<span class="badge">★ ' + t.rating + "</span>";
-      else if (t.status === "want") badge = '<span class="badge">' + esc(statusLabel(t.type, "want")) + "</span>";
-      return '<button class="gtile" data-action="open" data-id="' + t.id + '" aria-label="' + esc(t.title) + '">' + art(t) + sticker(t) + badge +
+    }), state.libSort);
+    if (!state.titles.length) return h + '<div class="empty"><h2>Nothing here yet</h2><p>Everything you add shows up in your library.</p><button class="btn-primary" data-action="open-add">' + I.plus + "Add a title</button></div>";
+    h += '<div class="lib-tools"><span>' + list.length + (list.length === 1 ? " title" : " titles") + "</span>" + sortSelect("lib-sort", state.libSort, ["added", "az", "rating", "finished"]) + "</div>";
+    if (!list.length) return h + '<p class="muted">No titles match. Try another filter or search.</p>';
+    return h + '<div class="grid">' + list.map(function (t) {
+      var p = progressOf(t);
+      return '<button class="gtile" data-action="open" data-id="' + t.id + '" aria-label="' + esc(t.title) + '">' + art(t) + pill(t) +
         (t.status === "progress" && p != null ? '<span class="mini-bar"><span style="width:' + Math.round(p * 100) + '%;background:var(--' + t.type + ')"></span></span>' : "") +
-        '</div><span class="tile-name">' + esc(t.title) + "</span></button>";
+        "</div>" + tileName(t) + "</button>";
     }).join("") + "</div>";
-    return h;
   }
 
+  function vaultSorted(k) {
+    return state.titles.filter(function (t) { return t.fav && t.type === k; }).sort(function (a, b) {
+      var ra = a.favRank || 99, rb = b.favRank || 99; return ra - rb || byUpdated(a, b);
+    });
+  }
+  var STAR14 = '<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>';
   function viewVault() {
     var favs = state.titles.filter(function (t) { return t.fav; });
     var top = state.titles.filter(function (t) { return t.allTime; })[0];
     var h = '<div class="head"><div class="vault-title">' + I.vault + "<h1>The Vault</h1></div></div>" +
-      '<p class="subtitle">Your all-time favorites. Top 3 ranked, no limit after that.</p>';
+      '<p class="subtitle">Your all-time favorites.</p>';
+    if (!favs.length) return h + '<div class="empty"><h2>Your Vault is empty</h2><p>Open any title and tap “Add to Vault” to keep it here forever.</p></div>';
     if (top) {
       h += '<button class="vault-hero" data-action="open" data-id="' + top.id + '">' + art(top) + '</div><div class="shade"></div><div class="vbody">' +
-        '<div class="eyebrow gold"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg>ALL-TIME #1</div>' +
+        '<div class="eyebrow gold">' + STAR14 + "ALL-TIME #1</div>" +
         '<div><div class="vh-title">' + esc(top.title) + "</div>" + (top.favWhy ? '<div class="vh-why">' + esc(top.favWhy) + "</div>" : "") + "</div></div></button>";
-    } else if (favs.length) {
-      h += '<p class="note">Open any favorite and turn on “All-time #1” to feature it here.</p>';
-    }
-    if (!favs.length) {
-      return h + '<div class="empty"><h2>Your Vault is empty</h2><p>Open any title and tap “Add to Vault” to keep it here forever.</p></div>';
+    } else {
+      h += '<button class="pick-card" data-action="open-picker"><span class="gold">' + STAR14.replace('width="14" height="14"', 'width="28" height="28"') + "</span><span><b>Pick your all-time #1</b><span class=\"hint\">Choose from your favorites</span></span></button>";
     }
     TYPE_KEYS.forEach(function (k) {
-      var items = favs.filter(function (t) { return t.type === k; }).sort(function (a, b) {
-        var ra = a.favRank || 99, rb = b.favRank || 99; return ra - rb || byUpdated(a, b);
-      });
-      h += '<div class="section-head"><h2>' + TYPES[k].plural + '</h2><span class="count">' + items.length + (items.length === 1 ? " favorite" : " favorites") + "</span></div>";
-      if (!items.length) { h += '<div class="row"><div class="shelf-empty">No favorite ' + TYPES[k].plural.toLowerCase() + " yet. Add one from its page.</div></div>"; return; }
-      h += '<div class="row">' + items.map(function (t) {
-        var r = t.favRank ? '<span class="rank' + (t.favRank === 1 ? " one" : "") + '">' + t.favRank + "</span>" : "";
-        return '<button class="tile" data-action="open" data-id="' + t.id + '" aria-label="' + esc(t.title) + (t.favRank ? ", ranked " + t.favRank : "") + '">' + art(t) + r + '</div><span class="tile-name">' + esc(t.title) + "</span></button>";
-      }).join("") + "</div>";
+      var items = vaultSorted(k);
+      if (!items.length) return;
+      h += '<div class="section-head"><h2>' + typeDot(k) + TYPES[k].plural + '</h2><button class="link" data-action="open-shelf" data-v="' + k + '">' + items.length + " · See all</button></div>" +
+        '<div class="row three">' + items.map(function (t) { return posterTile(t, { rank: t.favRank || 0, noPill: true }); }).join("") + "</div>";
     });
     return h;
   }
 
   /* ---------- overlays ---------- */
-  function seg(action, id, current, labels, values) {
-    return '<div class="seg" role="radiogroup">' + values.map(function (v, i) {
+  function seg(action, id, current, labels, values, cls) {
+    return '<div class="seg' + (cls ? " " + cls : "") + '" role="radiogroup">' + values.map(function (v, i) {
       return '<button role="radio" data-action="' + action + '" data-id="' + (id || "") + '" data-v="' + v + '" aria-checked="' + (current === v) + '">' + esc(labels[i]) + "</button>";
     }).join("") + "</div>";
   }
@@ -710,7 +859,7 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
       '<div class="poster-row">' +
       (state.canPoster ? '<label class="poster-slot file-label">' + slot + '<input type="file" accept="image/*" data-input="add-poster" aria-label="Add poster from Photos"></label>' : '<div class="poster-slot" aria-hidden="true">' + slot + "</div>") +
       '<div class="poster-side">' +
-      '<p class="hint">' + (state.canPoster ? "Pick an image or screenshot from Photos. Skip it for a color card." : "Posters can be added when you open Cueloft signed in to your account.") + "</p>" +
+      '<p class="hint">' + (state.canPoster ? "Pick an image or screenshot from Photos. Skip it for a color card." : "Posters aren’t available in this browser.") + "</p>" +
       (state.canPoster ? '<p class="limit">' + I.shield + "JPG, PNG or HEIC · up to 10 MB · auto-shrunk</p>" : "") + "</div></div>") +
       '<div class="group"><span class="field-label">Type</span><div class="types">' + TYPE_KEYS.map(function (k) {
         return '<button class="type-tile" data-action="add-type" data-v="' + k + '" aria-pressed="' + (a.type === k) + '">' + I[k] + TYPES[k].long + "</button>";
@@ -725,51 +874,98 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
       '<button class="cta" data-action="save-add"' + (a.busy ? " disabled" : "") + ">" + I.plus + esc(a.busy ? "Adding…" : verb) + "</button></section>";
   }
 
+  function whenMode(t) {
+    if (state.askWhen === t.id) return "";
+    if (state.dateMode && state.dateMode.id === t.id) return state.dateMode.v;
+    return !t.doneOn ? "unknown" : t.doneOn === todayKey() ? "today" : "earlier";
+  }
   function detailSheet(t) {
     var T = TYPES[t.type];
     var h = '<div class="scrim"></div><section class="sheet detail" role="dialog" aria-modal="true" aria-label="' + esc(t.title) + '">' +
+      '<div class="dback"><button class="glass-btn" data-action="close" aria-label="Back">' + I.back + "</button></div>" +
       '<div class="detail-art">' + (t.poster && posterSrc(t.poster) ? '<img class="detail-bg" src="' + posterSrc(t.poster) + '" alt="">' : '<div class="detail-bg" style="background:' + PAL[hash((t.title || "") + (t.id || "")) % PAL.length][0] + '"></div>') +
-      '<div class="fade"></div><div class="case"><div class="case-inner"><div class="case-plate">' + esc(statusLabel(t.type, t.status)) + '</div><div class="detail-poster">' + art(t) + '</div></div><span class="case-lock" aria-hidden="true"></span></div></div><div class="detail-top"><button class="glass-btn" data-action="close" aria-label="Back">' + I.back + "</button></div></div>" +
+      '<div class="fade"></div><div class="case"><div class="case-inner"><div class="case-plate">' + esc(statusLabel(t.type, t.status)) + '</div><div class="detail-poster">' + art(t) + '</div></div><span class="case-lock" aria-hidden="true"></span></div></div></div>' +
       '<div class="detail-body"><div class="group" style="gap:6px"><div class="eyebrow" style="color:var(--text2)">' + typeDot(t.type) + esc(T.long.toUpperCase() + (t.year ? " · " + t.year : "")) + "</div>" +
       '<label class="sr" for="d-title">Title</label><textarea id="d-title" class="title-input" rows="1" data-input="d-title" data-id="' + t.id + '">' + esc(t.title) + '</textarea></div>' +
       seg("d-status", t.id, t.status, T.st, STATUS);
+    if (t.status === "done") {
+      var m = whenMode(t);
+      h += '<div class="group"><span class="field-label' + (state.askWhen === t.id ? " ask" : "") + '">' + (state.askWhen === t.id ? "When did you finish?" : T.dateLabel) + "</span>" +
+        seg("d-when", t.id, m, ["Today", "Pick a date", "Don’t remember"], ["today", "earlier", "unknown"]) +
+        (m === "earlier" ? '<div class="rows-card"><label class="rc-row"><span>Date</span><input type="date" max="' + todayKey() + '" data-input="d-date" data-id="' + t.id + '" value="' + esc(t.doneOn || "") + '"></label></div>' : "") +
+        (m === "unknown" ? '<p class="hint">No date, so it won’t show on your activity heatmap.</p>' : "") + "</div>";
+    }
     if (t.type === "show") {
       h += '<div class="steppers"><div class="stepper"><span>Season <b>' + (t.season || 1) + '</b></span><div><button data-action="d-step" data-id="' + t.id + '" data-f="season" data-d="-1" aria-label="Previous season">−</button><button data-action="d-step" data-id="' + t.id + '" data-f="season" data-d="1" aria-label="Next season">+</button></div></div>' +
         '<div class="stepper"><span>Watched <b>' + (t.ep || 0) + '</b></span><div><button data-action="d-step" data-id="' + t.id + '" data-f="ep" data-d="-1" aria-label="One fewer episode watched">−</button><button data-action="d-step" data-id="' + t.id + '" data-f="ep" data-d="1" aria-label="One more episode watched">+</button></div></div></div>' +
         '<div class="rows-card"><label class="rc-row"><span>Episodes this season</span><input type="number" inputmode="numeric" min="0" max="999" placeholder="Unknown" data-input="d-total" data-id="' + t.id + '" value="' + (t.total || "") + '"></label></div>';
     }
-    if (t.type === "game") {
-      h += '<div class="steppers"><div class="stepper" style="grid-column: span 2"><span>Hours played <b>' + (t.hours || 0) + '</b></span><div><button data-action="d-step" data-id="' + t.id + '" data-f="hours" data-d="-1" aria-label="One hour less">−</button><button data-action="d-step" data-id="' + t.id + '" data-f="hours" data-d="1" aria-label="One more hour">+</button></div></div></div>';
+    if (t.type === "game" && t.status !== "done") {
+      h += '<div class="rows-card"><div class="rc-row"><span>' + esc(t.lastPlayed ? "Last played" : t.startedOn ? "Started" : "Progress") + '</span><span class="hint">' + esc(t.lastPlayed ? relDay(t.lastPlayed) : t.startedOn ? relDay(t.startedOn) : "Not started yet") + "</span></div>" +
+        '<div class="rc-col"><div class="small-btns"><button class="sbtn brand" data-action="played-today" data-id="' + t.id + '">' + I.check + "Played today</button></div></div></div>";
     }
     h += '<div class="group"><span class="field-label">Your rating</span><div class="stars" role="group" aria-label="Rating">' + [1, 2, 3, 4, 5].map(function (n) {
       return '<button class="star" data-action="d-rate" data-id="' + t.id + '" data-v="' + n + '" data-on="' + ((t.rating || 0) >= n) + '" aria-label="' + n + (n === 1 ? " star" : " stars") + '" aria-pressed="' + (t.rating === n) + '">' + I.star + "</button>";
     }).join("") + "</div></div>";
-    h += '<div class="rows-card">' + (t.status === "done" ? '<label class="rc-row"><span>' + T.dateLabel + (t.doneOn ? "" : ' <span class="hint">(not set)</span>') + '</span><input type="date" max="' + todayKey() + '" data-input="d-date" data-id="' + t.id + '" value="' + esc(t.doneOn || "") + '"></label>' : "") +
-      '<div class="rc-col"><label for="d-notes">Notes</label><textarea id="d-notes" data-input="d-notes" data-id="' + t.id + '" placeholder="What did you think?" rows="3">' + esc(t.notes || "") + "</textarea></div></div>";
+    h += '<div class="rows-card"><div class="rc-col"><label for="d-notes">Notes</label><textarea id="d-notes" data-input="d-notes" data-id="' + t.id + '" placeholder="What did you think?" rows="3">' + esc(t.notes || "") + "</textarea></div></div>";
     h += '<div class="group"><span class="field-label">The Vault</span><div class="rows-card">' +
       '<div class="rc-row"><span id="fav-l">Add to Vault</span><button class="switch" role="switch" aria-labelledby="fav-l" aria-checked="' + !!t.fav + '" data-action="d-fav" data-id="' + t.id + '"></button></div>' +
-      (t.fav ? '<div class="rc-col"><span>Rank among ' + TYPES[t.type].plural.toLowerCase() + "</span>" + seg("d-rank", t.id, String(t.favRank || 0), ["Unranked", "#1", "#2", "#3"], ["0", "1", "2", "3"]) + "</div>" +
+      (t.fav ? '<div class="rc-col"><span>Rank among ' + TYPES[t.type].plural.toLowerCase() + "</span>" + seg("d-rank", t.id, String(t.favRank || 0), ["Unranked", "#1", "#2", "#3"], ["0", "1", "2", "3"], "brandseg") + "</div>" +
         '<div class="rc-row"><span id="all-l">All-time #1</span><button class="switch" role="switch" aria-labelledby="all-l" aria-checked="' + !!t.allTime + '" data-action="d-alltime" data-id="' + t.id + '"></button></div>' +
         (t.allTime ? '<div class="rc-col"><label for="d-why">Why it’s your favorite</label><textarea id="d-why" data-input="d-why" data-id="' + t.id + '" rows="2" placeholder="One line about why it matters">' + esc(t.favWhy || "") + "</textarea></div>" : "") : "") +
       "</div></div>";
-    h += '<div class="group"><span class="field-label">Poster</span><div class="small-btns">' + (state.canPoster ? '<button class="sbtn" data-action="d-find" data-id="' + t.id + '">Find poster</button>' : "") +
-      (state.canPoster ? '<label class="sbtn file-label">' + (t.poster ? "Change poster" : "Add poster") + '<input type="file" accept="image/*" data-input="d-poster" data-id="' + t.id + '" aria-label="Choose a poster from Photos"></label>' : '<span class="hint">Posters can be added when you open Cueloft signed in to your account.</span>') +
-      (t.poster && state.canPoster ? '<button class="sbtn" data-action="d-unposter" data-id="' + t.id + '">Remove poster</button>' : "") + "</div>" +
-      (state.canPoster ? '<p class="limit">' + I.shield + "JPG, PNG or HEIC · up to 10 MB · auto-shrunk</p>" : "") + detailOfferHTML(t) + "</div>";
+    if (state.canPoster) {
+      h += '<div class="group"><span class="field-label">Poster</span><div class="small-btns one-row"><button class="sbtn" data-action="d-find" data-id="' + t.id + '">Find</button>' +
+        '<label class="sbtn file-label">' + (t.poster ? "Change" : "Add") + '<input type="file" accept="image/*" data-input="d-poster" data-id="' + t.id + '" aria-label="Choose a poster from Photos"></label>' +
+        (t.poster ? '<button class="sbtn" data-action="d-unposter" data-id="' + t.id + '">Remove</button>' : "") + "</div>" +
+        '<p class="limit">' + I.shield + "JPG, PNG or HEIC · up to 10 MB · auto-shrunk</p>" + detailOfferHTML(t) + "</div>";
+    }
     h += '<div class="small-btns"><button class="sbtn danger" data-action="d-delete" data-id="' + t.id + '">' + (state.confirmDelete ? "Tap again to delete" : "Delete from library") + "</button></div></div></section>";
     return h;
   }
 
+  function backupLine() {
+    var last = lsGet("cueloft.lastBackup", null);
+    if (!last) return state.titles.length ? '<span class="warn">No backup yet</span>' : "No backup yet";
+    var days = Math.floor((Date.now() - new Date(last).getTime()) / 86400000);
+    var txt = "Last backup: " + (days <= 0 ? "today" : days === 1 ? "yesterday" : days + " days ago");
+    return days > 30 ? '<span class="warn">' + txt + "</span>" : txt;
+  }
   function settingsSheet() {
     var pref = getThemePref();
     return '<div class="scrim" data-action="close"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="set-h">' +
       '<div class="grabber"></div><div class="sheet-head"><span style="width:52px"></span><h2 id="set-h">Settings</h2><button class="textbtn strong" data-action="close">Done</button></div>' +
       '<div class="group"><span class="field-label">Appearance</span>' + seg("theme", "", pref, ["Automatic", "Light", "Dark"], ["auto", "light", "dark"]) + "</div>" +
-      '<div class="group"><span class="field-label">Backup</span><div class="rows-card"><div class="rc-col"><span>Save your library and posters to a file, or bring a backup back in. Use Import to move your library over from the earlier Claude version.</span>' +
-      '<div class="small-btns">' + (state.exportReady ? '<button class="sbtn" data-action="export-save">Save backup file</button>' : '<button class="sbtn" data-action="export">' + (state.exporting ? "Preparing…" : "Export backup") + "</button>") +
-      '<label class="sbtn file-label">Import backup<input type="file" accept=".json,application/json" data-input="import" aria-label="Import a Cueloft backup file"></label></div></div></div></div>' +
-      '<div class="group"><span class="field-label">Storage</span><div class="rows-card"><div class="rc-row"><span>Library</span><span class="hint">' +
-      "Saved privately on this device" + '</span></div><div class="rc-row"><span>Posters</span><span class="hint" id="usage">' + (state.canPoster ? "Checking…" : "Off in this view") + "</span></div></div></div></section>";
+      '<div class="group"><span class="field-label">Backup</span><div class="rows-card"><div class="rc-col"><span>Save your library and posters to a file, or restore from a backup.</span>' +
+      '<div class="small-btns" style="margin-top:6px">' + (state.exportReady ? '<button class="sbtn brand" data-action="export-save">Save backup file</button>' : '<button class="sbtn brand" data-action="export">' + (state.exporting ? "Preparing…" : "Export backup") + "</button>") +
+      '<label class="sbtn file-label">Import backup<input type="file" accept=".json,application/json" data-input="import" aria-label="Import a Cueloft backup file"></label></div>' +
+      '<span class="hint" style="margin-top:4px">' + backupLine() + "</span></div></div></div>" +
+      '<div class="group"><span class="field-label">Storage</span><div class="rows-card"><div class="rc-row"><span>Library</span><span class="hint">Saved privately on this device</span></div>' +
+      '<div class="rc-row"><span>Posters</span><span class="hint" id="usage">' + (state.canPoster ? "Checking…" : "Off") + "</span></div></div></div>" +
+      '<div class="group about"><span class="field-label">About</span><div class="rows-card"><div class="rc-row"><span>Version</span><span class="hint">' + APP_VERSION + "</span></div>" +
+      '<div class="rc-col"><span class="hint">Names and posters from <a href="https://www.wikipedia.org/" target="_blank" rel="noopener">Wikipedia</a> (CC BY-SA). Your library never leaves this device.</span></div></div></div></section>';
+  }
+
+  function shelfSheet() {
+    var k = state.shelfType, items = vaultSorted(k);
+    var ranked = items.filter(function (t) { return t.favRank; }), rest = sortList(items.filter(function (t) { return !t.favRank; }), state.shelfSort);
+    return '<div class="scrim"></div><section class="sheet detail" role="dialog" aria-modal="true" aria-labelledby="shelf-h">' +
+      '<div class="dback"><button class="glass-btn" data-action="close" aria-label="Back">' + I.back + "</button></div>" +
+      '<div class="head" style="padding-top:calc(72px + env(safe-area-inset-top, 0px))"><h1 id="shelf-h" style="display:flex;align-items:center;gap:10px">' + typeDot(k, 12) + TYPES[k].plural + "</h1></div>" +
+      '<div class="lib-tools"><span>' + items.length + (items.length === 1 ? " favorite" : " favorites") + "</span>" + sortSelect("shelf-sort", state.shelfSort, ["added", "az", "rating"]) + "</div>" +
+      '<div class="grid">' + ranked.concat(rest).map(function (t) {
+        return '<button class="gtile" data-action="open" data-id="' + t.id + '" aria-label="' + esc(t.title) + (t.favRank ? ", ranked " + t.favRank : "") + '">' + art(t) +
+          (t.favRank ? '<span class="rank' + (t.favRank === 1 ? " one" : "") + '">' + t.favRank + "</span>" : "") + "</div>" + tileName(t) + "</button>";
+      }).join("") + "</div><div style=\"height:40px\"></div></section>";
+  }
+
+  function pickerSheet() {
+    var favs = state.titles.filter(function (t) { return t.fav; }).sort(function (a, b) { return (a.favRank || 99) - (b.favRank || 99) || byUpdated(a, b); });
+    return '<div class="scrim" data-action="close"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="pick-h">' +
+      '<div class="grabber"></div><div class="sheet-head"><button class="textbtn" data-action="close">Cancel</button><h2 id="pick-h">Pick your all-time #1</h2><span style="width:52px"></span></div>' +
+      '<div class="grid" style="padding:0">' + favs.map(function (t) {
+        return '<button class="gtile" data-action="pick-at" data-id="' + t.id + '" aria-label="Make ' + esc(t.title) + ' your all-time #1">' + art(t) + pill(t, true) + "</div>" + tileName(t) + "</button>";
+      }).join("") + "</div></section>";
   }
 
   /* ---------- render ---------- */
@@ -780,6 +976,7 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
     view.innerHTML = state.view === "library" ? viewLibrary() : state.view === "vault" ? viewVault() : viewNext();
     document.querySelectorAll(".tab").forEach(function (b) { if (b.dataset.tab === state.view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
     view.scrollTop = y;
+    updateSbar();
     renderOverlay();
   }
   var pointerDown = false, pendingOverlay = false;
@@ -803,6 +1000,8 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
       overlay.innerHTML = detailSheet(t);
     } else if (state.overlay === "add") overlay.innerHTML = addSheet();
     else if (state.overlay === "settings") { overlay.innerHTML = settingsSheet(); loadUsage(); }
+    else if (state.overlay === "shelf") overlay.innerHTML = shelfSheet();
+    else if (state.overlay === "picker") overlay.innerHTML = pickerSheet();
     document.body.style.overflow = "hidden";
     var ns = overlay.querySelector(".sheet"); if (ns && st) ns.scrollTop = st;
     overlay.querySelectorAll("textarea.title-input").forEach(autosize);
@@ -815,6 +1014,11 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
   }
   function closeOverlay() {
     var a = document.activeElement; if (a && overlay.contains(a)) a.blur();
+    if (state.overlay === "detail" && state.backTo === "shelf") {
+      state.backTo = null; state.overlay = "shelf"; state.detailId = null; state.confirmDelete = false; state.detailOffer = null; state.askWhen = null; state.dateMode = null;
+      renderOverlay(true); render(); return;
+    }
+    state.backTo = null; state.askWhen = null; state.dateMode = null;
     state.overlay = null; state.detailId = null; state.add = null; state.confirmDelete = false; state.suggest = null; state.exportReady = null; state.exporting = false; state.detailOffer = null;
     renderOverlay(true); render();
   }
@@ -850,13 +1054,13 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
     switch (a) {
       case "tab":
         state.view = el.dataset.tab;
-        if (el.dataset.status) { state.libStatus = el.dataset.status; state.libType = state.filter; }
+        if (el.dataset.status) { state.libStatus = el.dataset.status; state.libType = el.dataset.type || state.filter; }
         render(); view.scrollTop = 0; break;
       case "filter": state.filter = v; render(); break;
       case "lib-type": state.libType = v; render(); break;
       case "lib-status": state.libStatus = v; render(); break;
       case "day": state.selectedDay = state.selectedDay === el.dataset.day ? null : el.dataset.day; render(); break;
-      case "open": state.detailId = id; openOverlay("detail"); break;
+      case "open": state.backTo = state.overlay === "shelf" ? "shelf" : null; state.detailId = id; openOverlay("detail"); break;
       case "open-add":
         state.add = { title: "", type: "movie", status: "want", season: 1, ep: 0, blob: null, preview: null, busy: false, when: "today", date: "", bulk: false, bulkText: "" };
         state.suggest = null; openOverlay("add"); break;
@@ -880,7 +1084,23 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
       case "next-season": if (t) { update(t.id, { season: (t.season || 1) + 1, ep: 0, total: 0 }); toast("Season " + ((t.season || 1) + 1) + " is up next"); } break;
       case "add-hour": if (t) { update(t.id, { hours: (t.hours || 0) + 1, status: "progress" }, "Played 1 hr"); toast("Logged an hour of " + t.title); } break;
       case "mark-done": if (t) { setStatus(t, "done"); toast("Marked " + t.title + " watched"); } break;
-      case "d-status": if (t) setStatus(t, v); break;
+      case "d-status": if (t) setStatus(t, v, true); break;
+      case "d-when": if (t) {
+        var today0 = todayKey();
+        if (v === "today") { moveDone(t, t.doneOn || "", today0); state.askWhen = null; state.dateMode = null; update(t.id, { doneOn: today0 }); }
+        else if (v === "unknown") { moveDone(t, t.doneOn || "", ""); state.askWhen = null; state.dateMode = null; update(t.id, { doneOn: "" }); }
+        else { state.askWhen = null; state.dateMode = { id: t.id, v: "earlier" }; renderOverlay(true); }
+      } break;
+      case "played-today": if (t) {
+        var tk = todayKey();
+        if (t.lastPlayed === tk) { toast("Already logged for today"); break; }
+        update(t.id, { status: "progress", lastPlayed: tk, startedOn: t.startedOn || tk }, "Played");
+        toast("Logged " + t.title + " for today");
+      } break;
+      case "toggle-activity": lsSet("cueloft.actOpen", !lsGet("cueloft.actOpen", true)); render(); break;
+      case "open-shelf": state.shelfType = v; state.shelfSort = state.shelfSort || "added"; openOverlay("shelf"); break;
+      case "open-picker": openOverlay("picker"); break;
+      case "pick-at": if (t) { setAllTime(t, true); closeOverlay(); toast(t.title + " is your all-time #1"); } break;
       case "d-step": if (t) {
         var fld = el.dataset.f, dd = +el.dataset.d, cur = t[fld] || (fld === "season" ? 1 : 0);
         var nv = Math.max(fld === "season" ? 1 : 0, cur + dd), patch = {}; patch[fld] = nv;
@@ -903,7 +1123,7 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
       case "export": exportBackup(); break;
       case "export-save": {
         var ex = state.exportReady; if (!ex) break;
-        store.downloads.save(ex).then(function () { state.exportReady = null; toast("Backup saved"); renderOverlay(true); }, function (e2) { if (!(e2 && e2.code === "declined")) toast("Couldn’t save the file. Try again."); });
+        store.downloads.save(ex).then(function () { state.exportReady = null; lsSet("cueloft.lastBackup", new Date().toISOString()); toast("Backup saved"); renderOverlay(true); }, function (e2) { if (!(e2 && e2.code === "declined")) toast("Couldn’t save the file. Try again."); });
         break;
       }
       case "hide-tip": lsSet("cueloft.tipDone", true); render(); break;
@@ -961,8 +1181,10 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
     if (k === "d-why" && t && el.value !== (t.favWhy || "")) update(t.id, { favWhy: el.value });
     if (k === "d-total" && t) { var n = Math.max(0, Math.min(999, parseInt(el.value, 10) || 0)); if (n !== (t.total || 0)) update(t.id, { total: n }); }
     if (k === "add-date" && state.add) state.add.date = el.value;
+    if (k === "lib-sort") { state.libSort = el.value; lsSet("cueloft.libSort", el.value); render(); }
+    if (k === "shelf-sort") { state.shelfSort = el.value; renderOverlay(true); }
     if (k === "import" && el.files && el.files[0]) { var fr = new FileReader(); fr.onload = function () { importBackup(String(fr.result)); }; fr.readAsText(el.files[0]); el.value = ""; }
-    if (k === "d-date" && t && el.value !== (t.doneOn || "")) { moveDone(t, t.doneOn || "", el.value); update(t.id, { doneOn: el.value }); }
+    if (k === "d-date" && t && el.value !== (t.doneOn || "")) { moveDone(t, t.doneOn || "", el.value); state.dateMode = null; update(t.id, { doneOn: el.value }); }
     if (k === "add-poster" && state.add && el.files && el.files[0]) {
       processImage(el.files[0]).then(function (r) { if (!state.add) return; state.add.blob = r.blob; state.add.preview = r.preview; renderOverlay(true); }, function (err) { toast(err.msg || "Couldn’t use that image."); });
     }
@@ -988,10 +1210,13 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
     var t = e.target; if (t && t.tagName === "IMG" && t.hasAttribute("data-poster")) t.remove();
   }, true);
 
-  function setStatus(t, s) {
+  function setStatus(t, s, ask) {
     if (t.status === s) return;
     var patch = { status: s }, log = null;
-    if (s === "done") { patch.doneOn = t.doneOn || todayKey(); log = TYPES[t.type].done; }
+    if (s === "done") {
+      if (ask && !t.doneOn) { patch.doneOn = ""; state.askWhen = t.id; }
+      else { patch.doneOn = t.doneOn || todayKey(); if (!t.doneOn) log = TYPES[t.type].done; }
+    }
     if (s === "progress" && t.type === "show" && !t.season) patch.season = 1;
     update(t.id, patch, log);
   }
@@ -1209,7 +1434,48 @@ textarea.input { height: auto; min-height: 84px; padding: 12px 14px; resize: ver
   }
 
   /* ---------- boot ---------- */
+  function updateSbar() { var sb = document.getElementById("sbar"); if (sb) sb.classList.toggle("on", view.scrollTop > 6); }
+  view.addEventListener("scroll", updateSbar, { passive: true });
+
+  /* ---------- gestures: swipe back from the left edge, swipe down to close ---------- */
+  (function () {
+    var g = null;
+    overlay.addEventListener("touchstart", function (e) {
+      var sh = overlay.querySelector(".sheet"); if (!sh || e.touches.length !== 1) return;
+      var tch = e.touches[0];
+      var full = sh.classList.contains("detail");
+      g = { sh: sh, x: tch.clientX, y: tch.clientY, edge: full && tch.clientX < 28, top: sh.scrollTop <= 0, mode: null, dx: 0, dy: 0 };
+    }, { passive: true });
+    overlay.addEventListener("touchmove", function (e) {
+      if (!g) return;
+      var tch = e.touches[0]; g.dx = tch.clientX - g.x; g.dy = tch.clientY - g.y;
+      if (!g.mode) {
+        if (g.edge && g.dx > 8 && Math.abs(g.dx) > Math.abs(g.dy)) g.mode = "x";
+        else if (g.top && g.dy > 8 && Math.abs(g.dy) > Math.abs(g.dx) && g.sh.scrollTop <= 0) g.mode = "y";
+        else if (Math.abs(g.dx) > 10 || Math.abs(g.dy) > 10) { g = null; return; }
+        if (g && g.mode) { g.sh.classList.add("dragging"); g.sh.classList.remove("snap"); }
+      }
+      if (!g || !g.mode) return;
+      e.preventDefault();
+      if (g.mode === "x") g.sh.style.transform = "translateX(" + Math.max(0, g.dx) + "px)";
+      else g.sh.style.transform = "translateY(" + Math.max(0, g.dy * 0.9) + "px)";
+    }, { passive: false });
+    function end() {
+      if (!g || !g.mode) { g = null; return; }
+      var sh = g.sh, done = g.mode === "x" ? g.dx > 90 : g.dy > 120;
+      sh.classList.remove("dragging"); sh.classList.add("snap");
+      if (done) {
+        sh.style.transform = g.mode === "x" ? "translateX(100%)" : "translateY(100%)";
+        setTimeout(function () { closeOverlay(); }, 200);
+      } else sh.style.transform = "";
+      g = null;
+    }
+    overlay.addEventListener("touchend", end);
+    overlay.addEventListener("touchcancel", end);
+  })();
+
   function startLocal() {
+    state.libSort = lsGet("cueloft.libSort", "added");
     store.mode = "local";
     state.titles = lsGet(LS_T, []); state.activity = lsGet(LS_A, {});
     state.ready = true; render();

@@ -9,10 +9,10 @@
 
 ## What it does
 
-- **Up Next** – whatever you're in the middle of, with one-tap actions: *Watched E7*, *+1 hr played*, *Mark watched*.
+- **Up Next** – whatever you're in the middle of, with one-tap actions: *Watched E7*, *Played today*, *Mark watched*, plus watchlist rows for movies, shows and games.
 - **Search as you type** – start typing a title and pick the right movie, show or game; the type and year fill in for you.
-- **Library** – everything you've logged, with search, filters and an activity heatmap colored by type.
-- **The Vault** – your all-time favorites, with a ranked top 3 per category and an all-time #1.
+- **Library** – everything you've logged, with search, filters, sorting and an activity heatmap colored by type.
+- **The Vault** – your all-time favorites, with a ranked top 3 per category, an all-time #1 and a full grid per shelf.
 - **Posters** – one-tap suggestions from Wikipedia, or add your own from Photos; they're resized on the device before saving.
 - **Backfill** – add titles you finished years ago, with a date or "don't remember", one at a time or as a list.
 - **Light & dark mode**, installable to the iPhone Home Screen, works offline.
