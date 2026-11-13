@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -483,6 +483,19 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
 .res small { display: block; font-size: 12px; color: var(--text2); }
 .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
 .toggle-row span { font-size: 15px; }
+
+/* ===== v1.2 beta fixes ===== */
+html, body { touch-action: manipulation; }
+.sheet { animation: none; }
+.sheet.anim { animation: up .28s cubic-bezier(.2,.8,.2,1); }
+.sheet.detail.anim { animation: slideup .3s cubic-bezier(.2,.8,.2,1); }
+@keyframes slideup { from { transform: translateY(36px); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .sheet.anim, .sheet.detail.anim { animation: none; } }
+.cover-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.cover-pick { border: 2px solid transparent; border-radius: 12px; padding: 0; background: none; aspect-ratio: 2 / 3; position: relative; overflow: hidden; }
+.cover-pick[aria-pressed="true"] { border-color: var(--brand); }
+.cover-pick .art { position: absolute; inset: 0; border-radius: 10px; }
+.prev-list { display: flex; flex-direction: column; }
 </style>
 </head>
 <body>
@@ -785,13 +798,6 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
         prog.slice(1).map(function (t) { return posterTile(t, { bar: true, meta: true }); }).join("") + "</div>";
     }
     if (f === "all" || f === "movie") {
-      var cont = continueSeries();
-      if (cont.length) {
-        h += '<div class="section-head"><h2>' + typeDot("movie") + 'Continue a series</h2></div><div class="row three">' + cont.map(function (x) {
-          if (x.t) return posterTile(x.t, { dotOnly: true, metaText: "Next in " + x.c.name });
-          return '<button class="tile" data-action="open-coll" data-v="' + esc(x.c.key) + '" aria-label="' + esc(x.f.l) + ', not in your library">' + art({ title: x.f.l, id: x.f.id }) + "</div>" + tileName({ title: x.f.l }) + '<span class="tile-meta">Next in ' + esc(x.c.name) + "</span></button>";
-        }).join("") + "</div>";
-      }
       var unsorted = movies().filter(function (t) { return t.status === "want" && !t.vibe; }).length;
       if (unsorted) h += '<div class="sortcard-prompt"><div><b>Sort your movie watchlist</b><span class="hint">' + unsorted + (unsorted === 1 ? " movie" : " movies") + ' to split into Headliners and Unwind</span></div><button class="sbtn brand" data-action="open-sorter">Start</button></div>';
     }
@@ -1131,6 +1137,8 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     else if (state.overlay === "collnew") { overlay.innerHTML = collNewSheet(); paintCollSearch(); }
     else if (state.overlay === "colladd") overlay.innerHTML = collAddSheet();
     else if (state.overlay === "hidden") overlay.innerHTML = hiddenSheet();
+    else if (state.overlay === "cover") overlay.innerHTML = coverSheet();
+    else if (state.overlay === "creditprev") overlay.innerHTML = creditPrevSheet();
     document.body.style.overflow = "hidden";
     var ns = overlay.querySelector(".sheet"); if (ns && st) ns.scrollTop = st;
     overlay.querySelectorAll("textarea.title-input").forEach(autosize);
@@ -1138,13 +1146,14 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
   }
   function openOverlay(name) {
     state.overlay = name; state.confirmDelete = false; renderOverlay(true);
+    var shA = overlay.querySelector(".sheet"); if (shA) shA.classList.add("anim");
     var first = overlay.querySelector(name === "add" ? "#add-title" : "[data-action='close']");
     if (first) first.focus({ preventScroll: true });
   }
   function closeOverlay() {
     var a = document.activeElement; if (a && overlay.contains(a)) a.blur();
-    if ((state.overlay === "detail" || state.overlay === "colladd") && state.backTo) {
-      var fromAdd = state.overlay === "colladd", bt = state.backTo;
+    if ((state.overlay === "detail" || state.overlay === "colladd" || state.overlay === "creditprev") && state.backTo) {
+      var fromAdd = state.overlay === "colladd" || state.overlay === "creditprev", bt = state.backTo;
       state.backTo = fromAdd ? state.backTo2 || null : null; state.backTo2 = null; state.overlay = bt;
       if (!fromAdd) { state.detailId = null; state.confirmDelete = false; state.detailOffer = null; state.askWhen = null; state.dateMode = null; }
       renderOverlay(true); render(); return;
@@ -1310,9 +1319,22 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       case "collnew-kind": state.collNew = { kind: v, q: "", results: [], loading: false }; renderOverlay(true); var ci = overlay.querySelector("#coll-q"); if (ci) ci.focus(); break;
       case "collnew-pick": { var nk = state.collNew.kind, pre = nk === "director" ? "d:" : nk === "studio" ? "s:" : "se:"; addManual({ key: pre + el.dataset.q, kind: nk === "series" ? "series" : nk, id: el.dataset.q, name: el.dataset.name }); state.collKey = pre + el.dataset.q; state.collEdit = false; state.overlay = "coll"; renderOverlay(true); render(); runEnrichment(); break; }
       case "collnew-custom": { var cin = overlay.querySelector("#coll-q"); var nm = cin ? cin.value.trim() : ""; if (!nm) { toast("Give it a name first."); break; } var ck = "c:" + Date.now().toString(36); addManual({ key: ck, kind: "custom", id: null, name: nm }); state.collKey = ck; state.collEdit = false; state.overlay = "coll"; renderOverlay(true); render(); break; }
-      case "credit": { var ck2 = (el.dataset.kind === "director" ? "d:" : el.dataset.kind === "studio" ? "s:" : el.dataset.kind === "universe" ? "u:" : "se:") + el.dataset.q;
-        if (el.dataset.kind === "director" || el.dataset.kind === "studio") addManual({ key: ck2, kind: el.dataset.kind, id: el.dataset.q, name: el.dataset.name });
+      case "credit": {
+        if (el.dataset.kind === "director" || el.dataset.kind === "studio") {
+          state.credit = { kind: el.dataset.kind, q: el.dataset.q, name: el.dataset.name };
+          state.backTo2 = state.backTo; state.backTo = "detail"; state.overlay = "creditprev"; renderOverlay(true);
+          var shC = overlay.querySelector(".sheet"); if (shC) shC.classList.add("anim"); break;
+        }
+        var ck2 = (el.dataset.kind === "universe" ? "u:" : "se:") + el.dataset.q;
         unhide(ck2); state.backTo = null; state.collKey = ck2; state.collEdit = false; state.overlay = "coll"; renderOverlay(true); render(); break; }
+      case "credit-add": case "credit-open": {
+        var cr0 = state.credit; if (!cr0) break; var key0 = (cr0.kind === "director" ? "d:" : "s:") + cr0.q;
+        if (a === "credit-add") { addManual({ key: key0, kind: cr0.kind, id: cr0.q, name: cr0.name }); toast("Added " + cr0.name + " to Collections"); }
+        state.backTo = null; state.backTo2 = null; state.collKey = key0; state.collEdit = false; state.overlay = "coll"; renderOverlay(true); render(); break; }
+      case "open-cover": state.overlay = "cover"; renderOverlay(true); var shV = overlay.querySelector(".sheet"); if (shV) shV.classList.add("anim"); break;
+      case "cover-done": state.overlay = "coll"; renderOverlay(true); render(); break;
+      case "cover-pick": if (t) { setCover(state.collKey, { t: t.id }); renderOverlay(true); render(); } break;
+      case "cover-reset": setCover(state.collKey, null); renderOverlay(true); render(); break;
       case "d-lookup": if (t) { toast("Looking up credits…"); lookupOne(t).then(function (ok) { toast(ok ? "Credits found" : "Couldn’t find this movie on Wikipedia"); render(); }); } break;
       case "open-colladd": if (t) { state.backTo2 = state.backTo; state.backTo = "detail"; state.collAddId = t.id; state.overlay = "colladd"; renderOverlay(true); } break;
       case "colladd-toggle": { var mt = find(state.collAddId), cc = findCollection(v); if (mt && cc) { collToggle(v, mt.id, members(cc).indexOf(mt) < 0); renderOverlay(true); } break; }
@@ -1343,6 +1365,11 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     if (k === "add-date" && state.add) state.add.date = el.value;
     if (k === "lib-sort") { state.libSort = el.value; lsSet("cueloft.libSort", el.value); render(); }
     if (k === "shelf-sort") { state.shelfSort = el.value; renderOverlay(true); }
+    if (k === "cover-file" && el.files && el.files[0]) {
+      var ckey = state.collKey; toast("Saving cover…");
+      processImage(el.files[0]).then(function (r) { return uploadPoster(r.blob); }).then(function (pid) { setCover(ckey, { a: pid }); renderOverlay(true); render(); toast("Cover saved"); },
+        function (err) { toast(err.msg || "Couldn’t use that image."); });
+    }
     if (k === "import" && el.files && el.files[0]) { var fr = new FileReader(); fr.onload = function () { importBackup(String(fr.result)); }; fr.readAsText(el.files[0]); el.value = ""; }
     if (k === "d-date" && t && el.value !== (t.doneOn || "")) { moveDone(t, t.doneOn || "", el.value); state.dateMode = null; update(t.id, { doneOn: el.value }); }
     if (k === "add-poster" && state.add && el.files && el.files[0]) {
@@ -1362,6 +1389,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     setTimeout(function () { if (state.overlay && !overlay.contains(document.activeElement)) renderOverlay(); }, 0);
   });
   function autosize(el) { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; }
+  document.addEventListener("gesturestart", function (e) { e.preventDefault(); });
   document.addEventListener("keydown", function (e) {
     if (e.key === "Enter" && e.target.classList && e.target.classList.contains("title-input")) { e.preventDefault(); e.target.blur(); return; }
     if (e.key === "Escape" && state.overlay) closeOverlay();
@@ -1445,6 +1473,7 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     if (state.exporting) return;
     state.exporting = true; renderOverlay(true);
     var used = {}; state.titles.forEach(function (t) { if (t.poster) used[t.poster] = 1; });
+    Object.keys(COL.covers || {}).forEach(function (k) { if (COL.covers[k] && COL.covers[k].a) used[COL.covers[k].a] = 1; });
     idbAll().then(function (recs) {
       return Promise.all(recs.filter(function (r) { return used[r.id]; }).map(function (r) {
         return blobToDataURL(new Blob([r.buf], { type: r.type || "image/jpeg" })).then(function (u) { return [r.id, u]; });
@@ -1486,6 +1515,11 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     if (d.collections && typeof d.collections === "object") {
       (d.collections.manual || []).forEach(function (c) { if (c && c.key && c.name && !COL.manual.some(function (x) { return x.key === c.key; })) COL.manual.push(c); });
       (d.collections.hidden || []).forEach(function (k) { if (COL.hidden.indexOf(k) < 0) COL.hidden.push(k); });
+      Object.keys(d.collections.covers || {}).forEach(function (k) {
+        var cv = d.collections.covers[k]; if (!cv) return;
+        if (cv.a && typeof posters[cv.a] === "string" && posters[cv.a].indexOf("data:image/") === 0) { jobs.push(fetch(posters[cv.a]).then(function (r) { return r.blob(); }).then(function (b) { return idbPutBlob(cv.a, b); })); COL.covers[k] = cv; }
+        else if (cv.t) COL.covers[k] = cv;
+      });
       ["adds", "removes"].forEach(function (f) { var src = d.collections[f] || {}; Object.keys(src).forEach(function (k) { COL[f][k] = (COL[f][k] || []).concat((src[k] || []).filter(function (x) { return (COL[f][k] || []).indexOf(x) < 0; })); }); });
       saveCol();
     }
@@ -1654,24 +1688,44 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
   if (!COL.adds || typeof COL.adds !== "object") COL.adds = {};
   if (!COL.removes || typeof COL.removes !== "object") COL.removes = {};
   var SERIES = lsGet(LS_SER, {}), seriesLoading = {};
-  function saveCol() { lsSet(LS_COL, COL); }
+  function saveCol() { lsSet(LS_COL, COL); autoCache = null; }
+  if (!COL.covers || typeof COL.covers !== "object") COL.covers = {};
   function movies() { return state.titles.filter(function (t) { return t.type === "movie"; }); }
   function crList(t, k) { return t.cr && Array.isArray(t.cr[k]) ? t.cr[k] : []; }
   function fieldsFor(kind) { return kind === "director" ? ["d"] : kind === "studio" ? ["s"] : kind === "series" || kind === "universe" ? ["se", "u"] : []; }
-  function autoCollections() {
-    var map = {};
+  function badSeriesName(n) { return /\bphase\b/i.test(n || ""); }
+  function rawAuto() {
+    var map = {}, seen = {};
     movies().forEach(function (t) {
-      crList(t, "se").forEach(function (x) { var k = "se:" + x[0]; if (!map[k]) map[k] = { key: k, kind: "series", id: x[0], name: x[1] }; });
-      crList(t, "u").forEach(function (x) { var k = "u:" + x[0]; if (!map[k]) map[k] = { key: k, kind: "universe", id: x[0], name: x[1] }; });
+      crList(t, "se").forEach(function (x) { if (seen[x[0]] || badSeriesName(x[1])) return; seen[x[0]] = 1; map["se:" + x[0]] = { key: "se:" + x[0], kind: "series", id: x[0], name: x[1] }; });
+      crList(t, "u").forEach(function (x) { if (seen[x[0]] || badSeriesName(x[1])) return; seen[x[0]] = 1; map["u:" + x[0]] = { key: "u:" + x[0], kind: "universe", id: x[0], name: x[1] }; });
     });
     return map;
+  }
+  var autoCache = null, autoSig = "";
+  function autoCollections() {
+    var sig = state.titles.length + "|" + Object.keys(SERIES).length + "|" + movies().filter(function (t) { return t.cr; }).length + "|" + JSON.stringify(COL.adds).length + "|" + JSON.stringify(COL.removes).length;
+    if (autoCache && sig === autoSig) return autoCache;
+    var raw = rawAuto(), keep = {}, groups = {};
+    Object.keys(raw).forEach(function (k) {
+      var c = raw[k], m = members(c), full = seriesFull(c);
+      if (full && !full.some(function (f) { return m.some(function (t) { return t.wd === f.id; }); })) full = null;
+      var size = full ? full.length : m.length;
+      if (size < 2) return;
+      c.size = full ? full.length : 999;
+      var sigM = m.map(function (t) { return t.id; }).sort().join(",");
+      if (!groups[sigM] || c.size < groups[sigM].size || (c.size === groups[sigM].size && c.kind === "series" && groups[sigM].kind !== "series")) groups[sigM] = c;
+    });
+    Object.keys(groups).forEach(function (g) { keep[groups[g].key] = groups[g]; });
+    autoCache = keep; autoSig = sig;
+    return keep;
   }
   function allCollections(includeHidden) {
     var map = autoCollections();
     COL.manual.forEach(function (c) { map[c.key] = c; });
     return Object.keys(map).map(function (k) { return map[k]; }).filter(function (c) { return includeHidden || COL.hidden.indexOf(c.key) < 0; });
   }
-  function findCollection(key) { var m = autoCollections(); return COL.manual.filter(function (c) { return c.key === key; })[0] || m[key] || null; }
+  function findCollection(key) { var m = autoCollections(); return COL.manual.filter(function (c) { return c.key === key; })[0] || m[key] || rawAuto()[key] || null; }
   function addManual(c) { if (!COL.manual.some(function (x) { return x.key === c.key; })) COL.manual.push(c); unhide(c.key); saveCol(); }
   function unhide(key) { var i = COL.hidden.indexOf(key); if (i >= 0) { COL.hidden.splice(i, 1); saveCol(); } }
   function members(c) {
@@ -1702,7 +1756,11 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       return da < db ? -1 : da > db ? 1 : 0;
     });
   }
-  function seriesFull(c) { var e = SERIES[c.id]; return e && Array.isArray(e.films) && e.films.length ? e.films : null; }
+  function seriesFull(c) {
+    var e = SERIES[c.id]; if (!(e && Array.isArray(e.films) && e.films.length)) return null;
+    var ids = {}; movies().forEach(function (t) { if (t.wd) ids[t.wd] = 1; });
+    return e.films.some(function (f) { return ids[f.id]; }) ? e.films : null;
+  }
   function byWd(id) { return movies().filter(function (m) { return m.wd === id; })[0] || null; }
   function collProgress(c) {
     var m = members(c), done = m.filter(function (t) { return t.status === "done"; }).length;
@@ -1713,7 +1771,15 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
     }
     return m.length + (m.length === 1 ? " movie" : " movies") + " · " + done + " watched";
   }
+  function coverHTML(c) {
+    var cv = COL.covers[c.key]; if (!cv) return "";
+    if (cv.t) { var t = find(cv.t); if (t) return '<span class="ccover one">' + art(t) + "</div></span>"; }
+    if (cv.a) { var src = posterSrc(cv.a); return '<span class="ccover one"><div class="art" style="background:#111">' + (src ? '<img class="art-img" src="' + src + '" alt="">' : "") + "</div></span>"; }
+    return "";
+  }
   function collCard(c) {
+    var custom = coverHTML(c);
+    if (custom) return '<button class="ccard" data-action="open-coll" data-v="' + esc(c.key) + '">' + custom + "<b>" + esc(c.name) + "</b><small>" + esc(collProgress(c)) + "</small></button>";
     var m = sortForCollection(members(c), c), cov = m.slice(0, 4);
     var cls = cov.length <= 1 ? " one" : cov.length === 2 ? " two" : "";
     var inner = cov.length ? cov.map(function (t) { return art(t) + "</div>"; }).join("") : art({ title: c.name, id: c.key }) + "</div>";
@@ -1768,9 +1834,33 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
       '<div class="dback"><button class="glass-btn" data-action="close" aria-label="Back">' + I.back + "</button></div>" +
       '<div class="coll-body" style="padding-top:calc(72px + env(safe-area-inset-top, 0px))"><div class="group" style="gap:6px"><div class="eyebrow" style="color:var(--text2)">' + typeDot("movie") + kindLabel + '</div><h1 id="coll-h" class="h1" style="padding:0">' + esc(c.name) + '</h1><span class="hint">' + esc(collProgress(c)) + "</span></div>" +
       '<div class="small-btns">' + (canPick ? '<button class="sbtn brand" data-action="coll-pick">' + I.dice + (isSeries ? "Pick next" : "Pick for me") + "</button>" : "") +
-      '<button class="sbtn" data-action="coll-edit">' + (state.collEdit ? "Done editing" : "Edit") + "</button></div>" +
+      '<button class="sbtn" data-action="coll-edit">' + (state.collEdit ? "Done editing" : "Edit") + '</button><button class="sbtn" data-action="open-cover">Edit cover</button></div>' +
       "<div>" + rows + "</div>" +
       '<div class="small-btns" style="margin-top:8px"><button class="sbtn danger" data-action="coll-hide">' + (c.kind === "series" || c.kind === "universe" ? "Hide this collection" : "Remove this collection") + "</button></div><div style=\"height:40px\"></div></div></section>";
+  }
+  function coverSheet() {
+    var c = findCollection(state.collKey); if (!c) return "";
+    var cv = COL.covers[c.key] || {}, withPosters = sortForCollection(members(c), c).filter(function (t) { return t.poster; });
+    return '<div class="scrim" data-action="cover-done"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="cv-h"><div class="grabber"></div><div class="sheet-head"><span style="width:52px"></span><h2 id="cv-h">Collection cover</h2><button class="textbtn strong" data-action="cover-done">Done</button></div>' +
+      '<div class="group"><span class="field-label">Choose from this collection</span>' + (withPosters.length ? '<div class="cover-grid">' + withPosters.map(function (t) {
+        return '<button class="cover-pick" data-action="cover-pick" data-id="' + t.id + '" aria-pressed="' + (cv.t === t.id) + '" aria-label="Use the poster of ' + esc(t.title) + '">' + art(t) + "</div></button>";
+      }).join("") + "</div>" : '<p class="hint">None of these movies has a poster yet.</p>') + "</div>" +
+      (state.canPoster ? '<div class="small-btns"><label class="sbtn file-label">Upload from Photos<input type="file" accept="image/*" data-input="cover-file" aria-label="Upload a cover from Photos"></label>' +
+        (COL.covers[c.key] ? '<button class="sbtn" data-action="cover-reset">Reset cover</button>' : "") + "</div>" : "") + "</section>";
+  }
+  function setCover(key, cv) {
+    var old = COL.covers[key];
+    if (old && old.a && store.assets && (!cv || cv.a !== old.a)) store.assets.delete(old.a).catch(function () {});
+    if (cv) COL.covers[key] = cv; else delete COL.covers[key];
+    saveCol();
+  }
+  function creditPrevSheet() {
+    var cr = state.credit || {}, c = { kind: cr.kind, id: cr.q, key: (cr.kind === "director" ? "d:" : "s:") + cr.q, name: cr.name };
+    var m = sortForCollection(members(c), c), exists = COL.manual.some(function (x) { return x.key === c.key; });
+    return '<div class="scrim" data-action="close"></div><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="cp-h"><div class="grabber"></div><div class="sheet-head"><button class="textbtn" data-action="close">Close</button><h2 id="cp-h">' + (cr.kind === "director" ? "Director" : "Studio") + '</h2><span style="width:52px"></span></div>' +
+      '<div class="group" style="gap:4px"><div class="pick-title" style="text-align:left">' + esc(cr.name) + '</div><span class="hint">' + m.length + (m.length === 1 ? " of your movies" : " of your movies") + "</span></div>" +
+      '<div class="prev-list">' + m.slice(0, 12).map(function (t) { return collRow(null, t, null); }).join("") + "</div>" +
+      (exists ? '<button class="cta ghost" data-action="credit-open">Open collection</button>' : '<button class="cta" data-action="credit-add">' + I.plus + "Add as collection</button>") + "</section>";
   }
   function addFilmFromCollection(q, name, year) {
     if (!q || byWd(q)) return;
@@ -1952,16 +2042,18 @@ html { background: var(--top-bg) no-repeat, var(--bg); }
         var d = (b.dt && b.dt.value || "").slice(0, 10); if (d && (!e.dt || d < e.dt)) e.dt = d;
         var o = parseFloat(b.ord && b.ord.value); if (!isNaN(o)) e.o = o;
       });
-      var films = Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) {
+      var films = Object.keys(map).map(function (k) { return map[k]; }).filter(function (f) { return !badSeriesName(f.l); }).sort(function (a, b) {
         if (a.o != null && b.o != null && a.o !== b.o) return a.o - b.o;
         return (a.dt || "9999") < (b.dt || "9999") ? -1 : 1;
       });
-      SERIES[c.id] = { at: Date.now(), films: films.slice(0, 60) }; lsSet(LS_SER, SERIES);
+      SERIES[c.id] = { at: Date.now(), films: films.slice(0, 60) }; lsSet(LS_SER, SERIES); autoCache = null;
     }).catch(function () {}).then(function () { seriesLoading[c.id] = false; renderOverlay(); if (state.view !== "library") render(); });
   }
   function fetchMissingSeries() {
+    autoCache = null;
     var month = 30 * 86400000, now = Date.now();
-    var todo = allCollections().filter(function (c) { return (c.kind === "series" || c.kind === "universe") && c.id && (!SERIES[c.id] || now - SERIES[c.id].at > month); });
+    var raw = rawAuto(), todo = Object.keys(raw).map(function (k) { return raw[k]; }).concat(COL.manual.filter(function (c) { return c.kind === "series" || c.kind === "universe"; }))
+      .filter(function (c) { return c.id && (!SERIES[c.id] || now - SERIES[c.id].at > month); });
     todo.reduce(function (p, c) { return p.then(function () { return fetchSeries(c); }).then(function () { return sleep(700); }); }, Promise.resolve());
   }
 
